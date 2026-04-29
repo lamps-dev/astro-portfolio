@@ -29,12 +29,20 @@ const fullTitle = title === SITE_TITLE ? title : `${title} - ${SITE_TITLE}`;
 <script is:inline>
   (() => {
     const stored = typeof localStorage !== 'undefined' ? localStorage.getItem('theme') : null;
-    // Dark by default; only switch to light if the user has explicitly chosen it.
     const theme = stored === 'light' ? 'light' : 'dark';
     if (theme === 'dark') document.documentElement.classList.add('dark');
     else document.documentElement.classList.remove('dark');
     try { localStorage.setItem('theme', theme); } catch {}
   })();
+</script>
+
+<script is:inline>
+  document.addEventListener('astro:after-swap', () => {
+    const stored = localStorage.getItem('theme');
+    const theme = stored === 'light' ? 'light' : 'dark';
+    if (theme === 'dark') document.documentElement.classList.add('dark');
+    else document.documentElement.classList.remove('dark');
+  });
 </script>
 
 <meta name="generator" content={Astro.generator} />
