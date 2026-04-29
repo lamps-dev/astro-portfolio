@@ -1,0 +1,104 @@
+---
+import { NAV_LINKS, SITE_TITLE } from '../consts';
+import ThemeToggle from './ThemeToggle.astro';
+
+const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isActive = (href: string) => {
+  if (href === '/') return pathname === '/';
+  return pathname === href || pathname.startsWith(href + '/');
+};
+---
+
+<header class="nav-shell">
+  <nav class="nav-inner" aria-label="primary">
+    <a href="/" class="brand">{SITE_TITLE}</a>
+
+    <ul class="links">
+      {NAV_LINKS.map(({ href, label }) => (
+        <li>
+          <a href={href} class:list={[{ active: isActive(href) }]}>{label}</a>
+        </li>
+      ))}
+    </ul>
+
+    <div class="trailing">
+      <ThemeToggle />
+    </div>
+  </nav>
+</header>
+
+<style>
+  .nav-shell {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    backdrop-filter: blur(12px);
+    background: color-mix(in oklab, var(--color-bg) 75%, transparent);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .nav-inner {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .brand {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    color: var(--color-text);
+    text-decoration: none;
+    font-size: 0.95rem;
+  }
+  .brand::before {
+    content: '~/';
+    color: var(--color-muted);
+  }
+  .links {
+    display: flex;
+    gap: 0.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex: 1;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .links a {
+    color: var(--color-muted);
+    text-decoration: none;
+    padding: 0.4rem 0.7rem;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    transition: color 0.15s, background-color 0.15s;
+  }
+  .links a:hover {
+    color: var(--color-text);
+    background: color-mix(in oklab, var(--color-border) 60%, transparent);
+  }
+  .links a.active {
+    color: var(--color-text);
+    background: color-mix(in oklab, var(--color-accent) 15%, transparent);
+  }
+  .trailing {
+    display: flex;
+    align-items: center;
+  }
+  @media (max-width: 640px) {
+    .nav-inner {
+      flex-wrap: wrap;
+      padding: 0.6rem 1rem;
+    }
+    .links {
+      order: 3;
+      width: 100%;
+      justify-content: flex-start;
+      gap: 0;
+    }
+    .links a {
+      padding: 0.3rem 0.5rem;
+      font-size: 0.85rem;
+    }
+  }
+</style>

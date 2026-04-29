@@ -1,0 +1,63 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+---
+
+<BaseLayout
+  title="about"
+  description="about lamp. 13, montpellier, codes things."
+>
+  <SectionHeading level="h1" eyebrow="about">hi, i'm lamp</SectionHeading>
+
+  <div class="prose">
+    <p>
+      i'm 13 and i live in montpellier, france. i mostly code in python and
+      c#, but i'll use whatever the project needs (js, html, css, lua,
+      powershell, batch, you name it).
+    </p>
+
+    <p>
+      i make stuff. some of it is real, some of it is dumb on purpose.
+      i run a youtube channel called <a href="https://youtube.com/@ilovelampadaire" target="_blank" rel="noopener noreferrer">ilovelampadaire</a>
+      with around 300 subs, i have a black tortoiseshell cat named salma,
+      and i self-host a bunch of services and small websites.
+    </p>
+
+    <p>domains i own:</p>
+    <ul>
+      <li><a href="https://lamps-dev.dev">lamps-dev.dev</a> (this site)</li>
+      <li><a href="https://onlycats.info" target="_blank" rel="noopener noreferrer">onlycats.info</a> (a joke project)</li>
+      <li><a href="https://sillycat.cloud" target="_blank" rel="noopener noreferrer">sillycat.cloud</a> (in progress)</li>
+      <li>uniqueweb.site (parked, nothing yet)</li>
+    </ul>
+
+    <p>
+      you can find me as <a href="https://github.com/lamps-dev" target="_blank" rel="noopener noreferrer">lamps-dev</a> on github,
+      <a href="https://mastodon.social/@lampyt" target="_blank" rel="noopener noreferrer">@lampyt@mastodon.social</a> on mastodon,
+      and lampyt on discord.
+    </p>
+
+    <p>
+      that's pretty much it. check out <a href="/projects">projects</a> if you
+      want to see what i've been making, or <a href="/now">now</a> if you want
+      to know what i'm up to right this second.
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  .prose {
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+  .prose p {
+    margin: 0 0 1.1em;
+  }
+  .prose ul {
+    padding-left: 1.25em;
+    margin: 0 0 1.1em;
+  }
+  .prose li {
+    margin-bottom: 0.3em;
+  }
+</style>

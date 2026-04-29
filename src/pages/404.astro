@@ -1,0 +1,88 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="404"
+  description="this page does not exist."
+  hideMusic
+>
+  <div class="terminal">
+    <div class="bar">
+      <span class="dot dot-r"></span>
+      <span class="dot dot-y"></span>
+      <span class="dot dot-g"></span>
+      <span class="title">~/lamp -- bash</span>
+    </div>
+    <pre class="screen">
+<span class="prompt">lamp@home</span>:<span class="path">~</span>$ cd <span class="arg">{Astro.url.pathname}</span>
+<span class="err">bash: cd: {Astro.url.pathname}: No such file or directory</span>
+<span class="prompt">lamp@home</span>:<span class="path">~</span>$ ls
+<span class="ok">home  about  projects  uses  now  blog</span>
+<span class="prompt">lamp@home</span>:<span class="path">~</span>$ <span class="cursor">_</span>
+    </pre>
+    <p class="back">
+      <a href="/">go home</a>
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  .terminal {
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 2rem 0;
+    background: oklch(12% 0.01 280);
+    color: oklch(90% 0.02 145);
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.75rem;
+    background: oklch(20% 0.01 280);
+    border-bottom: 1px solid oklch(28% 0.01 280);
+  }
+  .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #febc2e; }
+  .dot-g { background: #28c840; }
+  .bar .title {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: oklch(70% 0 0);
+  }
+  .screen {
+    padding: 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .prompt { color: #62c073; }
+  .path { color: #5ea6ff; }
+  .arg { color: #f0a45e; }
+  .err { color: #ff5e6c; }
+  .ok { color: oklch(85% 0.05 145); }
+  .cursor {
+    display: inline-block;
+    width: 0.6em;
+    background: oklch(85% 0.05 145);
+    color: transparent;
+    animation: blink 1s steps(2, start) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+  .back {
+    margin: 1.5rem 0 0;
+    text-align: center;
+    font-family: var(--font-mono);
+  }
+</style>

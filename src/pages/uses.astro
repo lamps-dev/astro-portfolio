@@ -1,0 +1,68 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import { uses } from '../data/uses';
+---
+
+<BaseLayout
+  title="uses"
+  description="hardware, software, dev tools, and online services i use."
+>
+  <SectionHeading level="h1" eyebrow="uses">what i use</SectionHeading>
+  <p class="lede">
+    most of this is placeholder. i'll fill in real entries as i go.
+  </p>
+
+  {uses.map((section) => (
+    <section class="block" id={section.id}>
+      <SectionHeading level="h3">{section.title}</SectionHeading>
+      <ul class="items">
+        {section.items.map((item) => (
+          <li>
+            <span class="name">
+              {item.link ? (
+                <a href={item.link} target="_blank" rel="noopener noreferrer">{item.name}</a>
+              ) : (
+                item.name
+              )}
+            </span>
+            {item.detail && <span class="detail">{item.detail}</span>}
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))}
+</BaseLayout>
+
+<style>
+  .lede {
+    color: var(--color-muted);
+    margin: -0.5rem 0 1rem;
+  }
+  .block {
+    margin-bottom: 1.5rem;
+  }
+  .items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .items li {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.4rem 0;
+    border-bottom: 1px dashed var(--color-border);
+    align-items: baseline;
+  }
+  .items li:last-child {
+    border-bottom: none;
+  }
+  .name {
+    flex: 0 0 130px;
+    font-weight: 500;
+  }
+  .detail {
+    color: var(--color-muted);
+    font-size: 0.9rem;
+  }
+</style>

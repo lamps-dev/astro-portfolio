@@ -1,17 +1,119 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import MeshGradientHero from '../components/MeshGradientHero.tsx';
+import ProjectCard from '../components/ProjectCard.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import SocialLinks from '../components/SocialLinks.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { projects } from '../data/projects';
 
+const featured = projects.filter((p) => p.featured).slice(0, 3);
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION} fullBleed>
+  <section class="hero">
+    <div class="hero-bg">
+      <MeshGradientHero client:load />
+      <div class="grain"></div>
+      <div class="vignette"></div>
+    </div>
+
+    <div class="hero-content">
+      <p class="kicker">hi, i'm</p>
+      <h1>lamp</h1>
+      <p class="tagline">
+        i code projects and i also code stupid projects sometimes.
+      </p>
+      <div class="hero-socials">
+        <SocialLinks size={20} />
+      </div>
+    </div>
+  </section>
+
+  <div class="page">
+    <SectionHeading eyebrow="featured">stuff i'm working on</SectionHeading>
+    <div class="grid">
+      {featured.map((p) => <ProjectCard project={p} />)}
+    </div>
+    <p class="more">
+      <a href="/projects">see everything &rarr;</a>
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+  .vignette {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      ellipse at center,
+      transparent 0%,
+      transparent 50%,
+      color-mix(in oklab, var(--color-bg) 40%, transparent) 100%
+    );
+  }
+  .hero-content {
+    text-align: center;
+    padding: 4rem 1.25rem;
+    color: white;
+    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.35);
+  }
+  .kicker {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    text-transform: lowercase;
+    opacity: 0.85;
+    margin: 0 0 0.25rem;
+  }
+  .hero h1 {
+    font-size: clamp(3rem, 12vw, 6rem);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    margin: 0;
+    line-height: 1;
+  }
+  .tagline {
+    font-size: 1.1rem;
+    margin: 1rem auto 1.5rem;
+    max-width: 460px;
+    opacity: 0.9;
+  }
+  .hero-socials {
+    display: flex;
+    justify-content: center;
+  }
+  .hero-socials :global(.social-links a) {
+    color: white;
+    opacity: 0.85;
+  }
+  .hero-socials :global(.social-links a:hover) {
+    color: white;
+    opacity: 1;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+  .more {
+    margin-top: 1.5rem;
+    text-align: right;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+  }
+</style>

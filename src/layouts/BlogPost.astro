@@ -1,0 +1,97 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+
+type Props = CollectionEntry<'blog'>['data'];
+
+const { title, description, date, updated, tags } = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+  <article class="post">
+    <header class="post-head">
+      <p class="kicker">
+        <a href="/blog">&larr; all posts</a>
+      </p>
+      <h1>{title}</h1>
+      <p class="meta">
+        <FormattedDate date={date} />
+        {updated && (
+          <>
+            {' '}<span class="dot">&middot;</span>{' '}
+            <span>updated <FormattedDate date={updated} /></span>
+          </>
+        )}
+      </p>
+      {tags && tags.length > 0 && (
+        <ul class="tags">
+          {tags.map((t) => <li>#{t}</li>)}
+        </ul>
+      )}
+    </header>
+
+    <div class="prose">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .post-head {
+    margin-bottom: 2rem;
+  }
+  .kicker {
+    margin: 0 0 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+  }
+  .post-head h1 {
+    font-size: 2rem;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.02em;
+  }
+  .meta {
+    color: var(--color-muted);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    margin: 0;
+  }
+  .dot { opacity: 0.6; }
+  .tags {
+    display: flex;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0.5rem 0 0;
+    padding: 0;
+  }
+  .tags li {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-muted);
+  }
+  .prose {
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+  .prose :global(h2) {
+    font-size: 1.4rem;
+    margin: 2rem 0 0.75rem;
+  }
+  .prose :global(h3) {
+    font-size: 1.15rem;
+    margin: 1.5rem 0 0.5rem;
+  }
+  .prose :global(p) {
+    margin: 0 0 1.1em;
+  }
+  .prose :global(ul),
+  .prose :global(ol) {
+    padding-left: 1.4em;
+    margin: 0 0 1.1em;
+  }
+  .prose :global(img) {
+    border-radius: 8px;
+    margin: 1em 0;
+  }
+</style>

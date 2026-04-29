@@ -1,0 +1,80 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { projects, type ProjectStatus } from '../data/projects';
+
+const sections: { id: string; title: string; status: ProjectStatus; blurb: string }[] = [
+  {
+    id: 'works',
+    title: 'stuff that works',
+    status: 'active',
+    blurb: 'things i actively maintain or am building right now.',
+  },
+  {
+    id: 'stupid',
+    title: 'stupid shit',
+    status: 'stupid',
+    blurb: 'jokes, dares, vibecoded one-off nonsense.',
+  },
+  {
+    id: 'rip',
+    title: 'rip',
+    status: 'rip',
+    blurb: 'old, broken, abandoned. left as-is for the museum.',
+  },
+];
+
+const grouped = sections.map((s) => ({
+  ...s,
+  items: projects.filter((p) => p.status === s.status),
+}));
+---
+
+<BaseLayout
+  title="projects"
+  description="everything i've made, sorted into things that work, things that are dumb, and rip."
+>
+  <SectionHeading level="h1" eyebrow="projects">things i've made</SectionHeading>
+  <p class="lede">
+    sorted into the three states of code: working, stupid, dead.
+  </p>
+
+  {grouped.map((s) => (
+    <section class="group" id={s.id}>
+      <SectionHeading eyebrow={`section / ${s.items.length}`}>{s.title}</SectionHeading>
+      <p class="blurb">{s.blurb}</p>
+      {s.items.length > 0 ? (
+        <div class="grid">
+          {s.items.map((p) => <ProjectCard project={p} />)}
+        </div>
+      ) : (
+        <p class="empty">nothing here yet.</p>
+      )}
+    </section>
+  ))}
+</BaseLayout>
+
+<style>
+  .lede {
+    color: var(--color-muted);
+    margin: -0.5rem 0 1rem;
+  }
+  .blurb {
+    color: var(--color-muted);
+    font-size: 0.9rem;
+    margin: -0.5rem 0 1rem;
+  }
+  .group {
+    margin-bottom: 2rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+  .empty {
+    color: var(--color-muted);
+    font-style: italic;
+  }
+</style>

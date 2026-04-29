@@ -1,0 +1,113 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+
+const posts = (await getCollection('blog'))
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<BaseLayout
+  title="blog"
+  description="posts by lamp."
+>
+  <SectionHeading level="h1" eyebrow="blog">blog</SectionHeading>
+  <p class="lede">things i've written. mostly notes-to-self.</p>
+
+  {posts.length === 0 ? (
+    <p class="empty">nothing here yet.</p>
+  ) : (
+    <ul class="post-list">
+      {posts.map((post) => (
+        <li>
+          <a href={`/blog/${post.id}/`} class="post-link">
+            <span class="post-date">
+              <FormattedDate date={post.data.date} />
+            </span>
+            <span class="post-title">{post.data.title}</span>
+          </a>
+          {post.data.description && (
+            <p class="post-desc">{post.data.description}</p>
+          )}
+          {post.data.tags && post.data.tags.length > 0 && (
+            <ul class="tags">
+              {post.data.tags.map((t) => <li>#{t}</li>)}
+            </ul>
+          )}
+        </li>
+      ))}
+    </ul>
+  )}
+</BaseLayout>
+
+<style>
+  .lede {
+    color: var(--color-muted);
+    margin: -0.5rem 0 1.5rem;
+  }
+  .empty {
+    color: var(--color-muted);
+    font-style: italic;
+  }
+  .post-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .post-list > li {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .post-list > li:last-child {
+    border-bottom: none;
+  }
+  .post-link {
+    display: flex;
+    gap: 1rem;
+    align-items: baseline;
+    text-decoration: none;
+    color: var(--color-text);
+    flex-wrap: wrap;
+  }
+  .post-link:hover .post-title {
+    color: var(--color-accent);
+  }
+  .post-date {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--color-muted);
+    flex-shrink: 0;
+    min-width: 100px;
+  }
+  .post-title {
+    font-size: 1.05rem;
+    font-weight: 500;
+    transition: color 0.15s;
+  }
+  .post-desc {
+    margin: 0.4rem 0 0 0;
+    color: var(--color-muted);
+    font-size: 0.9rem;
+    padding-left: 116px;
+  }
+  .tags {
+    display: flex;
+    gap: 0.4rem;
+    list-style: none;
+    margin: 0.4rem 0 0;
+    padding-left: 116px;
+    flex-wrap: wrap;
+  }
+  .tags li {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-muted);
+  }
+  @media (max-width: 540px) {
+    .post-desc, .tags {
+      padding-left: 0;
+    }
+  }
+</style>

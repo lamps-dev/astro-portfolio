@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import DiscordPresence from '../components/DiscordPresence.tsx';
+import CodingActivity from '../components/CodingActivity.tsx';
+import { now } from '../data/now';
+---
+
+<BaseLayout
+  title="now"
+  description="what lamp is up to right now."
+>
+  <p class="stamp">last updated: {now.lastUpdated}</p>
+
+  <SectionHeading level="h1" eyebrow="now">now</SectionHeading>
+
+  <SectionHeading level="h3">right now</SectionHeading>
+  <div class="widgets">
+    <DiscordPresence client:load />
+    <CodingActivity client:load />
+  </div>
+
+  <SectionHeading level="h3">currently building</SectionHeading>
+  <ul>
+    {now.building.map((item) => <li>{item}</li>)}
+  </ul>
+
+  <SectionHeading level="h3">currently learning</SectionHeading>
+  <ul>
+    {now.learning.map((item) => <li>{item}</li>)}
+  </ul>
+
+  <SectionHeading level="h3">currently watching/listening</SectionHeading>
+  <ul>
+    {now.consuming.map((item) => <li>{item}</li>)}
+  </ul>
+
+  <SectionHeading level="h3">elsewhere</SectionHeading>
+  <ul class="links">
+    <li><a href="/projects">projects</a> what i've made</li>
+    <li><a href="/uses">uses</a> hardware/software</li>
+    <li><a href="/blog">blog</a> when i actually write</li>
+    <li><a href="/about">about</a> the basics</li>
+  </ul>
+</BaseLayout>
+
+<style>
+  .stamp {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-muted);
+    margin: 0 0 0.5rem;
+    text-transform: lowercase;
+  }
+  .widgets {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  @media (min-width: 600px) {
+    .widgets {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  ul {
+    padding-left: 1.25em;
+    margin: 0 0 1.5em;
+  }
+  ul li {
+    margin-bottom: 0.35em;
+  }
+  ul.links li a {
+    margin-right: 0.5em;
+  }
+</style>
