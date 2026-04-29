@@ -14,9 +14,7 @@
     stroke-linecap="round"
     stroke-linejoin="round"
   >
-    <!-- Sun core -->
     <circle class="sun-core" cx="12" cy="12" r="5" />
-    <!-- Sun rays -->
     <g class="sun-rays">
       <line x1="12" y1="1" x2="12" y2="3" />
       <line x1="12" y1="21" x2="12" y2="23" />
@@ -27,7 +25,6 @@
       <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
       <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
     </g>
-    <!-- Moon (hidden in light mode) -->
     <path
       class="moon"
       d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
@@ -65,30 +62,26 @@
     height: 20px;
   }
 
-  /* SUN STATE (light mode = sun visible) */
-  .sun-core {
+  .sun-core,
+  .sun-rays,
+  .moon {
     transform-origin: center;
+  }
+
+  .sun-core {
     transition: transform 0.5s cubic-bezier(0.5, 1.5, 0.5, 1);
   }
 
   .sun-rays {
-    transform-origin: center;
     transition: opacity 0.3s ease, transform 0.5s ease;
   }
 
-  .sun-rays line {
-    transform-origin: center;
-    transition: opacity 0.2s ease;
-  }
-
   .moon {
-    transform-origin: center;
     opacity: 0;
     transform: rotate(-90deg) scale(0);
     transition: opacity 0.3s ease, transform 0.5s cubic-bezier(0.5, 1.5, 0.5, 1);
   }
 
-  /* DARK MODE STATE (moon visible, sun hidden) */
   :global(.dark) .sun-core {
     transform: scale(0);
   }
@@ -103,7 +96,6 @@
     transform: rotate(0deg) scale(1);
   }
 
-  /* Click animation - whole icon spins on toggle */
   .theme-toggle.spinning .theme-icon {
     animation: spin 0.5s ease;
   }
@@ -113,39 +105,3 @@
     to { transform: rotate(180deg); }
   }
 </style>
-
-<script>
-  const toggle = document.getElementById('theme-toggle');
-
-  function setTheme(theme: string) {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    localStorage.setItem('theme', theme);
-  }
-
-  function init() {
-    if (!toggle) return;
-    
-    toggle.addEventListener('click', () => {
-      const current = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-      const next = current === 'dark' ? 'light' : 'dark';
-
-      toggle.classList.add('spinning');
-      setTimeout(() => toggle.classList.remove('spinning'), 500);
-
-      setTheme(next);
-    });
-
-    window.addEventListener('storage', (e) => {
-      if (e.key === 'theme' && e.newValue) {
-        setTheme(e.newValue);
-      }
-    });
-  }
-
-  init();
-  document.addEventListener('astro:after-swap', init);
-</script>

@@ -45,6 +45,32 @@ const fullTitle = title === SITE_TITLE ? title : `${title} - ${SITE_TITLE}`;
   });
 </script>
 
+<script is:inline>
+  document.addEventListener('astro:page-load', () => {
+    const toggle = document.getElementById('theme-toggle');
+    if (!toggle) return;
+
+    toggle.addEventListener('click', () => {
+      const current = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+      const next = current === 'dark' ? 'light' : 'dark';
+      
+      toggle.classList.add('spinning');
+      setTimeout(() => toggle.classList.remove('spinning'), 500);
+
+      if (next === 'dark') document.documentElement.classList.add('dark');
+      else document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', next);
+    });
+  });
+
+  document.addEventListener('storage', (e) => {
+    if (e.key === 'theme' && e.newValue) {
+      if (e.newValue === 'dark') document.documentElement.classList.add('dark');
+      else document.documentElement.classList.remove('dark');
+    }
+  });
+</script>
+
 <meta name="generator" content={Astro.generator} />
 <link rel="canonical" href={canonicalURL} />
 
