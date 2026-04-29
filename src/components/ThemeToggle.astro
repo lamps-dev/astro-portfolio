@@ -126,21 +126,26 @@
     localStorage.setItem('theme', theme);
   }
 
-  toggle?.addEventListener('click', () => {
-    const current = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-    const next = current === 'dark' ? 'light' : 'dark';
+  function init() {
+    if (!toggle) return;
+    
+    toggle.addEventListener('click', () => {
+      const current = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+      const next = current === 'dark' ? 'light' : 'dark';
 
-    // Trigger spin animation
-    toggle.classList.add('spinning');
-    setTimeout(() => toggle.classList.remove('spinning'), 500);
+      toggle.classList.add('spinning');
+      setTimeout(() => toggle.classList.remove('spinning'), 500);
 
-    setTheme(next);
-  });
+      setTheme(next);
+    });
 
-  // Sync across browser tabs
-  window.addEventListener('storage', (e) => {
-    if (e.key === 'theme' && e.newValue) {
-      setTheme(e.newValue);
-    }
-  });
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'theme' && e.newValue) {
+        setTheme(e.newValue);
+      }
+    });
+  }
+
+  init();
+  document.addEventListener('astro:after-swap', init);
 </script>
