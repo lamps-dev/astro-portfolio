@@ -12,11 +12,10 @@ import vercel from '@astrojs/vercel';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://lamps-dev.dev',
-  // Astro 5 replaced 'hybrid' with 'static' + per-route prerender opt-out.
-  // Pages stay prerendered by default; API routes that need SSR set
-  // `export const prerender = false` (see src/pages/api/wakatime.ts).
   output: 'static',
-  adapter: vercel(),
+  adapter: vercel({
+    webAnalytics: { enabled: false },
+  }),
   integrations: [mdx(), sitemap(), react(), icon()],
 
   vite: {

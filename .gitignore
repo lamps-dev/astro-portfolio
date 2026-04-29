@@ -1,3 +1,6 @@
+# Vercel
+.vercel/
+
 # build output
 dist/
 # generated types
