@@ -9,20 +9,41 @@ interface Props {
 
 const { size = 20, class: className = '' } = Astro.props;
 
-const links = [
+type LinkEntry =
+  | { href: string; label: string; icon: string; image?: undefined }
+  | { href: string; label: string; image: string; icon?: undefined };
+
+const links: LinkEntry[] = [
   { href: SOCIAL_LINKS.github, icon: 'lucide:github', label: 'github' },
   { href: SOCIAL_LINKS.youtube, icon: 'lucide:youtube', label: 'youtube' },
   { href: SOCIAL_LINKS.mastodon, icon: 'lucide:at-sign', label: 'mastodon' },
   { href: SOCIAL_LINKS.discord, icon: 'lucide:message-circle', label: 'discord' },
-  { href: SOCIAL_LINKS.bluesky, icon: 'lucide:cloud', label: 'bluesky' },
+  {
+    href: SOCIAL_LINKS.bluesky,
+    image:
+      'https://assets.streamlinehq.com/image/private/w_300,h_300,ar_1/f_auto/v1/icons/logos/bluesky-7gwyi9q582x9btwh7n9qc6.png/bluesky-lp8y5pdi2ob29youg4ycf.png?_a=DATAiZAAZAA0',
+    label: 'bluesky',
+  },
 ];
 ---
 
 <ul class={`social-links ${className}`} aria-label="social links">
-  {links.map(({ href, icon, label }) => (
+  {links.map((link) => (
     <li>
-      <a href={href} target="_blank" rel="noopener noreferrer" aria-label={label}>
-        <Icon name={icon} width={size} height={size} />
+      <a href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.label}>
+        {link.image ? (
+          <img
+            src={link.image}
+            width={size}
+            height={size}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            class="img-icon"
+          />
+        ) : (
+          <Icon name={link.icon} width={size} height={size} />
+        )}
       </a>
     </li>
   ))}
@@ -48,5 +69,15 @@ const links = [
   .social-links a:hover {
     color: var(--color-accent);
     transform: translateY(-1px);
+  }
+  .img-icon {
+    display: block;
+    object-fit: contain;
+    /* dim to match the lucide icon weight, restore on hover */
+    opacity: 0.75;
+    transition: opacity 0.2s ease;
+  }
+  .social-links a:hover .img-icon {
+    opacity: 1;
   }
 </style>
