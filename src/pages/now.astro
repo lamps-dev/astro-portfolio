@@ -3,74 +3,200 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import DiscordPresence from '../components/DiscordPresence.tsx';
 import CodingActivity from '../components/CodingActivity.tsx';
+import { Icon } from 'astro-icon/components';
 import { now } from '../data/now';
+
+const elsewhere = [
+  { href: '/projects', label: 'projects', detail: 'what i\'ve made', icon: 'lucide:folder-git' },
+  { href: '/uses', label: 'uses', detail: 'hardware/software', icon: 'lucide:wrench' },
+  { href: '/blog', label: 'blog', detail: 'when i actually write', icon: 'lucide:notebook-pen' },
+  { href: '/about', label: 'about', detail: 'the basics', icon: 'lucide:user-round' },
+];
 ---
 
 <BaseLayout
   title="now"
   description="what lamp is up to right now."
 >
-  <p class="stamp">last updated: {now.lastUpdated}</p>
+  <div class="now-head">
+    <SectionHeading level="h1" eyebrow="now">now</SectionHeading>
+    <span class="stamp">updated {now.lastUpdated}</span>
+  </div>
+  <p class="lede">
+    a snapshot of what i'm doing, building, and consuming this month.
+  </p>
 
-  <SectionHeading level="h1" eyebrow="now">now</SectionHeading>
-
-  <SectionHeading level="h3">right now</SectionHeading>
+  <SectionHeading level="h3" eyebrow="live">right now</SectionHeading>
   <div class="widgets">
     <DiscordPresence client:load />
     <CodingActivity client:load />
   </div>
 
-  <SectionHeading level="h3">currently building</SectionHeading>
-  <ul>
-    {now.building.map((item) => <li>{item}</li>)}
-  </ul>
+  <div class="lists">
+    <section class="list-card">
+      <header class="list-head">
+        <Icon name="lucide:hammer" width={16} height={16} />
+        <h3>building</h3>
+      </header>
+      <ul>
+        {now.building.map((item) => <li>{item}</li>)}
+      </ul>
+    </section>
 
-  <SectionHeading level="h3">currently learning</SectionHeading>
-  <ul>
-    {now.learning.map((item) => <li>{item}</li>)}
-  </ul>
+    <section class="list-card">
+      <header class="list-head">
+        <Icon name="lucide:book-open" width={16} height={16} />
+        <h3>learning</h3>
+      </header>
+      <ul>
+        {now.learning.map((item) => <li>{item}</li>)}
+      </ul>
+    </section>
 
-  <SectionHeading level="h3">currently watching/listening</SectionHeading>
-  <ul>
-    {now.consuming.map((item) => <li>{item}</li>)}
-  </ul>
+    <section class="list-card">
+      <header class="list-head">
+        <Icon name="lucide:headphones" width={16} height={16} />
+        <h3>consuming</h3>
+      </header>
+      <ul>
+        {now.consuming.map((item) => <li>{item}</li>)}
+      </ul>
+    </section>
+  </div>
 
-  <SectionHeading level="h3">elsewhere</SectionHeading>
-  <ul class="links">
-    <li><a href="/projects">projects</a> what i've made</li>
-    <li><a href="/uses">uses</a> hardware/software</li>
-    <li><a href="/blog">blog</a> when i actually write</li>
-    <li><a href="/about">about</a> the basics</li>
-  </ul>
+  <SectionHeading level="h3" eyebrow="elsewhere">around the site</SectionHeading>
+  <div class="elsewhere">
+    {elsewhere.map((e) => (
+      <a class="elsewhere-card" href={e.href}>
+        <Icon name={e.icon} width={16} height={16} />
+        <span class="el-label">{e.label}</span>
+        <span class="el-detail">{e.detail}</span>
+      </a>
+    ))}
+  </div>
 </BaseLayout>
 
 <style>
+  .now-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
   .stamp {
     font-family: var(--font-mono);
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: var(--color-muted);
-    margin: 0 0 0.5rem;
     text-transform: lowercase;
+    padding: 0.3rem 0.6rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    margin-bottom: 1.4rem;
+  }
+  .lede {
+    color: var(--color-muted);
+    margin: -0.5rem 0 1.5rem;
   }
   .widgets {
     display: grid;
     grid-template-columns: 1fr;
     gap: 0.75rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
   }
   @media (min-width: 600px) {
     .widgets {
       grid-template-columns: 1fr 1fr;
     }
   }
-  ul {
-    padding-left: 1.25em;
-    margin: 0 0 1.5em;
+
+  .lists {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+    margin-bottom: 1rem;
   }
-  ul li {
-    margin-bottom: 0.35em;
+  @media (min-width: 700px) {
+    .lists {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
-  ul.links li a {
-    margin-right: 0.5em;
+  .list-card {
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 0.9rem 1rem 0.6rem;
+    background: color-mix(in oklab, var(--color-bg) 92%, var(--color-border));
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .list-card:hover {
+    border-color: color-mix(in oklab, var(--color-accent) 50%, var(--color-border));
+    transform: translateY(-1px);
+  }
+  .list-head {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-accent);
+  }
+  .list-head h3 {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--color-text);
+    text-transform: lowercase;
+  }
+  .list-card ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .list-card li {
+    padding: 0.35rem 0;
+    border-bottom: 1px dashed var(--color-border);
+    font-size: 0.9rem;
+  }
+  .list-card li:last-child {
+    border-bottom: none;
+  }
+
+  .elsewhere {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 0.5rem;
+  }
+  .elsewhere-card {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    column-gap: 0.6rem;
+    align-items: center;
+    padding: 0.7rem 0.85rem;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--color-text);
+    background: color-mix(in oklab, var(--color-bg) 92%, var(--color-border));
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .elsewhere-card :global(svg) {
+    grid-row: 1 / span 2;
+    color: var(--color-muted);
+  }
+  .elsewhere-card:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-1px);
+  }
+  .elsewhere-card:hover :global(svg) {
+    color: var(--color-accent);
+  }
+  .el-label {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  .el-detail {
+    font-size: 0.78rem;
+    color: var(--color-muted);
   }
 </style>

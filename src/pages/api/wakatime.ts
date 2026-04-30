@@ -6,8 +6,9 @@
  * keep us well under Wakatime's free-tier rate limits even with a few
  * concurrent visitors. CodingActivity polls this every 60s as well.
  *
- * The route MUST be on-demand (prerender = false) so import.meta.env
- * reads are evaluated at request time, not build time.
+ * The route MUST be on-demand (prerender = false) so the env read is
+ * evaluated at request time (Vercel injects dashboard env vars into
+ * process.env for serverless functions), not baked in at build time.
  */
 import type { APIRoute } from 'astro';
 
@@ -67,7 +68,10 @@ export const GET: APIRoute = async () => {
     });
   }
 
-  const apiKey = import.meta.env.WAKATIME_API_KEY;
+  // process.env is the source of truth for Vercel runtime env vars
+  // (set via the Vercel dashboard / `vercel env`). Falls back to
+  // import.meta.env for local `astro dev`, which loads .env into Vite.
+  const apiKey = process.env.WAKATIME_API_KEY ?? import.meta.env.WAKATIME_API_KEY;
   if (!apiKey) {
     const body = JSON.stringify({ ok: false, error: 'missing WAKATIME_API_KEY' });
     return new Response(body, {

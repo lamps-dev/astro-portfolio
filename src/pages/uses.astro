@@ -1,7 +1,15 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/SectionHeading.astro';
+import { Icon } from 'astro-icon/components';
 import { uses } from '../data/uses';
+
+const sectionIcons: Record<string, string> = {
+  hardware: 'lucide:cpu',
+  software: 'lucide:app-window',
+  dev: 'lucide:code',
+  online: 'lucide:globe',
+};
 ---
 
 <BaseLayout
@@ -13,34 +21,92 @@ import { uses } from '../data/uses';
     most of this is placeholder. i'll fill in real entries as i go.
   </p>
 
-  {uses.map((section) => (
-    <section class="block" id={section.id}>
-      <SectionHeading level="h3">{section.title}</SectionHeading>
-      <ul class="items">
-        {section.items.map((item) => (
-          <li>
-            <span class="name">
-              {item.link ? (
-                <a href={item.link} target="_blank" rel="noopener noreferrer">{item.name}</a>
-              ) : (
-                item.name
-              )}
-            </span>
-            {item.detail && <span class="detail">{item.detail}</span>}
-          </li>
-        ))}
-      </ul>
-    </section>
-  ))}
+  <div class="blocks">
+    {uses.map((section) => (
+      <section class="block" id={section.id}>
+        <header class="block-head">
+          <span class="block-icon">
+            <Icon name={sectionIcons[section.id] ?? 'lucide:circle'} width={16} height={16} />
+          </span>
+          <h3 class="block-title">{section.title}</h3>
+          <span class="block-count">{section.items.length}</span>
+        </header>
+        <ul class="items">
+          {section.items.map((item) => (
+            <li>
+              <span class="name">
+                {item.link ? (
+                  <a href={item.link} target="_blank" rel="noopener noreferrer">{item.name}</a>
+                ) : (
+                  item.name
+                )}
+              </span>
+              {item.detail && <span class="detail">{item.detail}</span>}
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </div>
 </BaseLayout>
 
 <style>
   .lede {
     color: var(--color-muted);
-    margin: -0.5rem 0 1rem;
+    margin: -0.5rem 0 1.5rem;
+  }
+  .blocks {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  @media (min-width: 700px) {
+    .blocks {
+      grid-template-columns: 1fr 1fr;
+    }
   }
   .block {
-    margin-bottom: 1.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 1rem 1.1rem 0.5rem;
+    background: color-mix(in oklab, var(--color-bg) 92%, var(--color-border));
+    transition: border-color 0.2s;
+  }
+  .block:hover {
+    border-color: color-mix(in oklab, var(--color-accent) 50%, var(--color-border));
+  }
+  .block-head {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding-bottom: 0.6rem;
+    margin-bottom: 0.4rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .block-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    background: color-mix(in oklab, var(--color-accent) 15%, transparent);
+    color: var(--color-accent);
+  }
+  .block-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: lowercase;
+  }
+  .block-count {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-muted);
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--color-border) 70%, transparent);
   }
   .items {
     list-style: none;
@@ -50,7 +116,7 @@ import { uses } from '../data/uses';
   .items li {
     display: flex;
     gap: 0.75rem;
-    padding: 0.4rem 0;
+    padding: 0.5rem 0;
     border-bottom: 1px dashed var(--color-border);
     align-items: baseline;
   }
@@ -58,11 +124,12 @@ import { uses } from '../data/uses';
     border-bottom: none;
   }
   .name {
-    flex: 0 0 130px;
+    flex: 0 0 110px;
     font-weight: 500;
+    font-size: 0.9rem;
   }
   .detail {
     color: var(--color-muted);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
 </style>

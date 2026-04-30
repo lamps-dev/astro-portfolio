@@ -19,18 +19,26 @@ const featured = projects.filter((p) => p.featured).slice(0, 3);
     </div>
 
     <div class="hero-content">
-      <p class="kicker">hi, i'm</p>
-      <h1>lamp</h1>
+      <p class="kicker"><span class="kicker-dot"></span> hi, i'm</p>
+      <h1>lamp<span class="cursor-blink">_</span></h1>
       <p class="tagline">
         i code projects and i also code stupid projects sometimes.
       </p>
+      <div class="hero-actions">
+        <a class="cta primary" href="/projects">see projects &rarr;</a>
+        <a class="cta ghost" href="/about">about me</a>
+      </div>
       <div class="hero-socials">
         <SocialLinks size={20} />
       </div>
     </div>
+
+    <a class="scroll-hint" href="#featured" aria-label="scroll to featured">
+      <span class="line"></span>
+    </a>
   </section>
 
-  <div class="page">
+  <div class="page" id="featured">
     <SectionHeading eyebrow="featured">stuff i'm working on</SectionHeading>
     <div class="grid">
       {featured.map((p) => <ProjectCard project={p} />)}
@@ -44,7 +52,7 @@ const featured = projects.filter((p) => p.featured).slice(0, 3);
 <style>
   .hero {
     position: relative;
-    min-height: 70vh;
+    min-height: 78vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -63,35 +71,113 @@ const featured = projects.filter((p) => p.featured).slice(0, 3);
     background: radial-gradient(
       ellipse at center,
       transparent 0%,
-      transparent 50%,
-      color-mix(in oklab, var(--color-bg) 40%, transparent) 100%
+      transparent 45%,
+      color-mix(in oklab, var(--color-bg) 55%, transparent) 100%
     );
   }
   .hero-content {
+    position: relative;
     text-align: center;
     padding: 4rem 1.25rem;
     color: white;
-    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.35);
+    text-shadow: 0 1px 16px rgba(0, 0, 0, 0.4);
+    animation: rise 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
   }
   .kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     font-family: var(--font-mono);
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     text-transform: lowercase;
-    opacity: 0.85;
-    margin: 0 0 0.25rem;
+    letter-spacing: 0.04em;
+    opacity: 0.9;
+    margin: 0 0 0.75rem;
+    padding: 0.3rem 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(6px);
+  }
+  .kicker-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #6cf09e;
+    box-shadow: 0 0 8px #6cf09e;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.45; }
   }
   .hero h1 {
-    font-size: clamp(3rem, 12vw, 6rem);
+    font-size: clamp(3.5rem, 13vw, 7rem);
     font-weight: 600;
-    letter-spacing: -0.04em;
+    letter-spacing: -0.045em;
     margin: 0;
     line-height: 1;
   }
+  .cursor-blink {
+    display: inline-block;
+    margin-left: 0.05em;
+    color: var(--color-accent);
+    font-weight: 400;
+    animation: blink 1.1s steps(2, start) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
   .tagline {
-    font-size: 1.1rem;
-    margin: 1rem auto 1.5rem;
-    max-width: 460px;
-    opacity: 0.9;
+    font-size: 1.15rem;
+    margin: 1.25rem auto 1.75rem;
+    max-width: 480px;
+    opacity: 0.92;
+    line-height: 1.5;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 0.65rem;
+    justify-content: center;
+    margin-bottom: 1.75rem;
+    flex-wrap: wrap;
+  }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 1.1rem;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    text-decoration: none;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    transition: transform 0.18s ease, background-color 0.18s ease,
+      border-color 0.18s ease;
+  }
+  .cta.primary {
+    background: white;
+    color: oklch(20% 0.01 280);
+    border-color: white;
+  }
+  .cta.primary:hover {
+    transform: translateY(-1px);
+    background: color-mix(in oklab, white 92%, var(--color-accent));
+  }
+  .cta.ghost {
+    color: white;
+    border-color: rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(6px);
+  }
+  .cta.ghost:hover {
+    transform: translateY(-1px);
+    border-color: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.12);
   }
   .hero-socials {
     display: flex;
@@ -105,15 +191,48 @@ const featured = projects.filter((p) => p.featured).slice(0, 3);
     color: white;
     opacity: 1;
   }
+  .scroll-hint {
+    position: absolute;
+    left: 50%;
+    bottom: 1.5rem;
+    transform: translateX(-50%);
+    width: 18px;
+    height: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    text-decoration: none;
+  }
+  .scroll-hint .line {
+    width: 1.5px;
+    height: 7px;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 2px;
+    animation: scrollDown 1.6s ease-in-out infinite;
+  }
+  @keyframes scrollDown {
+    0% { transform: translateY(-6px); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: translateY(6px); opacity: 0; }
+  }
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 1rem;
   }
   .more {
-    margin-top: 1.5rem;
+    margin-top: 1.75rem;
     text-align: right;
     font-family: var(--font-mono);
     font-size: 0.9rem;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-content,
+    .kicker-dot,
+    .cursor-blink,
+    .scroll-hint .line {
+      animation: none;
+    }
   }
 </style>

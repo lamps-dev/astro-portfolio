@@ -40,16 +40,33 @@ const grouped = sections.map((s) => ({
     sorted into the three states of code: working, stupid, dead.
   </p>
 
+  <nav class="jumps" aria-label="section jumps">
+    {grouped.map((s) => (
+      <a href={`#${s.id}`} class={`jump status-${s.status}`}>
+        <span class="jump-title">{s.title}</span>
+        <span class="jump-count">{s.items.length}</span>
+      </a>
+    ))}
+  </nav>
+
   {grouped.map((s) => (
-    <section class="group" id={s.id}>
-      <SectionHeading eyebrow={`section / ${s.items.length}`}>{s.title}</SectionHeading>
+    <section class={`group status-${s.status}`} id={s.id}>
+      <div class="group-head">
+        <SectionHeading eyebrow={`section`}>
+          {s.title}
+          <span class="count">{s.items.length}</span>
+        </SectionHeading>
+      </div>
       <p class="blurb">{s.blurb}</p>
       {s.items.length > 0 ? (
         <div class="grid">
           {s.items.map((p) => <ProjectCard project={p} />)}
         </div>
       ) : (
-        <p class="empty">nothing here yet.</p>
+        <div class="empty">
+          <span class="empty-icon">∅</span>
+          <span>nothing here yet.</span>
+        </div>
       )}
     </section>
   ))}
@@ -58,15 +75,78 @@ const grouped = sections.map((s) => ({
 <style>
   .lede {
     color: var(--color-muted);
-    margin: -0.5rem 0 1rem;
+    margin: -0.5rem 0 1.25rem;
   }
+  .jumps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+  .jump {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--color-text);
+    background: color-mix(in oklab, var(--color-bg) 92%, var(--color-border));
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .jump:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-1px);
+  }
+  .jump-title {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+  }
+  .jump-count {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--color-border) 70%, transparent);
+    color: var(--color-muted);
+  }
+  .jump.status-active .jump-count {
+    background: color-mix(in oklab, var(--color-accent) 25%, transparent);
+    color: var(--color-accent);
+  }
+  .jump.status-stupid {
+    border-style: dashed;
+  }
+  .jump.status-rip {
+    opacity: 0.7;
+  }
+
   .blurb {
     color: var(--color-muted);
     font-size: 0.9rem;
     margin: -0.5rem 0 1rem;
   }
   .group {
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
+    scroll-margin-top: 5rem;
+  }
+  .group-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+  }
+  .count {
+    display: inline-block;
+    margin-left: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-muted);
+    padding: 0.1rem 0.55rem;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--color-border) 70%, transparent);
+    vertical-align: middle;
   }
   .grid {
     display: grid;
@@ -74,7 +154,18 @@ const grouped = sections.map((s) => ({
     gap: 1rem;
   }
   .empty {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.25rem 1rem;
+    border: 1px dashed var(--color-border);
+    border-radius: 10px;
     color: var(--color-muted);
     font-style: italic;
+  }
+  .empty-icon {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    color: var(--color-muted);
   }
 </style>

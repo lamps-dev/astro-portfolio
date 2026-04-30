@@ -3,7 +3,8 @@
     "allow": [
       "Bash(pnpm add *)",
       "Bash(pnpm build *)",
-      "Bash(timeout 15 pnpm dev)"
+      "Bash(timeout 15 pnpm dev)",
+      "Bash(pnpm exec *)"
     ]
   }
 }

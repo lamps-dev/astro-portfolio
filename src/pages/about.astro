@@ -1,6 +1,21 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/SectionHeading.astro';
+import { Icon } from 'astro-icon/components';
+
+const facts = [
+  { label: 'age', value: '13' },
+  { label: 'where', value: 'montpellier, fr' },
+  { label: 'main', value: 'python / c#' },
+  { label: 'cat', value: 'salma' },
+];
+
+const domains = [
+  { href: 'https://lamps-dev.dev', name: 'lamps-dev.dev', detail: 'this site', external: false },
+  { href: 'https://onlycats.info', name: 'onlycats.info', detail: 'a joke project', external: true },
+  { href: 'https://sillycat.cloud', name: 'sillycat.cloud', detail: 'in progress', external: true },
+  { href: null, name: 'uniqueweb.site', detail: 'parked, nothing yet', external: false },
+];
 ---
 
 <BaseLayout
@@ -8,6 +23,15 @@ import SectionHeading from '../components/SectionHeading.astro';
   description="about lamp. 13, montpellier, codes things."
 >
   <SectionHeading level="h1" eyebrow="about">hi, i'm lamp</SectionHeading>
+
+  <div class="facts">
+    {facts.map((f) => (
+      <div class="fact">
+        <span class="fact-label">{f.label}</span>
+        <span class="fact-value">{f.value}</span>
+      </div>
+    ))}
+  </div>
 
   <div class="prose">
     <p>
@@ -22,30 +46,88 @@ import SectionHeading from '../components/SectionHeading.astro';
       with around 300 subs, i have a black tortoiseshell cat named salma,
       and i self-host a bunch of services and small websites.
     </p>
-
-    <p>domains i own:</p>
-    <ul>
-      <li><a href="https://lamps-dev.dev">lamps-dev.dev</a> (this site)</li>
-      <li><a href="https://onlycats.info" target="_blank" rel="noopener noreferrer">onlycats.info</a> (a joke project)</li>
-      <li><a href="https://sillycat.cloud" target="_blank" rel="noopener noreferrer">sillycat.cloud</a> (in progress)</li>
-      <li>uniqueweb.site (parked, nothing yet)</li>
-    </ul>
-
-    <p>
-      you can find me as <a href="https://github.com/lamps-dev" target="_blank" rel="noopener noreferrer">lamps-dev</a> on github,
-      <a href="https://mastodon.social/@lampyt" target="_blank" rel="noopener noreferrer">@lampyt@mastodon.social</a> on mastodon,
-      and lampyt on discord.
-    </p>
-
-    <p>
-      that's pretty much it. check out <a href="/projects">projects</a> if you
-      want to see what i've been making, or <a href="/now">now</a> if you want
-      to know what i'm up to right this second.
-    </p>
   </div>
+
+  <SectionHeading level="h3" eyebrow="domains">things i own</SectionHeading>
+  <ul class="domains">
+    {domains.map((d) => (
+      <li class={d.href ? '' : 'parked'}>
+        {d.href ? (
+          <a href={d.href} target={d.external ? '_blank' : undefined} rel={d.external ? 'noopener noreferrer' : undefined}>
+            <span class="domain-name">{d.name}</span>
+            <span class="domain-detail">{d.detail}</span>
+            <Icon name={d.external ? 'lucide:external-link' : 'lucide:arrow-right'} class="domain-icon" width={14} height={14} />
+          </a>
+        ) : (
+          <span class="parked-row">
+            <span class="domain-name">{d.name}</span>
+            <span class="domain-detail">{d.detail}</span>
+          </span>
+        )}
+      </li>
+    ))}
+  </ul>
+
+  <SectionHeading level="h3" eyebrow="elsewhere">find me</SectionHeading>
+  <ul class="contacts">
+    <li>
+      <Icon name="lucide:github" width={16} height={16} />
+      <a href="https://github.com/lamps-dev" target="_blank" rel="noopener noreferrer">lamps-dev</a>
+      <span class="muted">github</span>
+    </li>
+    <li>
+      <Icon name="lucide:at-sign" width={16} height={16} />
+      <a href="https://mastodon.social/@lampyt" target="_blank" rel="noopener noreferrer">@lampyt@mastodon.social</a>
+      <span class="muted">mastodon</span>
+    </li>
+    <li>
+      <Icon name="lucide:message-circle" width={16} height={16} />
+      <span>lampyt</span>
+      <span class="muted">discord</span>
+    </li>
+  </ul>
+
+  <p class="outro">
+    that's pretty much it. check out <a href="/projects">projects</a> if you
+    want to see what i've been making, or <a href="/now">now</a> if you want
+    to know what i'm up to right this second.
+  </p>
 </BaseLayout>
 
 <style>
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.5rem;
+    margin: 0.5rem 0 2rem;
+  }
+  .fact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: color-mix(in oklab, var(--color-bg) 90%, var(--color-border));
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .fact:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-1px);
+  }
+  .fact-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-muted);
+  }
+  .fact-value {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--color-text);
+  }
+
   .prose {
     font-size: 1rem;
     line-height: 1.7;
@@ -53,11 +135,85 @@ import SectionHeading from '../components/SectionHeading.astro';
   .prose p {
     margin: 0 0 1.1em;
   }
-  .prose ul {
-    padding-left: 1.25em;
-    margin: 0 0 1.1em;
+
+  .domains {
+    list-style: none;
+    margin: 0 0 1rem;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
   }
-  .prose li {
-    margin-bottom: 0.3em;
+  .domains li a,
+  .parked-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    text-decoration: none;
+    background: color-mix(in oklab, var(--color-bg) 92%, var(--color-border));
+    transition: border-color 0.2s, transform 0.2s, background-color 0.2s;
+  }
+  .domains li a:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-1px);
+    background: color-mix(in oklab, var(--color-bg) 80%, var(--color-accent));
+  }
+  .domains li.parked .parked-row {
+    opacity: 0.55;
+    border-style: dashed;
+  }
+  .domain-name {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--color-text);
+  }
+  .domain-detail {
+    flex: 1;
+    color: var(--color-muted);
+    font-size: 0.85rem;
+  }
+  .domain-icon {
+    color: var(--color-muted);
+    transition: transform 0.2s, color 0.2s;
+  }
+  .domains li a:hover .domain-icon {
+    color: var(--color-accent);
+    transform: translateX(2px);
+  }
+
+  .contacts {
+    list-style: none;
+    margin: 0 0 1.5rem;
+    padding: 0;
+    display: grid;
+    gap: 0.4rem;
+  }
+  .contacts li {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.95rem;
+  }
+  .contacts li :global(svg) {
+    color: var(--color-muted);
+    flex-shrink: 0;
+  }
+  .contacts .muted {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-muted);
+  }
+
+  .outro {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--color-muted);
+    margin-top: 2rem;
   }
 </style>
