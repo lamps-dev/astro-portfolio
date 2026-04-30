@@ -32,10 +32,6 @@ const featured = projects.filter((p) => p.featured).slice(0, 3);
         <SocialLinks size={20} />
       </div>
     </div>
-
-    <a class="scroll-hint" href="#featured" aria-label="scroll to featured">
-      <span class="line"></span>
-    </a>
   </section>
 
   <div class="page" id="featured">
@@ -191,31 +187,6 @@ const featured = projects.filter((p) => p.featured).slice(0, 3);
     color: white;
     opacity: 1;
   }
-  .scroll-hint {
-    position: absolute;
-    left: 50%;
-    bottom: 1.5rem;
-    transform: translateX(-50%);
-    width: 18px;
-    height: 28px;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: 999px;
-    display: grid;
-    place-items: center;
-    text-decoration: none;
-  }
-  .scroll-hint .line {
-    width: 1.5px;
-    height: 7px;
-    background: rgba(255, 255, 255, 0.85);
-    border-radius: 2px;
-    animation: scrollDown 1.6s ease-in-out infinite;
-  }
-  @keyframes scrollDown {
-    0% { transform: translateY(-6px); opacity: 0; }
-    50% { opacity: 1; }
-    100% { transform: translateY(6px); opacity: 0; }
-  }
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -230,8 +201,7 @@ const featured = projects.filter((p) => p.featured).slice(0, 3);
   @media (prefers-reduced-motion: reduce) {
     .hero-content,
     .kicker-dot,
-    .cursor-blink,
-    .scroll-hint .line {
+    .cursor-blink {
       animation: none;
     }
   }
