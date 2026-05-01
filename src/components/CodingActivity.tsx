@@ -62,7 +62,7 @@ export default function CodingActivity() {
       )}
 
       {!loading && data && data.ok && !data.active && (
-        <p className="muted">not coding right now</p>
+        <p className="muted">not coding right now (If you however see data below, then it means I'm coding)</p>
       )}
 
       {!loading && data && data.ok && data.active && (
@@ -80,19 +80,19 @@ export default function CodingActivity() {
         <ul className="stats">
           {data.todayText && (
             <li>
-              <span className="k">today</span>
+              <span className="k">Today:</span>
               <span className="v">{data.todayText}</span>
             </li>
           )}
           {data.topLanguage && (
             <li>
-              <span className="k">top lang</span>
+              <span className="k">Top language:</span>
               <span className="v">{data.topLanguage}</span>
             </li>
           )}
           {data.topProject && (
             <li>
-              <span className="k">top project</span>
+              <span className="k">Top project:</span>
               <span className="v">{data.topProject}</span>
             </li>
           )}

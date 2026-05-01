@@ -35,20 +35,19 @@ const domains = [
 
   <div class="prose">
     <p>
-      i'm 13 and i live in montpellier, france. i mostly code in python and
-      c#, but i'll use whatever the project needs (js, html, css, lua,
-      powershell, batch, you name it).
+      I'm 13 and I live in REDACTED, France. I mostly code in Python, React and
+      C#, but i'll use whatever the project needs (JS, HTML, CSS, Lua,
+      Powershell, Bash, React, and more).
     </p>
 
     <p>
-      i make stuff. some of it is real, some of it is dumb on purpose.
-      i run a youtube channel called <a href="https://youtube.com/@ilovelampadaire" target="_blank" rel="noopener noreferrer">ilovelampadaire</a>
-      with around 300 subs, i have a black tortoiseshell cat named salma,
-      and i self-host a bunch of services and small websites.
+      I code stuff and I'm also a <a href="https://youtube.com/@ilovelampadaire" target="_blank" rel="noopener noreferrer">YouTuber</a> (Note: The username is my old cringy one I won't chane cuz I need to change it everywhere afterwards).
+      I have around 300 subs. I also have a black tortoiseshell cat named Salma (A bit shy to me still but a bit less shy than usual).
+      I self-host a bunch of services and small websites cuz I like coding and self-hosting.
     </p>
   </div>
 
-  <SectionHeading level="h3" eyebrow="domains">things i own</SectionHeading>
+  <SectionHeading level="h3" eyebrow="domains">Things i own</SectionHeading>
   <ul class="domains">
     {domains.map((d) => (
       <li class={d.href ? '' : 'parked'}>
@@ -58,11 +57,8 @@ const domains = [
             <span class="domain-detail">{d.detail}</span>
             <Icon name={d.external ? 'lucide:external-link' : 'lucide:arrow-right'} class="domain-icon" width={14} height={14} />
           </a>
-        ) : (
-          <span class="parked-row">
-            <span class="domain-name">{d.name}</span>
-            <span class="domain-detail">{d.detail}</span>
-          </span>
+        ): (
+        <p></p>
         )}
       </li>
     ))}
@@ -73,23 +69,23 @@ const domains = [
     <li>
       <Icon name="lucide:github" width={16} height={16} />
       <a href="https://github.com/lamps-dev" target="_blank" rel="noopener noreferrer">lamps-dev</a>
-      <span class="muted">github</span>
+      <span class="muted">GitHub</span>
     </li>
     <li>
       <Icon name="lucide:at-sign" width={16} height={16} />
       <a href="https://mastodon.social/@lampyt" target="_blank" rel="noopener noreferrer">@lampyt@mastodon.social</a>
-      <span class="muted">mastodon</span>
+      <span class="muted">Mastodon</span>
     </li>
     <li>
       <Icon name="lucide:message-circle" width={16} height={16} />
       <span>lampyt</span>
-      <span class="muted">discord</span>
+      <span class="muted">Disord username</span>
     </li>
   </ul>
 
   <p class="outro">
-    that's pretty much it. check out <a href="/projects">projects</a> if you
-    want to see what i've been making, or <a href="/now">now</a> if you want
+    That's pretty much it. Check out <a href="/projects">projects</a> if you
+    want to see what I've been making, or <a href="/now">now</a> If you want
     to know what i'm up to right this second.
   </p>
 </BaseLayout>
