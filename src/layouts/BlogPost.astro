@@ -34,6 +34,11 @@ const { title, description, date, updated, tags } = Astro.props;
     <div class="prose">
       <slot />
     </div>
+
+    <section class="comments" aria-label="comments">
+      <h2 class="comments-heading">comments</h2>
+      <div class="giscus-container" id="giscus-container"></div>
+    </section>
   </article>
 </BaseLayout>
 
@@ -94,19 +99,55 @@ const { title, description, date, updated, tags } = Astro.props;
     border-radius: 8px;
     margin: 1em 0;
   }
+  .comments {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-border);
+  }
+  .comments-heading {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin: 0 0 1rem;
+    letter-spacing: -0.01em;
+  }
 </style>
-<script src="https://giscus.app/client.js"
-        data-repo="lamps-dev/astro-portfolio"
-        data-repo-id="R_kgDOSQNYOg"
-        data-category="General"
-        data-category-id="DIC_kwDOSQNYOs4C8HiP"
-        data-mapping="url"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="bottom"
-        data-theme="preferred_color_scheme"
-        data-lang="en"
-        crossorigin="anonymous"
-        async>
+
+<!--
+  Giscus must be re-injected on every client-side navigation: the
+  static <script src=...> only runs once, and ClientRouter doesn't
+  re-execute it. Listen on astro:page-load (fires on initial load AND
+  every navigation) and rebuild the iframe each time.
+-->
+<script is:inline>
+  (function () {
+    const GISCUS_ATTRS = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'lamps-dev/astro-portfolio',
+      'data-repo-id': 'R_kgDOSQNYOg',
+      'data-category': 'General',
+      'data-category-id': 'DIC_kwDOSQNYOs4C8HiP',
+      'data-mapping': 'url',
+      'data-strict': '0',
+      'data-reactions-enabled': '1',
+      'data-emit-metadata': '0',
+      'data-input-position': 'bottom',
+      'data-theme': 'preferred_color_scheme',
+      'data-lang': 'en',
+      crossorigin: 'anonymous',
+    };
+
+    function mount() {
+      const container = document.getElementById('giscus-container');
+      if (!container) return;
+      // Clear any previous iframe / script so giscus re-binds to the
+      // current URL via data-mapping="url".
+      container.replaceChildren();
+      const s = document.createElement('script');
+      for (const [k, v] of Object.entries(GISCUS_ATTRS)) s.setAttribute(k, v);
+      s.async = true;
+      container.appendChild(s);
+    }
+
+    document.addEventListener('astro:page-load', mount);
+  })();
 </script>
