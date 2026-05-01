@@ -15,7 +15,7 @@ export const uses: UsesSection[] = [
     id: 'hardware',
     title: 'Hardware',
     items: [
-      { name: 'Main PC', detail: 'Desktop, specs tbd (To be announced)' },
+      { name: 'Main PC', detail: 'Desktop, specs tba (To be announced)' },
       { name: 'Raspberry Pi', detail: 'For self-hosted stuff' },
       { name: 'Keyboard', detail: 'G-Lab Keyz Rubidium' },
       { name: 'Mouse', detail: 'Glorious Gaming Model O Wired' },
