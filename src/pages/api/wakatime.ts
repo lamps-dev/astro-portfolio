@@ -15,9 +15,9 @@ import type { APIRoute } from 'astro';
 export const prerender = false;
 
 const STATUS_BAR_URL = 'https://wakatime.com/api/v1/users/current/status_bar/today';
-const CACHE_TTL_MS = 60_000;
+const CACHE_TTL_MS = 60000;
 // "active" means: last_heartbeat_at is within this many ms of now.
-const ACTIVE_WINDOW_MS = 5 * 60_000;
+const ACTIVE_WINDOW_MS = 1 * CACHE_TTL_MS;
 
 type CachedResponse = { body: string; expires: number };
 let cache: CachedResponse | null = null;
