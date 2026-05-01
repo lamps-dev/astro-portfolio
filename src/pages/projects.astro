@@ -9,20 +9,38 @@ const sections: { id: string; title: string; status: ProjectStatus; blurb: strin
     id: 'works',
     title: 'stuff that works',
     status: 'active',
-    blurb: 'things i actively maintain or am building right now.',
+    blurb: 'Things I actively maintain or am building right now.',
   },
   {
-    id: 'stupid',
-    title: 'stupid shit',
-    status: 'stupid',
-    blurb: 'jokes, dares, vibecoded one-off nonsense.',
+    id: 'silly',
+    title: 'Random and Silly',
+    status: 'random and silly',
+    blurb: 'Jokes, dares, vibecoded one-off nonsense.',
   },
   {
     id: 'rip',
-    title: 'rip',
-    status: 'rip',
-    blurb: 'old, broken, abandoned. left as-is for the museum.',
+    title: 'Old and abandonned, rip',
+    status: 'old and abandonned, rip',
+    blurb: 'Old, broken, abandoned. left as-is for the museum.',
   },
+  {
+    id: 'nolongeractive',
+    title: 'No longer active',
+    status: 'no longer active',
+    blurb: 'No longer active, no commits for a while.',
+  },
+  {
+    id: 'wip',
+    title: 'WIP',
+    status: 'wip',
+    blurb: 'WIP.',
+  },
+  {
+    id: 'semiactive',
+    title: 'Semi-active',
+    status: 'semi-active',
+    blurb: 'Semi-active.'
+  }
 ];
 
 const grouped = sections.map((s) => ({
@@ -37,7 +55,7 @@ const grouped = sections.map((s) => ({
 >
   <SectionHeading level="h1" eyebrow="projects">things i've made</SectionHeading>
   <p class="lede">
-    sorted into the three states of code: working, stupid, dead.
+    sorted into the three states of code: working, silly, dead, semi-active, wip, no longer active.
   </p>
 
   <nav class="jumps" aria-label="section jumps">
