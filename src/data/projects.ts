@@ -1,4 +1,4 @@
-export type ProjectStatus = 'active' | 'stupid' | 'rip';
+export type ProjectStatus = 'active' | 'random and silly' | 'old and abandonned, rip' | 'no longer active' | 'semi-active' | 'wip';
 
 export type Project = {
   name: string;
@@ -16,62 +16,71 @@ export type Project = {
 export const projects: Project[] = [
   {
     name: 'Cubic',
-    tagline: 'python + c# toolset',
+    tagline: 'Python + C# toolset',
     description:
-      "swore i'd add 100 tools, currently has 2. small grab-bag of utilities i actually use.",
-    status: 'active',
-    tech: ['python', 'c#'],
+      "Said i'd add 100 tools, currently has 2. TextTool's CDN has expired.",
+    status: 'no longer active',
+    tech: ['Python', 'C#'],
     github: 'https://github.com/lamps-dev/cubic',
     date: '2025',
-    featured: true,
   },
   {
-    name: 'lmp bot',
-    tagline: 'discord bot, with feelings',
+    name: 'Lmp Bot',
+    tagline: 'discord bot, my newest project.',
     description:
-      'pycord-based discord bot. has a honeypot spam channel that auto-bans anyone who posts in it. surprisingly effective.',
+      'Pycord-based discord bot (used to be in Forgescript). Has a honeypot spam channel setup that auto-bans anyone who posts in it. surprisingly effective.',
     status: 'active',
-    tech: ['python', 'pycord'],
-    date: '2025',
+    tech: ['Python', 'Pycord'],
+    date: '2026',
     featured: true,
   },
   {
     name: 'sillycat.cloud',
     tagline: 'silly cat themed cloud project',
     description:
-      'in-progress. self-hosted services with a cat skin on top. exactly as serious as the name suggests.',
-    status: 'active',
-    tech: ['self-hosted', 'docker'],
+      'In-progress and in WIP. Self-hosted silly hosting services, wired with pipes ig. Exactly as serious as the name suggests.',
+    status: ['wip', 'semi-active'],
+    tech: ['website: cloud', 'services: will be self-hosted'],
     demo: 'https://sillycat.cloud',
-    date: '2025',
+    date: '2026',
     featured: true,
+  },
+  {
+    name: 'files.sillycat.cloud',
+    tagline: 'CDN self-hosted for myself',
+    description:
+      'Made a CDN, self-hosted for myself, might use it for the file hosting of Sillycat Cloud too, one day.',
+    status: 'active',
+    tech: ['Nginxy', 'Caddy'],
+    demo: 'https://files.sillycat.cloud',
+    date: '2026',
   },
   {
     name: 'onlycats.info',
     tagline: 'joke website, vibecoded',
     description:
-      'vibecoded in an afternoon. exactly what the domain says. no further questions.',
-    status: 'stupid',
-    tech: ['html', 'css', 'js'],
+      'Vibecoded in an afternoon. Exactly what the domain says (its just a cat-posting platform). No further questions.',
+    status: 'random and silly',
+    tech: ['React', 'Typescript', 'Vite', 'Cloudflare Storage', 'Tailwind', 'Supabase'],
     demo: 'https://onlycats.info',
-    date: '2025',
+    date: '2026',
   },
   {
     name: 'SysInfo',
-    tagline: 'early python project',
+    tagline: 'Early python project',
     description:
-      "copied blindly i admit. one of the first things i ever wrote. kept it for the museum.",
-    status: 'rip',
+      "One of the first things I ever wrote and vibecoded. Kept it for the museum.",
+    status: 'old and abandonned, rip',
     tech: ['python'],
-    date: '2023',
+    date: '2023 / 2024',
   },
   {
     name: 'PyChatroom',
-    tagline: 'dead and broken',
+    tagline: 'Dead and broken',
     description:
-      'tried to do a chatroom in python. it sort of worked once. it does not work now.',
-    status: 'rip',
-    tech: ['python'],
-    date: '2023',
+      'Tried to do a chatroom in Python. It sort of worked once. It does not work now.',
+    status: 'old and abandonned, rip',
+    tech: ['Python'],
+    date: '2023 / 2024',
   },
 ];

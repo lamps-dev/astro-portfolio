@@ -6,18 +6,20 @@ export type NowData = {
 };
 
 export const now: NowData = {
-  lastUpdated: 'april 2026',
+  lastUpdated: 'May 1st 2026',
   building: [
     'this portfolio',
-    'sillycat.cloud',
-    'lmp bot improvements',
+    'sillycat.cloud (not really)',
+    'onlycats.info',
+    'lmp bot',
+    'random tools'
   ],
   learning: [
-    'getting better at typescript',
-    'astro internals',
+    'typescript (and some javascript in general)',
   ],
   consuming: [
-    'random youtube rabbit holes',
-    'whatever salma the cat is doing',
+    'youtube videos',
+    'my cat named Salma :333 (i keep petting her)',
+    'random coding platforms or tools',
   ],
 };

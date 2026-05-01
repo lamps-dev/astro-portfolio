@@ -13,41 +13,41 @@ export type UsesSection = {
 export const uses: UsesSection[] = [
   {
     id: 'hardware',
-    title: 'hardware',
+    title: 'Hardware',
     items: [
-      { name: 'main pc', detail: 'desktop, specs tbd' },
-      { name: 'raspberry pi', detail: 'for self-hosted stuff' },
-      { name: 'keyboard', detail: 'placeholder' },
-      { name: 'mouse', detail: 'placeholder' },
+      { name: 'Main PC', detail: 'Desktop, specs tbd (To be announced)' },
+      { name: 'Raspberry Pi', detail: 'For self-hosted stuff' },
+      { name: 'Keyboard', detail: 'G-Lab Keyz Rubidium' },
+      { name: 'Mouse', detail: 'Glorious Gaming Model O Wired' },
     ],
   },
   {
     id: 'software',
-    title: 'software',
+    title: 'Software',
     items: [
-      { name: 'editor', detail: 'vs code' },
-      { name: 'terminal', detail: 'placeholder' },
-      { name: 'browser', detail: 'placeholder' },
-      { name: 'os', detail: 'placeholder' },
+      { name: 'Editor', detail: 'VSCode' },
+      { name: 'Terminal', detail: 'Windows: Windows Terminal. Linux (EndeavourOS): Konsole.' },
+      { name: 'Browser', detail: 'Waterfox' },
+      { name: 'OS', detail: 'Windows: mostly daily use. Linux dual-booted (EndeavourOS): Somewhat daily sometimes.' },
     ],
   },
   {
     id: 'dev',
-    title: 'dev',
+    title: 'Dev',
     items: [
-      { name: 'languages', detail: 'python, c#, js, ts, lua' },
-      { name: 'frameworks', detail: 'astro, pycord, .net' },
-      { name: 'shell', detail: 'powershell, batch when forced' },
+      { name: 'Languages', detail: 'Python, C#, JS, TS, Lua, HTML, CSS, React, Bash' },
+      { name: 'Frameworks', detail: 'Astro, React, Pycord (Discord Bots), .Net (Windows GUI apps, uses rarely nowadays)' },
+      { name: 'Shell', detail: 'Powershell. Bash if on Linux.' },
     ],
   },
   {
     id: 'online',
-    title: 'online',
+    title: 'Online',
     items: [
-      { name: 'lamps-dev.dev', detail: 'this site', link: 'https://lamps-dev.dev' },
-      { name: 'onlycats.info', detail: 'joke project', link: 'https://onlycats.info' },
-      { name: 'sillycat.cloud', detail: 'in-progress', link: 'https://sillycat.cloud' },
-      { name: 'uniqueweb.site', detail: 'parked' },
+      { name: 'lamps-dev.dev', detail: 'This portfolio', link: 'https://lamps-dev.dev' },
+      { name: 'onlycats.info', detail: 'The vibecoded joke project', link: 'https://onlycats.info' },
+      { name: 'sillycat.cloud', detail: 'In-progress/WIP', link: 'https://sillycat.cloud' },
+      // { name: 'uniqueweb.site', detail: 'Parked' }, - Useless to put there now lol
     ],
   },
 ];
