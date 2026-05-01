@@ -83,4 +83,13 @@ export const projects: Project[] = [
     tech: ['Python'],
     date: '2023 / 2024',
   },
+  {
+    name: 'old.lamps-dev.dev',
+    tagline: 'The 2 year old portfolio I had.',
+    description:
+      'This has been replaced with the new one on the main domain, but the old one still exists at https://old.lamps-dev.dev.',
+    status: 'old and abandonned, rip',
+    tech: ['HTML', 'CSS', 'JS'],
+    date: '2024',
+  },
 ];
