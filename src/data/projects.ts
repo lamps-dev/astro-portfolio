@@ -39,7 +39,7 @@ export const projects: Project[] = [
     tagline: 'silly cat themed cloud project',
     description:
       'In-progress and in WIP. Self-hosted silly hosting services, wired with pipes ig. Exactly as serious as the name suggests.',
-    status: ['wip', 'semi-active'],
+    status: 'wip',
     tech: ['website: cloud', 'services: will be self-hosted'],
     demo: 'https://sillycat.cloud',
     date: '2026',
