@@ -18,8 +18,8 @@ export const now: NowData = {
     'typescript (and some javascript in general)',
   ],
   consuming: [
-    'youtube videos',
-    'my cat named Salma :333 (i keep petting her)',
-    'random coding platforms or tools',
+    'Watching YouTube videos.',
+    'Petting my cat named Salma :333 (I keep petting her).',
+    'Discovering random coding platforms or tools.',
   ],
 };
