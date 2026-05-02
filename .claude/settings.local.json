@@ -5,7 +5,8 @@
       "Bash(pnpm build *)",
       "Bash(timeout 15 pnpm dev)",
       "Bash(pnpm exec *)",
-      "PowerShell(New-Item *)"
+      "PowerShell(New-Item *)",
+      "PowerShell(Get-Content *)"
     ]
   }
 }

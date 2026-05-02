@@ -22,6 +22,8 @@ type Payload = {
   url: string | null;
   title: string | null;
   channel: string | null;
+  currentTime: number | null;
+  duration: number | null;
   ts: number;
 };
 
@@ -29,6 +31,10 @@ let latest: Payload | null = null;
 
 function clean(s: unknown, max: number): string | null {
   return typeof s === 'string' && s.length > 0 ? s.slice(0, max) : null;
+}
+
+function num(n: unknown): number | null {
+  return typeof n === 'number' && Number.isFinite(n) && n >= 0 ? n : null;
 }
 
 export const POST: APIRoute = async ({ request }) => {
@@ -60,6 +66,8 @@ export const POST: APIRoute = async ({ request }) => {
     url: clean(body.url, 256),
     title: clean(body.title, 300),
     channel: clean(body.channel, 200),
+    currentTime: num(body.currentTime),
+    duration: num(body.duration),
     ts: typeof body.ts === 'number' ? body.ts : Date.now(),
   };
 
@@ -94,6 +102,12 @@ export const GET: APIRoute = async () => {
       channel: visible ? latest.channel : null,
       url: visible ? latest.url : null,
       videoId: visible ? latest.videoId : null,
+      currentTime: visible ? latest.currentTime : null,
+      duration: visible ? latest.duration : null,
+      // capturedAt: when the extension recorded this position. Lets the
+      // client interpolate elapsed playback locally between polls so
+      // the time bar advances smoothly without spamming the API.
+      capturedAt: visible ? latest.ts : null,
     }),
     {
       status: 200,
