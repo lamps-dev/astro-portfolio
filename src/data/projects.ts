@@ -15,16 +15,6 @@ export type Project = {
 
 export const projects: Project[] = [
   {
-    name: 'Cubic',
-    tagline: 'Python + C# toolset',
-    description:
-      "Said i'd add 100 tools, currently has 2. TextTool's CDN has expired.",
-    status: 'no longer active',
-    tech: ['Python', 'C#'],
-    github: 'https://github.com/lamps-dev/cubic',
-    date: '2025',
-  },
-  {
     name: 'Lmp Bot',
     tagline: 'discord bot, my newest project.',
     description:
@@ -33,6 +23,15 @@ export const projects: Project[] = [
     tech: ['Python', 'Pycord'],
     date: '2026',
     featured: true,
+  },
+  {
+    name: 'Terry',
+    tagline: 'Discord bot.',
+    description:
+      'A discord bot based on Forgescript, kind of discontinued since im busy on LmpBot and the hosting provider where Terry is hosted on has been offline for a while now.',
+    status: 'no longer active',
+    tech: ['Forgescript', 'Javascript'],
+    date: '2026',
   },
   {
     name: 'sillycat.cloud',
@@ -64,6 +63,7 @@ export const projects: Project[] = [
     tech: ['React', 'Typescript', 'Vite', 'Cloudflare Storage', 'Tailwind', 'Supabase'],
     demo: 'https://onlycats.info',
     date: '2026',
+    featured: true,
   },
   {
     name: 'SysInfo',
@@ -91,5 +91,15 @@ export const projects: Project[] = [
     status: 'old and abandonned, rip',
     tech: ['HTML', 'CSS', 'JS'],
     date: '2024',
+  },
+  {
+    name: 'Cubic',
+    tagline: 'Python + C# toolset',
+    description:
+      "Said i'd add 100 tools, currently has 2. TextTool's CDN has expired.",
+    status: 'no longer active',
+    tech: ['Python', 'C#'],
+    github: 'https://github.com/lamps-dev/cubic',
+    date: '2025',
   },
 ];
