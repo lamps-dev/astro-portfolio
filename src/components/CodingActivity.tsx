@@ -16,7 +16,7 @@ type WakatimeData = {
   topProject: string | null;
 } | { ok: false; error: string };
 
-const POLL_INTERVAL_MS = 60_000;
+const POLL_INTERVAL_MS = 30_000;
 
 export default function CodingActivity() {
   const [data, setData] = useState<WakatimeData | null>(null);
@@ -26,7 +26,7 @@ export default function CodingActivity() {
     let cancelled = false;
     const load = async () => {
       try {
-        const res = await fetch('/api/wakatime');
+        const res = await fetch('/api/wakatime', { cache: 'no-store' });
         if (!res.ok) throw new Error(String(res.status));
         const json: WakatimeData = await res.json();
         if (!cancelled) {
@@ -52,7 +52,7 @@ export default function CodingActivity() {
     <div className="coding-activity" role="status" aria-live="polite">
       <div className="head">
         <span className="who">coding</span>
-        {!loading && data?.ok && <span className="live" />}
+        {!loading && data?.ok && data.active && <span className="live" />}
       </div>
 
       {loading && <p className="muted">checking wakatime...</p>}
@@ -62,7 +62,7 @@ export default function CodingActivity() {
       )}
 
       {!loading && data && data.ok && !data.active && (
-        <p className="muted">not coding right now (If you however see data below, then it means I'm coding)</p>
+        <p className="muted">not coding right now</p>
       )}
 
       {!loading && data && data.ok && data.active && (

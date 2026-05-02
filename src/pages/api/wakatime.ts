@@ -4,7 +4,8 @@
  * Server-side proxy to Wakatime so the API key never reaches the
  * browser. Caches the response in-memory for 60s, which is enough to
  * keep us well under Wakatime's free-tier rate limits even with a few
- * concurrent visitors. CodingActivity polls this every 60s as well.
+ * concurrent visitors. CodingActivity polls this every 30s; with the
+ * 60s cache TTL the upstream call still fires at most once per minute.
  *
  * The route MUST be on-demand (prerender = false) so the env read is
  * evaluated at request time (Vercel injects dashboard env vars into
@@ -16,8 +17,11 @@ export const prerender = false;
 
 const STATUS_BAR_URL = 'https://wakatime.com/api/v1/users/current/status_bar/today';
 const CACHE_TTL_MS = 60000;
-// "active" means: last_heartbeat_at is within this many ms of now.
-const ACTIVE_WINDOW_MS = 1 * CACHE_TTL_MS;
+// Wakatime heartbeats only fire on edits/saves, so natural pauses
+// (reading docs, running tests, watching a build) easily exceed 60s
+// even while you're "coding". 5 min matches what feels intuitively
+// active and avoids the widget flapping between states.
+const ACTIVE_WINDOW_MS = 5 * 60_000;
 
 type CachedResponse = { body: string; expires: number };
 let cache: CachedResponse | null = null;
@@ -63,7 +67,12 @@ export const GET: APIRoute = async () => {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=60',
+        // no-store: don't let the edge or browser cache. Our in-memory
+        // cache already throttles upstream Wakatime calls to once per
+        // minute; we just want every client poll to actually reach the
+        // function so it sees fresh data the moment the server cache
+        // refreshes.
+        'Cache-Control': 'no-store',
       },
     });
   }
@@ -104,7 +113,7 @@ export const GET: APIRoute = async () => {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=60',
+        'Cache-Control': 'no-store',
       },
     });
   } catch (err) {
