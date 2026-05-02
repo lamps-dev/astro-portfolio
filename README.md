@@ -1,63 +1,29 @@
-# Astro Starter Kit: Blog
+# Lamp's new portfolio
 
-```sh
-pnpm create astro@latest -- --template blog
-```
+(the old one is available [here](https://github.com/lamps-dev/lamps-dev.dev)).
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Welcome, to, well, my new portfolio, built with Astro (blog template)! (and somewhat vibecoded, [heres the reason btw.](https://www.lamps-dev.dev/blog/the-switch/#:~:text=Why%2C%20vibecode%20almost%20everything%3F)).
 
-Features:
+## How I set it up locally (even tho I don't test locally anymore)
 
-- ✅ Minimal styling (make it your own!)
-- ✅ 100/100 Lighthouse performance
-- ✅ SEO-friendly with canonical URLs and Open Graph data
-- ✅ Sitemap support
-- ✅ RSS Feed support
-- ✅ Markdown & MDX support
+### Requirements
+- [pnpm](https://pnpm.io/installation).
+- [NodeJS](https://nodejs.org/en).
+- Astro (Will auto-install during build process).
+- A computer (Because how else are you going to build it-
+Oh wait[^1]...).
 
-## 🚀 Project Structure
+### Note
+> [!IMPORTANT]
+> The Vercel server astro package binaries are broken on Windows (since vercel deployements are supposed to be done on Linux systems), due to that, you **MUST** uninstall the vercel build astro package (``pnpm remove @astrojs/vercel``) and install the Node server package instead (``pnpm add @astrojs/node``). **ONLY DO THIS LOCALLY AND ONLY ON YOUR WINDOWS SYSTEM IF USING WINDOWS!!!!**
 
-Inside of your Astro project, you'll see the following folders and files:
+### Guide
 
-```text
-├── public/
-├── src/
-│   ├── assets/
-│   ├── components/
-│   ├── content/
-│   ├── layouts/
-│   └── pages/
-├── astro.config.mjs
-├── README.md
-├── package.json
-└── tsconfig.json
-```
+1. (If you don't have Git installed already, install it from [git-scm.com](https://git-scm.com/install/) and select your OS). Run ``git clone https://github.com/lamps-dev/astro-portfolio`` in the directory where you want to build the project at.
+2. ``cd astro-portfolio`` and then, ``pnpm install`` to install all dependencies.
+3. To run it, ``pnpm run dev``, to build it, ``pnpm build``.
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+___
 
-The `src/content/` directory contains "collections" of related Markdown and MDX documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and type-check your frontmatter using an optional schema. See [Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/) to learn more.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
-
-## Credit
-
-This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
+[^1]: If you are crazy enough, Termux for Android and iPhone (I think) exists and you can try building it on there, their package manager (``pkg``) certainly has ``Git``.
