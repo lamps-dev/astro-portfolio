@@ -1,5 +1,5 @@
 export const SITE_TITLE = 'lamp';
-export const SITE_DESCRIPTION = "lamp's site. 13, montpellier, codes things.";
+export const SITE_DESCRIPTION = "lamp's site. 13, codes things.";
 export const SITE_URL = 'https://lamps-dev.dev';
 
 export const SOCIAL_LINKS = {
