@@ -47,7 +47,7 @@ export const uses: UsesSection[] = [
       { name: 'lamps-dev.dev', detail: 'This portfolio', link: 'https://lamps-dev.dev' },
       { name: 'onlycats.info', detail: 'The vibecoded joke project', link: 'https://onlycats.info' },
       { name: 'sillycat.cloud', detail: 'In-progress/WIP', link: 'https://sillycat.cloud' },
-      { name: 'uniqueweb.site', detail: 'Self-hosting domain' },
+      { name: 'uniqueweb.site', detail: 'Self-hosting domain', link: 'https://uniqueweb.site'},
     ],
   },
 ];
