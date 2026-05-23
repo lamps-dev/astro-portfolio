@@ -53,12 +53,13 @@ export default function MusicPlayer() {
     };
   }, []);
 
-  // Keep the audio element's volume in sync with the slider. This persists
-  // across track changes since the <audio> element is reused.
+  // Keep the audio element's volume in sync with the slider. `current` is a
+  // dependency so the volume is (re)applied when the <audio> element first
+  // mounts — otherwise it would play at the browser default of 100%.
   useEffect(() => {
     const audio = audioRef.current;
     if (audio) audio.volume = volume;
-  }, [volume]);
+  }, [volume, current]);
 
   // Try autoplay when a track is loaded. Browsers will block this if
   // there's been no user interaction yet, so we surface a "click to play"
