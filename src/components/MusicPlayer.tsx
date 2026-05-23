@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Pause, Play, SkipForward, Volume2, VolumeX } from 'lucide-react';
+import { Pause, Play, SkipForward, Volume1, Volume2, VolumeX } from 'lucide-react';
 
 type Playlist = { songs: string[] };
 
@@ -21,11 +21,17 @@ function pickRandom(list: string[], avoid?: string) {
 
 export default function MusicPlayer() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const volumeRef = useRef<HTMLDivElement | null>(null);
   const [songs, setSongs] = useState<string[]>([]);
   const [current, setCurrent] = useState<string | null>(null);
   const [playing, setPlaying] = useState(false);
-  const [muted, setMuted] = useState(false);
+  const [volume, setVolume] = useState(DEFAULT_VOLUME);
+  const [showVolume, setShowVolume] = useState(false);
   const [blocked, setBlocked] = useState(false);
+
+  // Muting is purely a function of the slider being at 0 — dragging down to
+  // 0% mutes, raising it again unmutes.
+  const muted = volume === 0;
 
   useEffect(() => {
     let cancelled = false;
@@ -47,18 +53,36 @@ export default function MusicPlayer() {
     };
   }, []);
 
+  // Keep the audio element's volume in sync with the slider. This persists
+  // across track changes since the <audio> element is reused.
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (audio) audio.volume = volume;
+  }, [volume]);
+
   // Try autoplay when a track is loaded. Browsers will block this if
   // there's been no user interaction yet, so we surface a "click to play"
   // affordance when that happens.
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio || !current) return;
-    audio.volume = DEFAULT_VOLUME;
     const attempt = audio.play();
     if (attempt && typeof attempt.catch === 'function') {
       attempt.then(() => setBlocked(false)).catch(() => setBlocked(true));
     }
   }, [current]);
+
+  // Dismiss the volume popup when clicking anywhere outside of it.
+  useEffect(() => {
+    if (!showVolume) return;
+    const onDocClick = (e: MouseEvent) => {
+      if (volumeRef.current && !volumeRef.current.contains(e.target as Node)) {
+        setShowVolume(false);
+      }
+    };
+    document.addEventListener('mousedown', onDocClick);
+    return () => document.removeEventListener('mousedown', onDocClick);
+  }, [showVolume]);
 
   const next = () => {
     setCurrent((prev) => pickRandom(songs, prev ?? undefined));
@@ -77,14 +101,10 @@ export default function MusicPlayer() {
     }
   };
 
-  const toggleMute = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    audio.muted = !audio.muted;
-    setMuted(audio.muted);
-  };
-
   if (!current) return null;
+
+  const pct = Math.round(volume * 100);
+  const VolumeIcon = muted ? VolumeX : volume <= 0.5 ? Volume1 : Volume2;
 
   return (
     <div className={`music-player ${blocked ? 'blocked' : ''}`}>
@@ -107,14 +127,34 @@ export default function MusicPlayer() {
       <button className="mp-btn" type="button" onClick={next} aria-label="skip song">
         <SkipForward size={14} />
       </button>
-      <button
-        className="mp-btn"
-        type="button"
-        onClick={toggleMute}
-        aria-label={muted ? 'unmute' : 'mute'}
-      >
-        {muted ? <VolumeX size={14} /> : <Volume2 size={14} />}
-      </button>
+      <div className="mp-volume" ref={volumeRef}>
+        <button
+          className="mp-btn"
+          type="button"
+          onClick={() => setShowVolume((v) => !v)}
+          aria-label="volume"
+          aria-expanded={showVolume}
+        >
+          <VolumeIcon size={14} />
+        </button>
+        {showVolume && (
+          <div className="mp-volume-popup" role="group" aria-label="volume control">
+            <input
+              className="mp-range"
+              type="range"
+              min={0}
+              max={100}
+              value={pct}
+              onChange={(e) => setVolume(Number(e.target.value) / 100)}
+              aria-label="volume"
+              style={{
+                background: `linear-gradient(to right, var(--color-accent) ${pct}%, var(--color-border) ${pct}%)`,
+              }}
+            />
+            <span className="mp-vol-label">{pct}%</span>
+          </div>
+        )}
+      </div>
       <span className="mp-track" title={current}>
         {current.replace(/\.[^.]+$/, '')}
       </span>
@@ -156,6 +196,60 @@ export default function MusicPlayer() {
         }
         .mp-btn:hover {
           background: var(--color-border);
+        }
+        .mp-volume {
+          position: relative;
+          display: inline-flex;
+          align-items: center;
+        }
+        .mp-volume-popup {
+          position: absolute;
+          bottom: calc(100% + 10px);
+          left: 50%;
+          transform: translateX(-50%);
+          display: flex;
+          align-items: center;
+          gap: 0.45rem;
+          padding: 0.5rem 0.6rem;
+          background: color-mix(in oklab, var(--color-bg) 92%, transparent);
+          border: 1px solid var(--color-border);
+          border-radius: 10px;
+          backdrop-filter: blur(10px);
+          box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+        }
+        .mp-range {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 90px;
+          height: 4px;
+          border-radius: 999px;
+          background: var(--color-border);
+          cursor: pointer;
+          outline: none;
+        }
+        .mp-range::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          background: var(--color-accent);
+          border: none;
+          cursor: pointer;
+        }
+        .mp-range::-moz-range-thumb {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          background: var(--color-accent);
+          border: none;
+          cursor: pointer;
+        }
+        .mp-vol-label {
+          font-size: 0.65rem;
+          color: var(--color-muted);
+          min-width: 3ch;
+          text-align: right;
         }
         .mp-track {
           max-width: 140px;
