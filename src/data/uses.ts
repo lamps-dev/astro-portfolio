@@ -27,17 +27,17 @@ export const uses: UsesSection[] = [
     items: [
       { name: 'Editor', detail: 'VSCode' },
       { name: 'Terminal', detail: 'Windows: Windows Terminal. Linux (EndeavourOS): Konsole.' },
-      { name: 'Browser', detail: 'Waterfox' },
-      { name: 'OS', detail: 'Windows: mostly daily use. Linux dual-booted (EndeavourOS): Somewhat daily sometimes.' },
+      { name: 'Browser', detail: 'Waterfox, Librewolf' },
+      { name: 'OS', detail: 'Windows: Mostly daily use. Linux dual-booted (EndeavourOS): Somewhat daily sometimes.' },
     ],
   },
   {
     id: 'dev',
     title: 'Dev',
     items: [
-      { name: 'Languages', detail: 'Python, C#, JS, TS, Lua, HTML, CSS, React, Bash' },
+      { name: 'Languages', detail: 'Python, C#, JS, TS, Lua, HTML, CSS, TailwindCSS' },
       { name: 'Frameworks', detail: 'Astro, React, Pycord (Discord Bots), .Net (Windows GUI apps, uses rarely nowadays)' },
-      { name: 'Shell', detail: 'Powershell. Bash if on Linux.' },
+      { name: 'Shell', detail: 'Powershell. Bash/Shell if on Linux.' },
     ],
   },
   {
@@ -47,7 +47,7 @@ export const uses: UsesSection[] = [
       { name: 'lamps-dev.dev', detail: 'This portfolio', link: 'https://lamps-dev.dev' },
       { name: 'onlycats.info', detail: 'The vibecoded joke project', link: 'https://onlycats.info' },
       { name: 'sillycat.cloud', detail: 'In-progress/WIP', link: 'https://sillycat.cloud' },
-      // { name: 'uniqueweb.site', detail: 'Parked' }, - Useless to put there now lol
+      { name: 'uniqueweb.site', detail: 'Self-hosting domain' },
     ],
   },
 ];
