@@ -102,4 +102,14 @@ export const projects: Project[] = [
     github: 'https://github.com/lamps-dev/cubic',
     date: '2025',
   },
+  {
+    name: 'lamps-dev.dev',
+    tagline: 'This portfolio (the new one)',
+    description:
+      "This is the portfolio where you are at right now.",
+    status: 'active',
+    tech: ['Astro', 'React Components', 'TailwindCSS', 'Typescript'],
+    github: 'https://github.com/lamps-dev/astro-portfolio',
+    date: '2026',
+  },
 ];
