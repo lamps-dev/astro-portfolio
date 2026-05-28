@@ -11,18 +11,18 @@ const facts = [
 ];
 
 const domains = [
-  { href: 'https://old.lamps-dev.dev', name: 'old.lamps-dev.dev', detail: 'the old portfolio', external: true },
-  { href: 'https://onlycats.info', name: 'onlycats.info', detail: 'a joke project', external: true },
-  { href: 'https://sillycat.cloud', name: 'sillycat.cloud', detail: 'in progress', external: true },
-  { href: null, name: 'uniqueweb.site', detail: 'parked, nothing yet', external: false },
+  { href: 'https://old.lamps-dev.dev', name: 'old.lamps-dev.dev', detail: 'The old portfolio', external: true },
+  { href: 'https://onlycats.info', name: 'onlycats.info', detail: 'A joke project', external: true },
+  { href: 'https://sillycat.cloud', name: 'sillycat.cloud', detail: 'In progress', external: true },
+  { href: null, name: 'https://uniqueweb.site', detail: 'Self-hosting domain', external: true },
 ];
 ---
 
 <BaseLayout
   title="about"
-  description="about lamp. 13, lives in France, codes things."
+  description="About Lamp (lampyt)."
 >
-  <SectionHeading level="h1" eyebrow="about">hi, i'm lamp</SectionHeading>
+  <SectionHeading level="h1" eyebrow="about">hi :3, I'm Lamp (lampyt)</SectionHeading>
 
   <div class="facts">
     {facts.map((f) => (
@@ -36,7 +36,7 @@ const domains = [
   <div class="prose">
     <p>
       I'm 13 and I live in France. I mostly code in Python, React and
-      C#, but i'll use whatever the project needs (JS, HTML, CSS, Lua,
+      C#, but I'll use whatever the project needs (JS, HTML, CSS, Lua,
       Powershell, Bash, React, and more).
     </p>
 
@@ -47,7 +47,7 @@ const domains = [
     </p>
   </div>
 
-  <SectionHeading level="h3" eyebrow="domains">Things i own</SectionHeading>
+  <SectionHeading level="h3" eyebrow="domains">Things I own</SectionHeading>
   <ul class="domains">
     {domains.map((d) => (
       <li class={d.href ? '' : 'parked'}>
@@ -64,7 +64,7 @@ const domains = [
     ))}
   </ul>
 
-  <SectionHeading level="h3" eyebrow="elsewhere">find me</SectionHeading>
+  <SectionHeading level="h3" eyebrow="elsewhere">Find and contact me</SectionHeading>
   <ul class="contacts">
     <li>
       <Icon name="lucide:github" width={16} height={16} />
@@ -77,7 +77,8 @@ const domains = [
       <span class="muted">Mastodon</span>
     </li>
     <li>
-      <Icon name="lucide:message-circle" width={16} height={16} />
+      <!-- <Icon name="lucide:message-circle" width={16} height={16} /> -->
+      <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Discord</title><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></svg>
       <span>lampyt</span>
       <span class="muted">Discord username</span>
     </li>
@@ -86,7 +87,7 @@ const domains = [
   <p class="outro">
     That's pretty much it. Check out <a href="/projects">projects</a> if you
     want to see what I've been making, or <a href="/now">now</a> If you want
-    to know what i'm up to right this second.
+    to know what I'm up to right this second.
   </p>
 </BaseLayout>
 

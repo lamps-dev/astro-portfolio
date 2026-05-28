@@ -59,6 +59,9 @@ importers:
       sharp:
         specifier: ^0.34.3
         version: 0.34.5
+      simple-icons-astro:
+        specifier: ^16.1.0
+        version: 16.1.0(astro@6.1.10(@types/node@25.6.0)(@vercel/functions@3.4.4)(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.60.2)(typescript@6.0.3)(yaml@2.8.3))
       tailwindcss:
         specifier: ^4.2.4
         version: 4.2.4
@@ -2265,6 +2268,11 @@ packages:
   shiki@4.0.2:
     resolution: {integrity: sha512-eAVKTMedR5ckPo4xne/PjYQYrU3qx78gtJZ+sHlXEg5IHhhoQhMfZVzetTYuaJS0L2Ef3AcCRzCHV8T0WI6nIQ==}
     engines: {node: '>=20'}
+
+  simple-icons-astro@16.1.0:
+    resolution: {integrity: sha512-BzkYMmN1J8S2iAzMpNo1NtjNfdleWY7ZY39onZ1EWE7yCfjiOXfEo5zSIhX84OuNFeB/VlmWiEeQy6lc/jHrfQ==}
+    peerDependencies:
+      astro: '>=2.7.1'
 
   sisteransi@1.0.5:
     resolution: {integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==}
@@ -5449,6 +5457,10 @@ snapshots:
       '@shikijs/types': 4.0.2
       '@shikijs/vscode-textmate': 10.0.2
       '@types/hast': 3.0.4
+
+  simple-icons-astro@16.1.0(astro@6.1.10(@types/node@25.6.0)(@vercel/functions@3.4.4)(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.60.2)(typescript@6.0.3)(yaml@2.8.3)):
+    dependencies:
+      astro: 6.1.10(@types/node@25.6.0)(@vercel/functions@3.4.4)(jiti@2.6.1)(lightningcss@1.32.0)(rollup@4.60.2)(typescript@6.0.3)(yaml@2.8.3)
 
   sisteransi@1.0.5: {}
 

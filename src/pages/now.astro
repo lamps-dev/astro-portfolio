@@ -16,18 +16,18 @@ const elsewhere = [
 ---
 
 <BaseLayout
-  title="now"
-  description="what lamp is up to right now."
+  title="Now"
+  description="What Lamp is up to right now."
 >
   <div class="now-head">
-    <SectionHeading level="h1" eyebrow="now">now</SectionHeading>
-    <span class="stamp">updated {now.lastUpdated}</span>
+    <SectionHeading level="h1" eyebrow="now">Now</SectionHeading>
+    <span class="stamp">Updated {now.lastUpdated}</span>
   </div>
   <p class="lede">
     A snapshot of what I'm doing, building, and of what im watching + doing other stuff this month.
   </p>
 
-  <SectionHeading level="h3" eyebrow="live">right now</SectionHeading>
+  <SectionHeading level="h3" eyebrow="live">Right now</SectionHeading>
   <div class="widgets">
     <DiscordPresence client:load />
     <CodingActivity client:load />
@@ -66,7 +66,7 @@ const elsewhere = [
     </section>
   </div>
 
-  <SectionHeading level="h3" eyebrow="elsewhere">around the site</SectionHeading>
+  <SectionHeading level="h3" eyebrow="elsewhere">Around the site</SectionHeading>
   <div class="elsewhere">
     {elsewhere.map((e) => (
       <a class="elsewhere-card" href={e.href}>
