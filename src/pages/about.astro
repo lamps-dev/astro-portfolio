@@ -2,9 +2,10 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import { Icon } from 'astro-icon/components';
+import { AGE } from '../consts.ts';
 
 const facts = [
-  { label: 'age', value: '13' },
+  { label: 'age', value: AGE },
   { label: 'where', value: 'France' },
   { label: 'main', value: 'Python / C# / React / Astro' },
   { label: 'cat', value: 'Salma (Black Tortoiseshell)' },
@@ -35,7 +36,7 @@ const domains = [
 
   <div class="prose">
     <p>
-      I'm 13 and I live in France. I mostly code in Python, React and
+      I'm {AGE} and I live in France. I mostly code in Python, React and
       C#, but I'll use whatever the project needs (JS, HTML, CSS, Lua,
       Powershell, Bash, React, and more).
     </p>

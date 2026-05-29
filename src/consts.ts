@@ -1,5 +1,6 @@
+export const AGE = 13;
 export const SITE_TITLE = 'Lamp';
-export const SITE_DESCRIPTION = "Lamp's Portfolio. I'm 13, and I code things.";
+export const SITE_DESCRIPTION = `Lamp's Portfolio. I'm ${AGE}, and I code things.`;
 export const SITE_URL = 'https://lamps-dev.dev';
 
 export const SOCIAL_LINKS = {
