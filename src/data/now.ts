@@ -8,14 +8,14 @@ export type NowData = {
 export const now: NowData = {
   lastUpdated: 'May 1st 2026',
   building: [
-    'this portfolio',
+    'This portfolio',
     'sillycat.cloud (not really)',
     'onlycats.info',
-    'lmp bot',
-    'random tools'
+    'Lmp Bot',
+    'Random tools/projects'
   ],
   learning: [
-    'typescript (and some javascript in general)',
+    'Typescript (and some Javascript in general)',
   ],
   consuming: [
     'Watching YouTube videos.',
