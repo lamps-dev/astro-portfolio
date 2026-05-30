@@ -7,6 +7,13 @@ const PLAYLIST_URL = '/files/assets/songs/playlist.json';
 const SONG_BASE = '/files/assets/songs/';
 const DEFAULT_VOLUME = 0.1;
 
+function formatTime(seconds: number) {
+  if (!Number.isFinite(seconds) || seconds < 0) return '0:00';
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${m}:${String(s).padStart(2, '0')}`;
+}
+
 function pickRandom(list: string[], avoid?: string) {
   if (list.length === 0) return null;
   if (list.length === 1) return list[0];
@@ -28,6 +35,8 @@ export default function MusicPlayer() {
   const [volume, setVolume] = useState(DEFAULT_VOLUME);
   const [showVolume, setShowVolume] = useState(false);
   const [blocked, setBlocked] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
 
   // Muting is purely a function of the slider being at 0 — dragging down to
   // 0% mutes, raising it again unmutes.
@@ -67,6 +76,8 @@ export default function MusicPlayer() {
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio || !current) return;
+    setCurrentTime(0);
+    setDuration(0);
     const attempt = audio.play();
     if (attempt && typeof attempt.catch === 'function') {
       attempt.then(() => setBlocked(false)).catch(() => setBlocked(true));
@@ -89,6 +100,13 @@ export default function MusicPlayer() {
     setCurrent((prev) => pickRandom(songs, prev ?? undefined));
   };
 
+  const seek = (value: number) => {
+    const audio = audioRef.current;
+    if (!audio || !Number.isFinite(audio.duration)) return;
+    audio.currentTime = value;
+    setCurrentTime(value);
+  };
+
   const toggle = () => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -105,6 +123,7 @@ export default function MusicPlayer() {
   if (!current) return null;
 
   const pct = Math.round(volume * 100);
+  const progressPct = duration > 0 ? (currentTime / duration) * 100 : 0;
   const VolumeIcon = muted ? VolumeX : volume <= 0.5 ? Volume1 : Volume2;
 
   return (
@@ -115,6 +134,8 @@ export default function MusicPlayer() {
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
         onEnded={next}
+        onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
+        onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
         preload="auto"
       />
       <button
@@ -156,9 +177,29 @@ export default function MusicPlayer() {
           </div>
         )}
       </div>
-      <span className="mp-track" title={current}>
-        {current.replace(/\.[^.]+$/, '')}
-      </span>
+      <div className="mp-meta">
+        <span className="mp-track" title={current}>
+          {current.replace(/\.[^.]+$/, '')}
+        </span>
+        <div className="mp-progress">
+          <input
+            className="mp-seek"
+            type="range"
+            min={0}
+            max={duration || 0}
+            step="any"
+            value={Math.min(currentTime, duration || 0)}
+            onChange={(e) => seek(Number(e.target.value))}
+            aria-label="seek"
+            style={{
+              background: `linear-gradient(to right, var(--color-accent) ${progressPct}%, var(--color-border) ${progressPct}%)`,
+            }}
+          />
+          <span className="mp-time">
+            {formatTime(currentTime)} / {formatTime(duration)}
+          </span>
+        </div>
+      </div>
       <style>{`
         .music-player {
           position: fixed;
@@ -252,12 +293,57 @@ export default function MusicPlayer() {
           min-width: 3ch;
           text-align: right;
         }
+        .mp-meta {
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
+          min-width: 0;
+        }
         .mp-track {
           max-width: 140px;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
           color: var(--color-muted);
+        }
+        .mp-progress {
+          display: flex;
+          flex-direction: column;
+          gap: 0.15rem;
+        }
+        .mp-seek {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 140px;
+          height: 3px;
+          border-radius: 999px;
+          background: var(--color-border);
+          cursor: pointer;
+          outline: none;
+        }
+        .mp-seek::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background: var(--color-accent);
+          border: none;
+          cursor: pointer;
+        }
+        .mp-seek::-moz-range-thumb {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background: var(--color-accent);
+          border: none;
+          cursor: pointer;
+        }
+        .mp-time {
+          font-size: 0.6rem;
+          color: var(--color-muted);
+          font-variant-numeric: tabular-nums;
+          letter-spacing: 0.02em;
         }
       `}</style>
     </div>
