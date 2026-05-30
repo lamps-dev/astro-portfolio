@@ -1,0 +1,73 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+const { frontmatter } = Astro.props;
+---
+
+<BaseLayout title={frontmatter.title} description={frontmatter.description}>
+  <article class="legal">
+    <header class="legal-head">
+      <p class="kicker"><a href="/">&larr; back home</a></p>
+      <h1>{frontmatter.title}</h1>
+    </header>
+    <div class="prose">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .legal-head {
+    margin-bottom: 2rem;
+  }
+  .kicker {
+    margin: 0 0 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+  }
+  .legal-head h1 {
+    font-size: 2rem;
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+  .prose {
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+  .prose :global(h2) {
+    font-size: 1.3rem;
+    margin: 2rem 0 0.75rem;
+    letter-spacing: -0.01em;
+  }
+  .prose :global(h3) {
+    font-size: 1.1rem;
+    margin: 1.5rem 0 0.5rem;
+  }
+  .prose :global(p) {
+    margin: 0 0 1.1em;
+  }
+  .prose :global(ul),
+  .prose :global(ol) {
+    padding-left: 1.4em;
+    margin: 0 0 1.1em;
+  }
+  .prose :global(li) {
+    margin: 0.25em 0;
+  }
+  .prose :global(a) {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .prose :global(hr) {
+    border: none;
+    border-top: 1px solid var(--color-border);
+    margin: 2rem 0;
+  }
+  .prose :global(strong) {
+    color: var(--color-text);
+  }
+  .prose :global(em) {
+    color: var(--color-muted);
+  }
+</style>
