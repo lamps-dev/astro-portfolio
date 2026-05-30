@@ -126,7 +126,16 @@
       } else {
         document.documentElement.classList.remove('dark');
       }
-      localStorage.setItem('theme', next);
+      // Only remember the choice if the Functional consent category is enabled
+      // (it's on by default). Otherwise the toggle still works for this session
+      // but isn't persisted across visits.
+      const canStore = typeof window.__functionalConsent === 'function'
+        ? window.__functionalConsent()
+        : true;
+      try {
+        if (canStore) localStorage.setItem('theme', next);
+        else localStorage.removeItem('theme');
+      } catch {}
     });
   }
 
