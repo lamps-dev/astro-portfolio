@@ -29,7 +29,7 @@ const fullTitle = title === SITE_TITLE ? title : `${title} - ${SITE_TITLE}`;
       const raw = localStorage.getItem('lamp_consent');
       if (!raw) return true;
       const data = JSON.parse(raw);
-      return !!(data && data.prefs && data.prefs.Functional);
+      return !!(data && data.prefs && data.prefs.functional);
     } catch (e) { return true; }
   };
 </script>
@@ -92,27 +92,34 @@ const fullTitle = title === SITE_TITLE ? title : `${title} - ${SITE_TITLE}`;
       policyLink: '/privacy',
     },
     categories: [
-      { id: 'Necessary', name: 'Strictly necessary', desc: 'Required for the site to work properly.', required: true, gtag: [] },
-      { id: 'Functional', name: 'Functional', desc: 'Remembers your preferences like theme and language.', required: false, default: true, gtag: ['functionality_storage', 'personalization_storage'] },
-      { id: 'Analytics', name: 'Analytics', desc: 'Helps us understand how visitors use the site.', required: false, gtag: ['analytics_storage'] },
+      { id: 'necessary', name: 'Strictly necessary', desc: 'Required for the site to work properly.', required: true, gtag: [] },
+      { id: 'functional', name: 'Functional', desc: 'Remembers your preferences like theme and language.', required: false, default: true, gtag: ['functionality_storage', 'personalization_storage'] },
+      { id: 'analytics', name: 'Analytics', desc: 'Helps us understand how visitors use the site.', required: false, gtag: ['analytics_storage'] },
     ],
     onChange: function (prefs) {
       // Turning Functional off stops the site from remembering your theme.
-      if (!prefs.Functional) { try { localStorage.removeItem('theme'); } catch (e) {} }
+      if (!prefs.functional) { try { localStorage.removeItem('theme'); } catch (e) {} }
     },
+  });
+</script>
+<script is:inline>
+  // Astro's ClientRouter swaps <body> on navigation, discarding the consent UI
+  // that LampConsent injected there. Re-attach it after every swap.
+  document.addEventListener('astro:after-swap', function () {
+    if (window.LampConsent && typeof LampConsent.remount === 'function') LampConsent.remount();
   });
 </script>
 
 <!-- Google Tag Manager — blocked until Analytics consent is granted -->
-<script type="text/plain" data-lamp-category="Analytics" data-lamp-vendor="google_tag_manager" is:inline>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+<script type="text/plain" data-lamp-category="analytics" data-lamp-vendor="google_tag_manager" is:inline>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-5QT8BRFL');</script>
 <!-- End Google Tag Manager -->
 <!-- Google tag (gtag.js) — blocked until Analytics consent is granted -->
-<script type="text/plain" data-lamp-category="Analytics" is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-VN2SEP839X"></script>
-<script type="text/plain" data-lamp-category="Analytics" is:inline>
+<script type="text/plain" data-lamp-category="analytics" is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-VN2SEP839X"></script>
+<script type="text/plain" data-lamp-category="analytics" is:inline>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
@@ -121,7 +128,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </script>
 
 <!-- Cloudflare Web Analytics — blocked until Analytics consent is granted -->
-<script type="text/plain" data-lamp-category="Analytics" is:inline defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "4271c7e69a684ce199c6bef2e752d79e"}'></script>
+<script type="text/plain" data-lamp-category="analytics" is:inline defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "4271c7e69a684ce199c6bef2e752d79e"}'></script>
 <!-- End Cloudflare Web Analytics -->
 <link
   rel="alternate"

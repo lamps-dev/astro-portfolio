@@ -904,6 +904,25 @@
       buildModal();
       buildTrigger();
     },
+    // Re-attach the UI to the current document.body without re-running
+    // detection or re-showing the banner. Useful for SPA / view-transition
+    // frameworks (Astro ClientRouter, etc.) that swap <body> on navigation and
+    // discard our runtime-injected nodes. Rebuilds anything that went missing.
+    remount() {
+      if (!injected) return;
+      injectStyles(); // no-op if the <style> survived the swap
+      // Re-append the existing detached nodes so their current state (a visible
+      // banner, an open modal, the trigger) and event listeners are preserved.
+      // Only build from scratch if a node was never created.
+      if (bannerEl) { if (!document.body.contains(bannerEl)) document.body.appendChild(bannerEl); }
+      else buildBanner();
+      if (modalEl) { if (!document.body.contains(modalEl)) document.body.appendChild(modalEl); }
+      else buildModal();
+      if (cfg.showFloatingTrigger) {
+        if (triggerEl) { if (!document.body.contains(triggerEl)) document.body.appendChild(triggerEl); }
+        else buildTrigger();
+      }
+    },
     addVendor(v) { cfg.customVendors.push(v); allVendors.push(v); },
     reset() {
       if (cfg.storage === 'cookie') writeCookie(cfg.storageKey, '', -1);
