@@ -112,4 +112,13 @@ export const projects: Project[] = [
     github: 'https://github.com/lamps-dev/astro-portfolio',
     date: '2026',
   },
+  {
+    name: 'LampTools',
+    tagline: 'A Cubic replacement',
+    description: 'Fewer tools but a better gui and will be somewhat actively maintained.',
+    status: 'wip',
+    tech: ['Python', 'PySide6'],
+    github: 'https://github.com/lamp-studios/lamptools',
+    date: '2026',
+  }
 ];
