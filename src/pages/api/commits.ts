@@ -1,9 +1,9 @@
 /*
  * /api/commits
  *
- * Server-side proxy to GitHub that returns the most recent public
- * commits pushed by the configured user, flattened across repos. The
- * Changelog page reads from here so we can:
+ * Server-side proxy to GitHub that returns the most recent commits for
+ * the configured repository. The Changelog page reads from here so we
+ * can:
  *   - keep an optional GITHUB_TOKEN server-side (higher rate limit,
  *     never shipped to the browser), and
  *   - cache the upstream response in-memory so we stay well under
@@ -14,16 +14,13 @@
  * evaluated at request time on Vercel, not baked in at build time.
  */
 import type { APIRoute } from 'astro';
-import { GITHUB_USERNAME } from '../../consts';
+import { GITHUB_REPO, GITHUB_USERNAME } from '../../consts';
 
 export const prerender = false;
 
-// GitHub's public events feed surfaces PushEvents (recent commits)
-// across all of a user's public repos in one call -- exactly the
-// "recent activity" view we want, without enumerating every repo.
-const EVENTS_URL = `https://api.github.com/users/${GITHUB_USERNAME}/events/public?per_page=100`;
-const CACHE_TTL_MS = 5 * 60_000;
 const MAX_COMMITS = 40;
+const COMMITS_URL = `https://api.github.com/repos/${GITHUB_REPO}/commits?per_page=${MAX_COMMITS}`;
+const CACHE_TTL_MS = 5 * 60_000;
 
 type Commit = {
   sha: string;
@@ -44,37 +41,25 @@ type Sanitized =
 type CachedResponse = { body: string; expires: number };
 let cache: CachedResponse | null = null;
 
-function sanitize(events: any): Sanitized {
-  if (!Array.isArray(events)) return { ok: false, error: 'unexpected response' };
+function sanitize(raw: any): Sanitized {
+  if (!Array.isArray(raw)) return { ok: false, error: 'unexpected response' };
 
   const commits: Commit[] = [];
-  for (const event of events) {
-    if (event?.type !== 'PushEvent') continue;
-    const repo: string | undefined = event.repo?.name;
-    const date: string = event.created_at ?? '';
-    // PushEvent payloads list commits oldest-first; reverse so the most
-    // recent commit of each push shows up first.
-    const pushed = Array.isArray(event.payload?.commits)
-      ? [...event.payload.commits].reverse()
-      : [];
-    for (const c of pushed) {
-      if (!c?.sha || !repo) continue;
-      const message: string = typeof c.message === 'string' ? c.message : '';
-      const newline = message.indexOf('\n');
-      const title = newline === -1 ? message : message.slice(0, newline);
-      const description = newline === -1 ? '' : message.slice(newline + 1).trim();
-      commits.push({
-        sha: c.sha,
-        repo,
-        title: title.trim() || '(no message)',
-        description,
-        url: `https://github.com/${repo}/commit/${c.sha}`,
-        date,
-        author: c.author?.name ?? null,
-      });
-      if (commits.length >= MAX_COMMITS) break;
-    }
-    if (commits.length >= MAX_COMMITS) break;
+  for (const c of raw) {
+    if (!c?.sha) continue;
+    const message: string = typeof c.commit?.message === 'string' ? c.commit.message : '';
+    const newline = message.indexOf('\n');
+    const title = newline === -1 ? message : message.slice(0, newline);
+    const description = newline === -1 ? '' : message.slice(newline + 1).trim();
+    commits.push({
+      sha: c.sha,
+      repo: GITHUB_REPO,
+      title: title.trim() || '(no message)',
+      description,
+      url: c.html_url ?? `https://github.com/${GITHUB_REPO}/commit/${c.sha}`,
+      date: c.commit?.author?.date ?? c.commit?.committer?.date ?? '',
+      author: c.commit?.author?.name ?? c.author?.login ?? null,
+    });
   }
 
   return { ok: true, commits };
@@ -101,7 +86,7 @@ export const GET: APIRoute = async () => {
   if (token) headers.Authorization = `Bearer ${token}`;
 
   try {
-    const res = await fetch(EVENTS_URL, { headers });
+    const res = await fetch(COMMITS_URL, { headers });
     if (!res.ok) {
       const body = JSON.stringify({ ok: false, error: `github ${res.status}` });
       return new Response(body, {

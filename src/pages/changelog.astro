@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import Changelog from '../components/Changelog.tsx';
-import { GITHUB_USERNAME } from '../consts';
+import { GITHUB_REPO } from '../consts';
 ---
 
 <BaseLayout
@@ -19,8 +19,8 @@ import { GITHUB_USERNAME } from '../consts';
 
   <p class="footnote">
     Pulled live from
-    <a href={`https://github.com/${GITHUB_USERNAME}`} target="_blank" rel="noopener noreferrer">
-      github.com/{GITHUB_USERNAME}
+    <a href={`https://github.com/${GITHUB_REPO}`} target="_blank" rel="noopener noreferrer">
+      github.com/{GITHUB_REPO}
     </a>.
   </p>
 </BaseLayout>
