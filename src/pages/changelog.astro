@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import Changelog from '../components/Changelog.tsx';
+import { GITHUB_USERNAME } from '../consts';
+---
+
+<BaseLayout
+  title="Changelog"
+  description="Recent GitHub commits, freshest first. Click one to read its full description and jump to the commit."
+>
+  <SectionHeading level="h1" eyebrow="changelog">Recent commits</SectionHeading>
+  <p class="lede">
+    The latest public commits I've pushed, freshest first. Click any entry to
+    read its full description and open the commit on GitHub.
+  </p>
+
+  <Changelog client:load />
+
+  <p class="footnote">
+    Pulled live from
+    <a href={`https://github.com/${GITHUB_USERNAME}`} target="_blank" rel="noopener noreferrer">
+      github.com/{GITHUB_USERNAME}
+    </a>.
+  </p>
+</BaseLayout>
+
+<style>
+  .lede {
+    color: var(--color-muted);
+    margin: -0.5rem 0 1.5rem;
+  }
+  .footnote {
+    margin-top: 1.5rem;
+    font-size: 0.8rem;
+    color: var(--color-muted);
+  }
+  .footnote a {
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+  .footnote a:hover {
+    text-decoration: underline;
+  }
+</style>
