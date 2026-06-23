@@ -6,6 +6,9 @@ export const SITE_URL = 'https://lamps-dev.dev';
 /** GitHub handle used for the live changelog feed (/api/commits). */
 export const GITHUB_USERNAME = 'lamps-dev';
 
+/** "owner/repo" the changelog pulls its commits from. */
+export const GITHUB_REPO = 'lamps-dev/astro-portfolio';
+
 export const SOCIAL_LINKS = {
   github: 'https://github.com/lamps-dev',
   youtube: 'https://youtube.com/@ilovelampadaire',

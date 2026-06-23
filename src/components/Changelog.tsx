@@ -91,8 +91,6 @@ export default function Changelog() {
                   <span className="main">
                     <span className="title">{c.title}</span>
                     <span className="meta">
-                      <span className="repo">{c.repo}</span>
-                      <span className="sep">·</span>
                       <span className="sha">{c.sha.slice(0, 7)}</span>
                       {c.date && (
                         <>
@@ -197,11 +195,8 @@ export default function Changelog() {
           font-size: 0.72rem;
           color: var(--color-muted);
         }
-        .repo {
-          color: var(--color-accent);
-        }
         .sha {
-          color: var(--color-muted);
+          color: var(--color-accent);
         }
         .sep {
           opacity: 0.5;
