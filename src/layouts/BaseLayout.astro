@@ -32,6 +32,6 @@ const { title, description, image, fullBleed = false, hideMusic = false } = Astr
       <slot />
     </main>
     <Footer />
-    {!hideMusic && <MusicPlayer client:load transition:persist />}
+    {!hideMusic && <MusicPlayer client:load transition:persist="music-player" />}
   </body>
 </html>
