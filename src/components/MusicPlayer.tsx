@@ -203,8 +203,8 @@ export default function MusicPlayer() {
       <style>{`
         .music-player {
           position: fixed;
-          right: 1rem;
-          bottom: 1rem;
+          right: calc(1rem + env(safe-area-inset-right, 0px));
+          bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
           z-index: 50;
           display: flex;
           align-items: center;
@@ -344,6 +344,26 @@ export default function MusicPlayer() {
           color: var(--color-muted);
           font-variant-numeric: tabular-nums;
           letter-spacing: 0.02em;
+        }
+        /* Mobile: hug the right edge and stay clear of the bottom-left
+           cookie-settings button. Pinning max-width to the viewport keeps the
+           player's left edge at a fixed ~80px, so the two never collide, and
+           the inner track/seek flex down to fit the narrower box. */
+        @media (max-width: 600px) {
+          .music-player {
+            max-width: calc(100vw - 96px);
+            gap: 0.25rem;
+            padding: 0.35rem 0.5rem;
+          }
+          .mp-meta {
+            flex: 1 1 auto;
+          }
+          .mp-track {
+            max-width: none;
+          }
+          .mp-seek {
+            width: 100%;
+          }
         }
       `}</style>
     </div>

@@ -1,4 +1,5 @@
 ---
+import { Icon } from 'astro-icon/components';
 import { NAV_LINKS, SITE_TITLE } from '../consts';
 import ThemeToggle from './ThemeToggle.astro';
 
@@ -13,7 +14,7 @@ const isActive = (href: string) => {
   <nav class="nav-inner" aria-label="primary">
     <a href="/" class="brand">{SITE_TITLE}</a>
 
-    <ul class="links">
+    <ul class="links" id="nav-menu">
       {NAV_LINKS.map(({ href, label }) => (
         <li>
           <a href={href} class:list={[{ active: isActive(href) }]}>{label}</a>
@@ -23,6 +24,16 @@ const isActive = (href: string) => {
 
     <div class="trailing">
       <ThemeToggle />
+      <button
+        type="button"
+        class="nav-toggle"
+        aria-controls="nav-menu"
+        aria-expanded="false"
+        aria-label="Toggle navigation menu"
+      >
+        <Icon class="icon-menu" name="lucide:menu" width={20} height={20} />
+        <Icon class="icon-close" name="lucide:x" width={20} height={20} />
+      </button>
     </div>
   </nav>
 </header>
@@ -84,21 +95,131 @@ const isActive = (href: string) => {
   .trailing {
     display: flex;
     align-items: center;
+    gap: 0.25rem;
   }
+
+  /* Hamburger button — hidden on desktop, shown on mobile. */
+  .nav-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--color-text);
+    cursor: pointer;
+    transition: border-color 0.15s, background-color 0.15s;
+  }
+  .nav-toggle:hover {
+    border-color: var(--color-accent);
+    background: color-mix(in oklab, var(--color-border) 40%, transparent);
+  }
+  .icon-close {
+    display: none;
+  }
+  .nav-shell.open .icon-menu {
+    display: none;
+  }
+  .nav-shell.open .icon-close {
+    display: inline-flex;
+  }
+
   @media (max-width: 640px) {
     .nav-inner {
-      flex-wrap: wrap;
       padding: 0.6rem 1rem;
+      justify-content: space-between;
     }
+    .nav-toggle {
+      display: inline-flex;
+    }
+    /* Links collapse into a dropdown panel anchored under the bar. */
     .links {
-      order: 3;
-      width: 100%;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      flex: none;
+      flex-direction: column;
       justify-content: flex-start;
-      gap: 0;
+      gap: 0.15rem;
+      padding: 0.5rem 1rem 0.85rem;
+      background: color-mix(in oklab, var(--color-bg) 96%, transparent);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--color-border);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+      /* Hidden state */
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-8px);
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+    }
+    .nav-shell.open .links {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
     }
     .links a {
-      padding: 0.3rem 0.5rem;
-      font-size: 0.85rem;
+      display: block;
+      padding: 0.6rem 0.75rem;
+      font-size: 0.95rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .links {
+      transition: none;
     }
   }
 </style>
+
+<script>
+  interface NavWindow extends Window {
+    __navGlobalBound?: boolean;
+  }
+
+  function currentShell() {
+    return document.querySelector<HTMLElement>('.nav-shell');
+  }
+  function closeMenu() {
+    const shell = currentShell();
+    if (!shell) return;
+    shell.classList.remove('open');
+    shell.querySelector('.nav-toggle')?.setAttribute('aria-expanded', 'false');
+  }
+
+  function setupNav() {
+    const shell = currentShell();
+    const toggle = shell?.querySelector<HTMLButtonElement>('.nav-toggle');
+    if (!shell || !toggle) return;
+
+    toggle.addEventListener('click', () => {
+      const open = shell.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', String(open));
+    });
+
+    // Close after picking a link (covers same-page hashes too).
+    shell.querySelectorAll('.links a').forEach((a) => {
+      a.addEventListener('click', closeMenu);
+    });
+
+    // Document-level handlers bound once; they re-query the DOM each time so
+    // they keep working across client-side navigations.
+    const w = window as NavWindow;
+    if (!w.__navGlobalBound) {
+      w.__navGlobalBound = true;
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeMenu();
+      });
+      document.addEventListener('click', (e) => {
+        const shell = currentShell();
+        if (!shell?.classList.contains('open')) return;
+        if (!(e.target as Element).closest('.nav-inner')) closeMenu();
+      });
+    }
+  }
+
+  document.addEventListener('astro:page-load', setupNav);
+</script>
