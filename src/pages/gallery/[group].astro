@@ -1,0 +1,307 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import { resolveGroups, pageTransform, type ResolvedGroup } from '../../lib/gallery';
+
+export async function getStaticPaths() {
+  const groups = await resolveGroups();
+  return groups.map((group) => ({
+    params: { group: group.slug },
+    props: { group },
+  }));
+}
+
+const { group } = Astro.props as { group: ResolvedGroup };
+---
+
+<BaseLayout
+  title={`${group.title} · Gallery`}
+  description={group.blurb ?? `Photos from ${group.title}.`}
+>
+  <div class="gallery-view" transition:name="gallery-view" transition:animate={pageTransform}>
+    <a class="back" href="/gallery">
+      <span class="back-arrow" aria-hidden="true">&larr;</span> back to gallery
+    </a>
+
+    <SectionHeading level="h1" eyebrow="folder">{group.title}</SectionHeading>
+    {group.blurb && <p class="lede">{group.blurb}</p>}
+
+    <ul class="gallery" role="list">
+      {group.items.map((item) => (
+        <li class="tile">
+          <button
+            type="button"
+            class="tile-btn"
+            data-full={item.full.src}
+            data-title={item.title}
+            data-desc={item.description}
+            aria-label={`View ${item.title} full-size`}
+          >
+            <Image
+              src={item.image}
+              alt={item.title}
+              widths={[320, 480, 640]}
+              sizes="(max-width: 600px) 45vw, (max-width: 900px) 30vw, 260px"
+              loading="lazy"
+              class="tile-img"
+            />
+            <span class="tile-meta">
+              <span class="tile-title">{item.title}</span>
+              {item.description && <span class="tile-desc">{item.description}</span>}
+            </span>
+          </button>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <!-- Lightbox overlay, hidden until an image is clicked. -->
+  <div class="lightbox" id="lightbox" hidden aria-hidden="true">
+    <div class="lightbox-backdrop" data-close></div>
+    <figure class="lightbox-figure">
+      <button type="button" class="lightbox-close" data-close aria-label="Close">&times;</button>
+      <img class="lightbox-img" id="lightbox-img" src="" alt="" />
+      <figcaption class="lightbox-caption">
+        <span class="lightbox-title" id="lightbox-title"></span>
+        <span class="lightbox-desc" id="lightbox-desc"></span>
+      </figcaption>
+    </figure>
+  </div>
+</BaseLayout>
+
+<style is:global>
+  /* Full-page transform used when opening/closing a folder. Defined here too
+     so it exists on this page when it is the navigation destination. */
+  @keyframes gallery-in {
+    from { opacity: 0; transform: translateY(18px) scale(0.98); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes gallery-out {
+    from { opacity: 1; transform: none; }
+    to { opacity: 0; transform: translateY(-12px) scale(0.99); }
+  }
+</style>
+
+<style>
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--color-muted);
+    text-decoration: none;
+    padding: 0.4rem 0.75rem 0.4rem 0.55rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    transition: border-color 0.2s, color 0.2s, transform 0.2s;
+  }
+  .back:hover {
+    color: var(--color-text);
+    border-color: var(--color-accent);
+    transform: translateX(-2px);
+  }
+  .back-arrow {
+    font-size: 1rem;
+    line-height: 1;
+  }
+  .lede {
+    color: var(--color-muted);
+    margin: -0.25rem 0 1.75rem;
+  }
+
+  .gallery {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+  .tile {
+    margin: 0;
+  }
+  .tile-btn {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: color-mix(in oklab, var(--color-bg) 85%, var(--color-border));
+    cursor: zoom-in;
+    text-align: left;
+    color: inherit;
+    font: inherit;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .tile-btn:hover,
+  .tile-btn:focus-visible {
+    border-color: var(--color-accent);
+    transform: translateY(-2px);
+    outline: none;
+  }
+  .tile-img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    background: var(--color-border);
+  }
+  .tile-meta {
+    display: block;
+    padding: 0.7rem 0.85rem 0.85rem;
+  }
+  .tile-title {
+    display: block;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--color-text);
+  }
+  .tile-desc {
+    display: block;
+    margin-top: 0.2rem;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: var(--color-muted);
+  }
+
+  /* ---- Lightbox ---- */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    padding: 1.5rem;
+  }
+  .lightbox[hidden] {
+    display: none;
+  }
+  .lightbox-backdrop {
+    position: absolute;
+    inset: 0;
+    background: color-mix(in oklab, #000 78%, transparent);
+    backdrop-filter: blur(4px);
+    cursor: zoom-out;
+  }
+  .lightbox-figure {
+    position: relative;
+    margin: 0;
+    max-width: min(1100px, 100%);
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    animation: lightbox-in 0.18s ease-out;
+  }
+  @keyframes lightbox-in {
+    from { opacity: 0; transform: scale(0.97); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .lightbox-img {
+    display: block;
+    max-width: 100%;
+    max-height: 80vh;
+    width: auto;
+    height: auto;
+    margin: 0 auto;
+    border-radius: 10px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  }
+  .lightbox-close {
+    position: absolute;
+    top: -0.75rem;
+    right: -0.75rem;
+    width: 2.25rem;
+    height: 2.25rem;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .lightbox-close:hover {
+    border-color: var(--color-accent);
+    transform: scale(1.05);
+  }
+  .lightbox-caption {
+    text-align: center;
+    color: #fff;
+  }
+  .lightbox-title {
+    display: block;
+    font-weight: 600;
+    font-size: 1.05rem;
+  }
+  .lightbox-desc {
+    display: block;
+    margin-top: 0.2rem;
+    font-size: 0.9rem;
+    color: color-mix(in oklab, #fff 75%, transparent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tile-btn,
+    .lightbox-figure,
+    .lightbox-close,
+    .back {
+      transition: none;
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  // Bind on astro:page-load so the lightbox works on first load AND after
+  // every client-side navigation (ClientRouter re-runs this event).
+  function setupLightbox() {
+    const lightbox = document.getElementById('lightbox');
+    if (!lightbox) return;
+
+    const img = document.getElementById('lightbox-img') as HTMLImageElement | null;
+    const titleEl = document.getElementById('lightbox-title');
+    const descEl = document.getElementById('lightbox-desc');
+    if (!img || !titleEl || !descEl) return;
+
+    function open(full: string, title: string, desc: string) {
+      img!.src = full;
+      img!.alt = title;
+      titleEl!.textContent = title;
+      descEl!.textContent = desc;
+      descEl!.hidden = !desc;
+      lightbox!.hidden = false;
+      lightbox!.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function close() {
+      lightbox!.hidden = true;
+      lightbox!.setAttribute('aria-hidden', 'true');
+      img!.src = '';
+      document.body.style.overflow = '';
+    }
+
+    document.querySelectorAll<HTMLButtonElement>('.tile-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        open(btn.dataset.full ?? '', btn.dataset.title ?? '', btn.dataset.desc ?? '');
+      });
+    });
+
+    lightbox.querySelectorAll('[data-close]').forEach((el) => {
+      el.addEventListener('click', close);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !lightbox.hidden) close();
+    });
+  }
+
+  document.addEventListener('astro:page-load', setupLightbox);
+</script>

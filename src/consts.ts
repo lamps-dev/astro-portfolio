@@ -8,6 +8,7 @@ export const GITHUB_USERNAME = 'lamps-dev';
 
 /** "owner/repo" the changelog pulls its commits from. */
 export const GITHUB_REPO = 'lamps-dev/astro-portfolio';
+export const GALLERY_GITHUB_REPO = 'lamps-dev/portfolio-gallery';
 
 export const SOCIAL_LINKS = {
   github: 'https://github.com/lamps-dev',
@@ -21,6 +22,7 @@ export const SOCIAL_LINKS = {
 export const NAV_LINKS = [
   { href: '/', label: 'home' },
   { href: '/projects', label: 'projects' },
+  { href: '/gallery', label: 'gallery' },
   { href: '/about', label: 'about' },
   { href: '/uses', label: 'uses' },
   { href: '/now', label: 'now' },
