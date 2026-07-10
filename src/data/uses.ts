@@ -15,7 +15,7 @@ export const uses: UsesSection[] = [
     id: 'hardware',
     title: 'Hardware',
     items: [
-      { name: 'Main PC', detail: 'Desktop PC, Nvidia RTX 5050 GPU, AMD Ryzen 5 8400F CPU, MSI PRO A620M-E Motherboard, Kingston NV3 1 To Internal SSD (500GB for Windows), DDR5 Kingston Fury Beast 16 GB Ram (Planning to buy 16GB more soon)' },
+      { name: 'Main PC', detail: 'Desktop PC, Nvidia RTX 5050 GPU, AMD Ryzen 5 8400F CPU, MSI PRO A620M-E Motherboard, Kingston NV3 1 TB Internal SSD (500GB for Windows), DDR5 Kingston Fury Beast 16 GB Ram (Planning to buy 16GB more soon)' },
       { name: 'Raspberry Pi', detail: 'For self-hosted stuff' },
       { name: 'Keyboard', detail: 'G-Lab Keyz Rubidium (Planning to buy a new keyboard)' },
       { name: 'Mouse', detail: 'Glorious Gaming Model O Wired (Planning to buy a new mouse)' },
