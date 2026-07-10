@@ -15,10 +15,10 @@ export const uses: UsesSection[] = [
     id: 'hardware',
     title: 'Hardware',
     items: [
-      { name: 'Main PC', detail: 'Desktop, specs tba (To be announced)' },
+      { name: 'Main PC', detail: 'Desktop PC, Nvidia RTX 5050 GPU, AMD Ryzen 5 8400F CPU, MSI PRO A620M-E Motherboard, Kingston NV3 1 To Internal SSD (500GB for Windows), DDR5 Kingston Fury Beast 16 GB Ram (Planning to buy 16GB more soon)' },
       { name: 'Raspberry Pi', detail: 'For self-hosted stuff' },
-      { name: 'Keyboard', detail: 'G-Lab Keyz Rubidium' },
-      { name: 'Mouse', detail: 'Glorious Gaming Model O Wired' },
+      { name: 'Keyboard', detail: 'G-Lab Keyz Rubidium (Planning to buy a new keyboard)' },
+      { name: 'Mouse', detail: 'Glorious Gaming Model O Wired (Planning to buy a new mouse)' },
     ],
   },
   {
@@ -27,7 +27,7 @@ export const uses: UsesSection[] = [
     items: [
       { name: 'Editor', detail: 'VSCode' },
       { name: 'Terminal', detail: 'Windows: Windows Terminal. Linux (EndeavourOS): Konsole.' },
-      { name: 'Browser', detail: 'Waterfox, Librewolf' },
+      { name: 'Browser', detail: 'Waterfox (often), Librewolf (rarely)' },
       { name: 'OS', detail: 'Windows: Mostly daily use. Linux dual-booted (EndeavourOS): Somewhat daily sometimes.' },
     ],
   },
@@ -35,9 +35,9 @@ export const uses: UsesSection[] = [
     id: 'dev',
     title: 'Dev',
     items: [
-      { name: 'Languages', detail: 'Python, C#, JS, TS, Lua, HTML, CSS, TailwindCSS' },
-      { name: 'Frameworks', detail: 'Astro, React, Pycord (Discord Bots), .Net (Windows GUI apps, uses rarely nowadays)' },
-      { name: 'Shell', detail: 'Powershell. Bash/Shell if on Linux.' },
+      { name: 'Languages', detail: 'Python (often), C#, JS, NodeJS, TS, Lua, Basic Web Stack, Java (rarely)' },
+      { name: 'Frameworks', detail: 'Astro, React, Pycord (Python Discord Bots), ForgeScript (NodeJS Discord Bots, aoi.js alternative), Discord.JS (NodeJS Discord Bots), .Net (Windows GUI apps, uses rarely)' },
+      { name: 'Shell', detail: 'Powershell. Zsh and Bash (rarely) if on Linux.' },
     ],
   },
   {
@@ -46,7 +46,7 @@ export const uses: UsesSection[] = [
     items: [
       { name: 'lamps-dev.dev', detail: 'This portfolio', link: 'https://lamps-dev.dev' },
       { name: 'onlycats.info', detail: 'The vibecoded joke project', link: 'https://onlycats.info' },
-      { name: 'sillycat.cloud', detail: 'In-progress/WIP', link: 'https://sillycat.cloud' },
+      { name: 'sillycat.cloud', detail: 'In-progress/WIP Cat cloud hosting', link: 'https://sillycat.cloud' },
       { name: 'uniqueweb.site', detail: 'Self-hosting domain', link: 'https://uniqueweb.site'},
     ],
   },

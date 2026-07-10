@@ -23,13 +23,13 @@ export interface GalleryGroup {
 
 export const galleryGroups: GalleryGroup[] = [
   {
-    title: 'Photos',
-    blurb: 'A few shots I like.',
+    title: 'Cat(s)',
+    blurb: 'My cat! :3',
     images: [
       {
         file: 'aurora.jpg',
         title: 'Aurora',
-        description: 'Long-exposure shot of the northern lights spilling over the horizon.',
+        description: 'Old Salma pic but still showing it here :3',
       },
       {
         file: 'city-lights.jpg',
