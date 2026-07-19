@@ -1,0 +1,100 @@
+---
+title: How to switch to Linux
+description: To escape Microsoft's Bullshit
+date: 2026-07-19
+tags:
+  - linux
+  - windows
+  - microslop
+  - microsoft
+---
+
+NOTE: This guide will focus on family friendly distro, Linux Mint (and not Ubuntu, cuz Ubuntu fucking sucks), so people who have never tried linux before can actually try it before switching from Windows for good.
+___
+
+## Why would you switch?
+Microsoft has recently started doing bullshit to Windows, as in:
+- Shoving their stupid Copilot AI Assistant to our faces,
+- Bloating Windows with stupid ass ads,
+- Selling our data (as always).
+
+Linux has way better advantages that Windows doesn't have, and it also has multiple flavors of its OS, such as: Ubuntu (which fucking sucks, don't use it please for the love of god), Linux Mint (What I'll be explaining today; best for beginners), Arch Linux (Please don't use it as a "beginner" distro; it is too hard for beginners at the moment) and Fedora (Completely different ecosystem to Debian, the ancestor to Ubuntu, Linux Mint and other distros).
+The advantages are:
+- Privacy (There are literally distros for people into cybersecurity btw, notably: Kali Linux),
+- Customizability (It is so customizable you can "accidentally" break your OS by doing this, or making it unusable, if I remember correctly),
+- It is free (EXCEPT FOR FUCKING UBUNTU),
+And finally...
+- You can do whatever you want, freedom (You can even pirate more privately on Linux; Not that I'm promoting it, however)
+
+Have these advantages hooked you yet? Well, if they did, time for the guide!
+
+## The Actual guide
+(Note: This assumes you're currently running Windows first, on MacOS you can try to install Linux, but you have to do it yourself, because I don't own a Mac Laptop or PC)
+
+### 1. Partioning
+(This is only for people who have choosen the dualbooting route, Whats that? Well, its when you keep your current OS while still having Linux alongside it on your machine; If you do not have extra SSDs or HDDs anywhere, you'd have to install it alonside your Windows Installation sadly)
+
+So, partitioning. It sounds scary but it really isn't (mostly). All you're doing is telling Windows "hey, give up some of your space so Linux can live there too". On Windows you do this with the built in Disk Management tool (just search "Create and format hard disk partitions" in the start menu, yes it's actually called that, Microsoft naming things as usual).
+
+Once you're in there:
+- Right click your main drive (usually the C: one) and hit "Shrink Volume".
+- Give it however much space you want for Linux. I'd say **at least** 50GB if you actually wanna use it, but more is better. Mint itself doesn't need much but you'll fill it up eventually, trust me.
+- If you're one of the lucky people with a chunky drive (like 700GB minimum), just go ahead and carve out a proper **200-300GB** partition for Linux instead. That's more than enough to actually live in it, install a ton of stuff, keep games, whatever. Don't be shy with the space if you have it, future you will thank present you when you're not fighting over 40GB.
+- Now you'll have some "Unallocated" space. **Leave it as unallocated, don't format it or make a new partition out of it.** The Linux installer will handle that part later.
+
+And that's it for the Windows side. Don't touch anything else in there unless you know what you're doing, because messing with the wrong partition is a great way to nuke your Windows install (please make a backup of your important stuff before all this btw, i'm not responsible if you lose your files).
+
+### 2. Making the bootable USB
+
+You can't just download Linux and double click it like a normal program, sadly. You gotta put it on a USB drive and boot from that instead.
+
+First, grab the Linux Mint ISO from [linuxmint.com](https://linuxmint.com) (go for the Cinnamon edition, it's the "main" one and looks the nicest imo). It's like 2-3GB so it might take a bit depending on your internet.
+
+Then you need a USB stick that's at least 8GB, and a program to flash the ISO onto it. What I'd actually recommend is **Ventoy**. Instead of flashing one ISO and burning the whole USB for it, Ventoy sets up the drive once and then you just **drag and drop ISO files onto it like a normal USB**. Wanna try 5 different distros? Chuck all 5 ISOs on there and pick one from a menu when you boot. It's genuinely the best way to do this and you'll never go back.
+- Grab it from [ventoy.net](https://www.ventoy.net),
+- Run Ventoy2Disk, select your USB (this WILL wipe it the first time, so no important files on it),
+- Hit Install. Now the USB is a "Ventoy drive" forever,
+- Just copy the Mint ISO onto it like any other file, done.
+
+If you don't care about all that and just want the simplest one-and-done option, sure, use **Rufus** instead (it's free and lightweight):
+- Plug in your USB (this also wipes it),
+- Open Rufus, select your USB under "Device",
+- Select the Mint ISO you downloaded under "Boot selection",
+- Hit START and just accept the default settings if it asks anything.
+
+Either way, wait a few minutes and boom, bootable USB done.
+
+### 3. Booting into the USB
+
+Now you gotta actually boot off the thing. Restart your PC and spam the boot menu key while it's turning on. This key is different for every manufacturer (because why would they agree on ONE key, right?), but it's usually one of `F12`, `F10`, `F2`, `ESC` or `DEL`. Just google "[your laptop/motherboard brand] boot menu key" if you're not sure.
+
+From the boot menu, pick your USB drive and hit enter. If everything went right, you'll boot into a "live" version of Linux Mint. This is the cool part, you can literally try out the whole OS right now without installing anything. Click around, open Firefox, mess with the settings, see if you like it. Nothing you do here is permanent.
+
+(Quick note: if it refuses to boot or throws a fit, you might need to disable **Secure Boot** in your BIOS settings, and on some machines **Fast Startup** in Windows too. Google those for your specific device, it's a common thing.)
+
+### 4. Installing alongside Windows
+
+Alright, this is the section you actually came here for. Once you're in the live environment and you're sure you want Mint, double click the "Install Linux Mint" icon on the desktop.
+
+Go through the first few screens (language, keyboard layout, and there's an option to install multimedia codecs, **tick that box**, it saves you a headache later). Then you'll hit the important screen: **Installation type**.
+
+Here's where you gotta pay attention:
+- If Mint detects Windows, it'll straight up offer you an option like **"Install Linux Mint alongside Windows Boot Manager"**. If you see that, congrats, just pick it. It automatically uses that unallocated space you made earlier and sets everything up for dualbooting. Easy mode.
+- If you DON'T see that option (sometimes it doesn't show up, depends on your setup), pick **"Something else"** instead. This drops you into the manual partition editor. It looks intimidating but you basically just:
+  - Find your "free space" (the unallocated chunk from step 1),
+  - Click the `+` to make a new partition, set it to use all the space, format as **Ext4**, and set the mount point to `/` (that's just a forward slash, it means "root").
+  - Then make sure the bootloader is being installed to the right drive (the whole disk, like `/dev/sda`, not a specific partition).
+
+**WHATEVER YOU DO, do NOT pick "Erase disk and install Linux Mint".** That option wipes your ENTIRE drive, Windows included. That's the opposite of dualbooting. I'm putting this in bold because someone WILL skim past it and cry later.
+
+Once your partition setup looks right, hit Install Now, confirm the changes, and let it cook. Set your timezone and make a username/password while it installs. Takes like 10-20 minutes usually.
+
+### 5. Done!
+
+After it finishes, it'll ask you to restart and remove the USB. Do that, and now every time you boot your PC you'll get a menu (it's called GRUB) letting you pick between Linux Mint and Windows. Pick whichever one you feel like using that day. That's the whole point of dualbooting, best of both worlds.
+
+And that's it, you're officially a Linux user now (a beginner one, but still). Welcome to freedom, and to never seeing a Copilot popup again. Go customize your desktop until it's unrecognizable and "accidentally" break something, it's a rite of passage.
+
+___
+
+**If you got stuck anywhere, the Linux Mint forums and r/linuxmint are genuinely helpful and won't bite (unlike some other Linux communities cough Arch cough). Good luck out there.**
