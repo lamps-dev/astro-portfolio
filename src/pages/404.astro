@@ -1,5 +1,22 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+// Derive the page list from the filesystem instead of hardcoding it. Each file
+// under src/pages contributes its top-level route segment (nested/dynamic
+// routes collapse to their parent, e.g. blog/[...slug] -> "blog"). API
+// endpoints, dynamic params and this 404 page itself are skipped.
+const modules = import.meta.glob('./**/*.{astro,md,mdx}');
+const names = new Set<string>();
+for (const filepath of Object.keys(modules)) {
+  const parts = filepath.replace(/^\.\//, '').split('/');
+  let name = parts.length === 1 ? parts[0].replace(/\.(astro|md|mdx)$/, '') : parts[0];
+  if (!name || name.includes('[') || name === '404' || name === 'api') continue;
+  if (name === 'index') name = 'home';
+  names.add(name);
+}
+const pages = [...names].sort((a, b) =>
+  a === 'home' ? -1 : b === 'home' ? 1 : a.localeCompare(b)
+);
 ---
 
 <BaseLayout
@@ -18,7 +35,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <span class="prompt">lamp@home</span>:<span class="path">~</span>$ cd <span class="arg">{Astro.url.pathname}</span>
 <span class="err">bash: cd: {Astro.url.pathname}: No such file or directory</span>
 <span class="prompt">lamp@home</span>:<span class="path">~</span>$ ls
-<span class="ok">home  about  projects  uses  now  blog</span>
+<span class="ok">{pages.map((n, i) => (<>{i > 0 ? '  ' : ''}<a class="page" href={n === 'home' ? '/' : `/${n}`}>{n}</a></>))}</span>
 <span class="prompt">lamp@home</span>:<span class="path">~</span>$ <span class="cursor">_</span>
     </pre>
     <p class="back">
@@ -72,6 +89,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .arg { color: #f0a45e; }
   .err { color: #ff5e6c; }
   .ok { color: oklch(85% 0.05 145); }
+  .page {
+    color: inherit;
+    text-decoration: none;
+  }
+  .page:hover {
+    text-decoration: underline;
+  }
   .cursor {
     display: inline-block;
     width: 0.6em;
