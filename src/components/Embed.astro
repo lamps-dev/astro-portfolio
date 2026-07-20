@@ -1,0 +1,583 @@
+---
+/*
+  Universal, consent-gated embed component for blog posts.
+
+  Usage in .mdx (import once at the top of the file):
+
+    import Embed from '../../components/Embed.astro';
+
+    <Embed url="https://youtu.be/dQw4w9WgXcQ" />
+    <Embed url="https://x.com/astrodotbuild/status/1734..." caption="A tweet" />
+
+  Auto-detects: YouTube, Vimeo, Spotify, SoundCloud, CodePen, X/Twitter,
+  GitHub Gist, Bluesky. Anything else falls back to a link card. Pass
+  `type="iframe"` to force a raw iframe embed for an unrecognised URL.
+
+  PRIVACY: every third-party embed is gated behind LampConsent's "Functional"
+  category. When Functional consent is NOT granted, the real embed is never
+  loaded — the reader first sees a placeholder asking whether to allow the
+  service (which may track them). Allow mounts it for this page view only;
+  Disallow swaps in a plain link. Nothing is persisted, so a refresh re-asks.
+*/
+interface Props {
+  url: string;
+  /** Optional caption shown under the embed. */
+  caption?: string;
+  /** Accessible title for the iframe (defaults to a sensible per-provider label). */
+  title?: string;
+  /** Force a specific embed kind for unrecognised URLs. */
+  type?: 'iframe';
+  /** Override the aspect ratio for iframe/video embeds, e.g. "4/3". */
+  ratio?: string;
+}
+
+const { url, caption, title, type, ratio } = Astro.props;
+
+type Resolved =
+  | { kind: 'video'; src: string; label: string; ratio: string; service: string }
+  | { kind: 'audio'; src: string; label: string; height: number; service: string }
+  | { kind: 'tweet'; label: string; service: string }
+  | { kind: 'gist'; user: string; id: string; service: string }
+  | { kind: 'bluesky'; profile: string; rkey: string; service: string }
+  | { kind: 'iframe'; src: string; label: string; ratio: string; service: string }
+  | { kind: 'link'; label: string };
+
+function parseTime(raw: string | null): number {
+  if (!raw) return 0;
+  if (/^\d+$/.test(raw)) return parseInt(raw, 10);
+  // supports 1h2m3s style
+  const m = raw.match(/(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?/);
+  if (!m) return 0;
+  return (+(m[1] || 0)) * 3600 + (+(m[2] || 0)) * 60 + (+(m[3] || 0));
+}
+
+function resolve(raw: string): Resolved {
+  let u: URL;
+  try {
+    u = new URL(raw);
+  } catch {
+    return { kind: 'link', label: raw };
+  }
+  const host = u.hostname.replace(/^www\./, '');
+  const parts = u.pathname.split('/').filter(Boolean);
+
+  // --- YouTube ---
+  if (host === 'youtu.be' || host.endsWith('youtube.com') || host.endsWith('youtube-nocookie.com')) {
+    let id = '';
+    if (host === 'youtu.be') id = parts[0] ?? '';
+    else if (parts[0] === 'watch') id = u.searchParams.get('v') ?? '';
+    else if (parts[0] === 'shorts' || parts[0] === 'embed' || parts[0] === 'live') id = parts[1] ?? '';
+    if (id) {
+      const start = parseTime(u.searchParams.get('t') || u.searchParams.get('start'));
+      const src = `https://www.youtube-nocookie.com/embed/${id}${start ? `?start=${start}` : ''}`;
+      return { kind: 'video', src, label: title ?? 'YouTube video player', ratio: ratio ?? '16/9', service: 'YouTube' };
+    }
+  }
+
+  // --- Vimeo ---
+  if (host.endsWith('vimeo.com')) {
+    const id = parts.find((p) => /^\d+$/.test(p));
+    if (id) {
+      return {
+        kind: 'video',
+        src: `https://player.vimeo.com/video/${id}`,
+        label: title ?? 'Vimeo video player',
+        ratio: ratio ?? '16/9',
+        service: 'Vimeo',
+      };
+    }
+  }
+
+  // --- Spotify ---
+  if (host.endsWith('spotify.com') && parts.length >= 2) {
+    const [kind, id] = parts.slice(-2);
+    if (['track', 'album', 'playlist', 'episode', 'show', 'artist'].includes(kind)) {
+      const compact = kind === 'track' || kind === 'episode';
+      return {
+        kind: 'audio',
+        src: `https://open.spotify.com/embed/${kind}/${id}`,
+        label: title ?? 'Spotify player',
+        height: compact ? 152 : 352,
+        service: 'Spotify',
+      };
+    }
+  }
+
+  // --- SoundCloud ---
+  if (host.endsWith('soundcloud.com')) {
+    const src =
+      `https://w.soundcloud.com/player/?url=${encodeURIComponent(raw)}` +
+      '&color=%237961d3&auto_play=false&hide_related=true&show_comments=false&show_user=true';
+    return { kind: 'audio', src, label: title ?? 'SoundCloud player', height: 166, service: 'SoundCloud' };
+  }
+
+  // --- CodePen ---
+  if (host.endsWith('codepen.io') && parts.length >= 3 && parts[1] === 'pen') {
+    const [user, , id] = parts;
+    return {
+      kind: 'iframe',
+      src: `https://codepen.io/${user}/embed/${id}?default-tab=result`,
+      label: title ?? 'CodePen embed',
+      ratio: ratio ?? '16/9',
+      service: 'CodePen',
+    };
+  }
+
+  // --- X / Twitter ---
+  if ((host === 'x.com' || host.endsWith('twitter.com')) && parts.includes('status')) {
+    return { kind: 'tweet', label: title ?? 'Post on X', service: 'X (Twitter)' };
+  }
+
+  // --- GitHub Gist ---
+  if (host === 'gist.github.com' && parts.length >= 2) {
+    const [user, idRaw] = parts;
+    const id = idRaw.replace(/\.(js|json|pibb)$/, '');
+    return { kind: 'gist', user, id, service: 'GitHub Gist' };
+  }
+
+  // --- Bluesky ---
+  if (host === 'bsky.app' && parts[0] === 'profile' && parts[2] === 'post' && parts[3]) {
+    return { kind: 'bluesky', profile: parts[1], rkey: parts[3], service: 'Bluesky' };
+  }
+
+  // --- Forced raw iframe ---
+  if (type === 'iframe') {
+    return { kind: 'iframe', src: raw, label: title ?? 'Embedded content', ratio: ratio ?? '16/9', service: host };
+  }
+
+  return { kind: 'link', label: raw };
+}
+
+const embed = resolve(url);
+const domain = (() => {
+  try {
+    return new URL(url).hostname.replace(/^www\./, '');
+  } catch {
+    return url;
+  }
+})();
+
+// Sensible "open the original" text per embed kind.
+const fallbackText =
+  embed.kind === 'video'
+    ? `Watch on ${embed.service}`
+    : embed.kind === 'audio'
+      ? `Listen on ${embed.service}`
+      : embed.kind === 'tweet'
+        ? 'View post on X'
+        : embed.kind === 'gist'
+          ? 'View gist on GitHub'
+          : embed.kind === 'bluesky'
+            ? 'View post on Bluesky'
+            : embed.kind === 'iframe'
+              ? `Open on ${'service' in embed ? embed.service : domain}`
+              : 'Open link';
+
+// data-* payload the client gate reads to build the placeholder / real embed.
+const data: Record<string, string> = embed.kind === 'link'
+  ? {}
+  : {
+      'data-embed-kind': embed.kind,
+      'data-embed-service': 'service' in embed ? embed.service : domain,
+      'data-embed-url': url,
+      'data-embed-fallback': fallbackText,
+      ...(('src' in embed) ? { 'data-embed-src': embed.src } : {}),
+      ...(('ratio' in embed) ? { 'data-embed-ratio': embed.ratio } : {}),
+      ...(('height' in embed) ? { 'data-embed-height': String(embed.height) } : {}),
+      ...(('label' in embed) ? { 'data-embed-label': embed.label } : {}),
+      ...(embed.kind === 'gist' ? { 'data-gist-user': embed.user, 'data-gist-id': embed.id } : {}),
+      ...(embed.kind === 'bluesky' ? { 'data-profile': embed.profile, 'data-rkey': embed.rkey } : {}),
+    };
+---
+
+{embed.kind === 'link' ? (
+  <figure class="embed">
+    <a class="embed-link" href={url} target="_blank" rel="noopener noreferrer">
+      <span class="embed-link-domain">{domain}</span>
+      <span class="embed-link-url">{url}</span>
+    </a>
+    {caption && <figcaption>{caption}</figcaption>}
+  </figure>
+) : (
+  <figure class="embed" {...data}>
+    {/* Default (no-JS / pre-hydration) slot content: a safe link, never a
+        third-party request. The gate script replaces this per consent state. */}
+    <div class="embed-slot">
+      <a class="embed-link" href={url} target="_blank" rel="noopener noreferrer">
+        <span class="embed-link-domain">{domain}</span>
+        <span class="embed-link-url">{fallbackText}</span>
+      </a>
+    </div>
+    {caption && <figcaption>{caption}</figcaption>}
+  </figure>
+)}
+
+<style is:global>
+  .embed {
+    margin: 1.5em 0;
+  }
+  .embed-frame {
+    position: relative;
+    width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+    background: color-mix(in oklab, var(--color-border) 50%, transparent);
+    border: 1px solid var(--color-border);
+  }
+  .embed-frame iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .embed-audio {
+    width: 100%;
+    border-radius: 10px;
+    display: block;
+    border: 0;
+  }
+  .embed-bsky iframe {
+    width: 100%;
+    border: 0;
+    display: block;
+  }
+  .embed figcaption {
+    margin-top: 0.6rem;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--color-muted);
+    font-family: var(--font-mono);
+  }
+  .embed-link {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.9rem 1.1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: color-mix(in oklab, var(--color-border) 30%, transparent);
+    text-decoration: none;
+    transition: border-color 0.2s;
+  }
+  .embed-link:hover {
+    border-color: var(--color-accent);
+  }
+  .embed-link-domain {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-muted);
+  }
+  .embed-link-url {
+    color: var(--color-accent);
+    word-break: break-all;
+    font-size: 0.95rem;
+  }
+
+  /* ---- Consent placeholder (Privacy-Badger style) ---- */
+  .embed-consent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.85rem;
+    padding: 1.6rem 1.25rem;
+    border: 1px dashed var(--color-border);
+    border-radius: 12px;
+    background: color-mix(in oklab, var(--color-border) 22%, transparent);
+  }
+  .embed-consent-icon {
+    width: 26px;
+    height: 26px;
+    color: var(--color-muted);
+  }
+  .embed-consent-msg {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    max-width: 42ch;
+    color: var(--color-text);
+  }
+  .embed-consent-service {
+    font-weight: 600;
+    color: var(--color-accent);
+  }
+  .embed-consent-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .embed-consent-btn {
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.45rem 1rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-border);
+    background: transparent;
+    color: var(--color-text);
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s, transform 0.1s;
+  }
+  .embed-consent-btn:active {
+    transform: scale(0.97);
+  }
+  .embed-consent-btn--allow {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: #fff;
+  }
+  .embed-consent-btn--allow:hover {
+    filter: brightness(1.08);
+  }
+  .embed-consent-btn--deny:hover {
+    border-color: var(--color-accent);
+  }
+  .embed-consent-manage {
+    background: none;
+    border: 0;
+    padding: 0;
+    font: inherit;
+    font-size: 0.75rem;
+    color: var(--color-muted);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .embed-consent-manage:hover {
+    color: var(--color-text);
+  }
+</style>
+
+{/*
+  One consent gate for every embed on the page. Guarded so multiple <Embed>
+  instances share a single set of listeners. Runs on first load and after each
+  client-side navigation (astro:page-load), and reacts live to consent changes.
+*/}
+<script is:inline>
+  (function () {
+    if (window.__embedGateInit) return;
+    window.__embedGateInit = true;
+
+    var TW_SCRIPT = 'https://platform.twitter.com/widgets.js';
+    var BSKY_ORIGIN = 'https://embed.bsky.app';
+
+    // ---- consent check ----
+    function functionalGranted() {
+      try {
+        if (window.LampConsent && typeof window.LampConsent.getConsent === 'function') {
+          var p = window.LampConsent.getConsent();
+          if (p && typeof p.functional !== 'undefined') return !!p.functional;
+        }
+      } catch (e) {}
+      return typeof window.__functionalConsent === 'function' ? window.__functionalConsent() : true;
+    }
+
+    function state(fig) { return fig.getAttribute('data-embed-state'); }
+    function setState(fig, s) { fig.setAttribute('data-embed-state', s); }
+    function slot(fig) { return fig.querySelector('.embed-slot'); }
+
+    // ---- real embed mounting ----
+    function loadTweets() {
+      var dark = document.documentElement.classList.contains('dark');
+      document.querySelectorAll('.twitter-tweet:not([data-theme])').forEach(function (t) {
+        t.setAttribute('data-theme', dark ? 'dark' : 'light');
+      });
+      if (window.twttr && window.twttr.widgets) window.twttr.widgets.load();
+      else if (!document.getElementById('twitter-wjs')) {
+        var s = document.createElement('script');
+        s.id = 'twitter-wjs';
+        s.src = TW_SCRIPT;
+        s.async = true;
+        document.body.appendChild(s);
+      }
+    }
+
+    function loadGist(el, user, id) {
+      var cb = 'gistcb_' + id.replace(/[^a-zA-Z0-9]/g, '') + '_' + Math.floor(Math.random() * 1e6);
+      window[cb] = function (data) {
+        if (data && data.stylesheet && !document.querySelector('link[data-gist-css="' + data.stylesheet + '"]')) {
+          var link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = data.stylesheet;
+          link.setAttribute('data-gist-css', data.stylesheet);
+          document.head.appendChild(link);
+        }
+        if (data && data.div) el.innerHTML = data.div;
+        try { delete window[cb]; } catch (e) { window[cb] = undefined; }
+      };
+      var s = document.createElement('script');
+      s.src = 'https://gist.github.com/' + user + '/' + id + '.json?callback=' + cb;
+      document.body.appendChild(s);
+    }
+
+    function ensureBskyListener() {
+      if (window.__bskyMsgBound) return;
+      window.__bskyMsgBound = true;
+      window.__bskyFrames = {};
+      window.__bskyCount = 0;
+      window.addEventListener('message', function (e) {
+        if (e.origin !== BSKY_ORIGIN) return;
+        var id = e.data && e.data.id;
+        if (id == null) return;
+        var f = window.__bskyFrames[id];
+        if (f && e.data.height) f.style.height = e.data.height + 'px';
+      });
+    }
+    function buildBskyIframe(el, did, rkey) {
+      ensureBskyListener();
+      var id = String(++window.__bskyCount);
+      var iframe = document.createElement('iframe');
+      iframe.src = BSKY_ORIGIN + '/embed/' + did + '/app.bsky.feed.post/' + rkey + '?id=' + id;
+      iframe.setAttribute('frameborder', '0');
+      iframe.setAttribute('scrolling', 'no');
+      iframe.setAttribute('loading', 'lazy');
+      iframe.style.height = '400px';
+      window.__bskyFrames[id] = iframe;
+      el.innerHTML = '';
+      el.appendChild(iframe);
+    }
+    function loadBluesky(el, profile, rkey) {
+      var box = document.createElement('div');
+      box.className = 'embed-bsky';
+      el.innerHTML = '';
+      el.appendChild(box);
+      if (profile.indexOf('did:') === 0) {
+        buildBskyIframe(box, profile, rkey);
+      } else {
+        fetch(
+          'https://public.api.bsky.app/xrpc/com.atproto.identity.resolveHandle?handle=' +
+            encodeURIComponent(profile)
+        )
+          .then(function (r) { return r.json(); })
+          .then(function (d) { if (d && d.did) buildBskyIframe(box, d.did, rkey); })
+          .catch(function () {});
+      }
+    }
+
+    function mount(fig) {
+      if (state(fig) === 'mounted') return;
+      var s = slot(fig);
+      var kind = fig.getAttribute('data-embed-kind');
+      var label = fig.getAttribute('data-embed-label') || 'Embedded content';
+      var src = fig.getAttribute('data-embed-src');
+
+      if (kind === 'video' || kind === 'iframe') {
+        var ratio = fig.getAttribute('data-embed-ratio') || '16/9';
+        s.innerHTML = '';
+        var frame = document.createElement('div');
+        frame.className = 'embed-frame';
+        frame.style.aspectRatio = ratio;
+        var f = document.createElement('iframe');
+        f.src = src;
+        f.title = label;
+        f.loading = 'lazy';
+        f.setAttribute('frameborder', '0');
+        f.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+        f.setAttribute('allowfullscreen', '');
+        frame.appendChild(f);
+        s.appendChild(frame);
+      } else if (kind === 'audio') {
+        var h = fig.getAttribute('data-embed-height') || '166';
+        s.innerHTML = '';
+        var af = document.createElement('iframe');
+        af.className = 'embed-audio';
+        af.src = src;
+        af.title = label;
+        af.loading = 'lazy';
+        af.style.height = h + 'px';
+        af.setAttribute('frameborder', '0');
+        af.setAttribute('allow', 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture');
+        af.setAttribute('allowfullscreen', '');
+        s.appendChild(af);
+      } else if (kind === 'tweet') {
+        var url = fig.getAttribute('data-embed-url');
+        s.innerHTML =
+          '<blockquote class="twitter-tweet" data-dnt="true"><a href="' + url + '">' + label + '</a></blockquote>';
+        loadTweets();
+      } else if (kind === 'gist') {
+        loadGist(s, fig.getAttribute('data-gist-user'), fig.getAttribute('data-gist-id'));
+      } else if (kind === 'bluesky') {
+        loadBluesky(s, fig.getAttribute('data-profile'), fig.getAttribute('data-rkey'));
+      }
+      setState(fig, 'mounted');
+    }
+
+    function showLink(fig) {
+      if (state(fig) === 'link') return;
+      var s = slot(fig);
+      var url = fig.getAttribute('data-embed-url');
+      var text = fig.getAttribute('data-embed-fallback') || 'Open link';
+      var domain = '';
+      try { domain = new URL(url).hostname.replace(/^www\./, ''); } catch (e) { domain = url; }
+      s.innerHTML =
+        '<a class="embed-link" href="' + url + '" target="_blank" rel="noopener noreferrer">' +
+        '<span class="embed-link-domain">' + domain + '</span>' +
+        '<span class="embed-link-url">' + text + '</span></a>';
+      setState(fig, 'link');
+    }
+
+    var SHIELD =
+      '<svg class="embed-consent-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' +
+      '<path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>';
+
+    function showConsent(fig) {
+      if (state(fig) === 'consent') return;
+      var s = slot(fig);
+      var service = fig.getAttribute('data-embed-service') || 'this service';
+      s.innerHTML = '';
+      var box = document.createElement('div');
+      box.className = 'embed-consent';
+      box.innerHTML =
+        SHIELD +
+        '<p class="embed-consent-msg">Are you sure you want to allow the following site to possibly track you via embed? ' +
+        '<span class="embed-consent-service"></span></p>' +
+        '<div class="embed-consent-actions">' +
+        '<button type="button" class="embed-consent-btn embed-consent-btn--allow" data-act="allow">Allow</button>' +
+        '<button type="button" class="embed-consent-btn embed-consent-btn--deny" data-act="deny">Disallow</button>' +
+        '</div>' +
+        '<button type="button" class="embed-consent-manage" data-act="manage">Manage privacy settings</button>';
+      box.querySelector('.embed-consent-service').textContent = service;
+      box.addEventListener('click', function (e) {
+        var btn = e.target.closest('button[data-act]');
+        if (!btn) return;
+        var act = btn.getAttribute('data-act');
+        if (act === 'allow') { fig.setAttribute('data-embed-decision', 'allow'); mount(fig); }
+        else if (act === 'deny') { fig.setAttribute('data-embed-decision', 'deny'); showLink(fig); }
+        else if (act === 'manage' && window.LampConsent && window.LampConsent.openSettings) {
+          window.LampConsent.openSettings();
+        }
+      });
+      s.appendChild(box);
+      setState(fig, 'consent');
+    }
+
+    // ---- per-embed routing ----
+    function render(fig) {
+      if (functionalGranted()) { mount(fig); return; }
+      var decision = fig.getAttribute('data-embed-decision');
+      if (decision === 'allow') mount(fig);
+      else if (decision === 'deny') showLink(fig);
+      else showConsent(fig);
+    }
+    function renderAll() {
+      document.querySelectorAll('.embed[data-embed-kind]').forEach(render);
+    }
+
+    // Consent flipped in the banner/modal: re-evaluate every embed. Turning
+    // Functional off clears any per-embed "allow" and re-blocks (unmounts) the
+    // real embeds so nothing keeps tracking; turning it on mounts them all.
+    function onConsentChange() {
+      var granted = functionalGranted();
+      document.querySelectorAll('.embed[data-embed-kind]').forEach(function (fig) {
+        fig.removeAttribute('data-embed-decision');
+        if (granted) mount(fig);
+        else showConsent(fig);
+      });
+    }
+
+    document.addEventListener('lampconsent:change', onConsentChange);
+    document.addEventListener('astro:page-load', renderAll);
+  })();
+</script>
