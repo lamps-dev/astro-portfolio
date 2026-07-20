@@ -89,6 +89,13 @@ const { title, description, date, updated, tags } = Astro.props;
     font-size: 1rem;
     line-height: 1.7;
   }
+  .prose :global(h1) {
+    font-size: 1.9rem;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    font-weight: 600;
+    margin: 2.2rem 0 0.9rem;
+  }
   .prose :global(h2) {
     font-size: 1.4rem;
     margin: 2rem 0 0.75rem;
@@ -98,6 +105,13 @@ const { title, description, date, updated, tags } = Astro.props;
     margin: 1.5rem 0 0.5rem;
   }
   .prose :global(p) {
+    margin: 0 0 1.1em;
+  }
+  /* Discord-style subtext: `-# small grey line` (see remark-subtext plugin). */
+  .prose :global(p.subtext) {
+    font-size: 0.8rem;
+    line-height: 1.4;
+    color: var(--color-muted);
     margin: 0 0 1.1em;
   }
   .prose :global(ul),

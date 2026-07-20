@@ -9,6 +9,8 @@ import react from '@astrojs/react';
 import icon from 'astro-icon';
 import vercel from '@astrojs/vercel';
 
+import remarkSubtext from './src/lib/remark-subtext.mjs';
+
 // https://astro.build/config
 export default defineConfig({
   site: 'https://lamps-dev.dev',
@@ -16,6 +18,10 @@ export default defineConfig({
   adapter: vercel({
     webAnalytics: { enabled: false },
   }),
+  // Applies to both .md and .mdx (the MDX integration extends this config).
+  markdown: {
+    remarkPlugins: [remarkSubtext],
+  },
   integrations: [mdx(), sitemap(), react(), icon()],
 
   vite: {
