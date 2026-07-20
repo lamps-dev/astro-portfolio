@@ -105,6 +105,18 @@ const { title, description, date, updated, tags } = Astro.props;
     padding-left: 1.4em;
     margin: 0 0 1.1em;
   }
+  .prose :global(ul) {
+    list-style: disc;
+  }
+  .prose :global(ol) {
+    list-style: decimal;
+  }
+  .prose :global(li) {
+    margin: 0.25em 0;
+  }
+  .prose :global(li)::marker {
+    color: var(--color-muted);
+  }
   .prose :global(img) {
     border-radius: 8px;
     margin: 1em 0;
