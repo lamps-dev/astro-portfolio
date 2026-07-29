@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Pause, Play, SkipForward, Volume1, Volume2, VolumeX } from 'lucide-react';
 
 type Playlist = { songs: string[] };
@@ -37,6 +38,10 @@ export default function MusicPlayer() {
   const [blocked, setBlocked] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  // Cover art for the current track (served by /api/cover). Hidden when the
+  // mp3 has no embedded artwork (the endpoint 404s and the <img> errors).
+  const [coverOk, setCoverOk] = useState(false);
+  const [zoomed, setZoomed] = useState(false);
 
   // Muting is purely a function of the slider being at 0 — dragging down to
   // 0% mutes, raising it again unmutes.
@@ -69,6 +74,23 @@ export default function MusicPlayer() {
     const audio = audioRef.current;
     if (audio) audio.volume = volume;
   }, [volume, current]);
+
+  // Reset cover state whenever the track changes so the new track's art is
+  // attempted afresh (and any open fullscreen view is closed).
+  useEffect(() => {
+    setCoverOk(false);
+    setZoomed(false);
+  }, [current]);
+
+  // Close the fullscreen cover on Escape.
+  useEffect(() => {
+    if (!zoomed) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setZoomed(false);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [zoomed]);
 
   // Try autoplay when a track is loaded. Browsers will block this if
   // there's been no user interaction yet, so we surface a "click to play"
@@ -125,9 +147,29 @@ export default function MusicPlayer() {
   const pct = Math.round(volume * 100);
   const progressPct = duration > 0 ? (currentTime / duration) * 100 : 0;
   const VolumeIcon = muted ? VolumeX : volume <= 0.5 ? Volume1 : Volume2;
+  const coverUrl = `/api/cover/${encodeURIComponent(current)}`;
+  const trackName = current.replace(/\.[^.]+$/, '');
 
   return (
     <div className={`music-player ${blocked ? 'blocked' : ''}`}>
+      {/* Cover art lives outside the flow when hidden (no embedded art) so the
+          pill keeps its shape. The <img> is always rendered so onLoad/onError
+          can decide visibility; the wrapper is collapsed until it loads. */}
+      <button
+        type="button"
+        className={`mp-cover ${coverOk ? 'is-visible' : ''}`}
+        onClick={() => coverOk && setZoomed(true)}
+        aria-label="view cover art"
+        tabIndex={coverOk ? 0 : -1}
+      >
+        <img
+          src={coverUrl}
+          alt={coverOk ? `${trackName} cover art` : ''}
+          onLoad={() => setCoverOk(true)}
+          onError={() => setCoverOk(false)}
+          draggable={false}
+        />
+      </button>
       <audio
         ref={audioRef}
         src={`${SONG_BASE}${current}`}
@@ -200,6 +242,34 @@ export default function MusicPlayer() {
           </span>
         </div>
       </div>
+      {/* Rendered to <body> via a portal: the player pill uses backdrop-filter,
+          which makes it a containing block for position:fixed children, so an
+          in-place overlay would be trapped inside the pill instead of covering
+          the viewport. */}
+      {zoomed && coverOk && typeof document !== 'undefined' &&
+        createPortal(
+          <div
+            className="mp-cover-overlay"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${trackName} cover art`}
+            onClick={() => setZoomed(false)}
+          >
+            <figure className="mp-cover-figure" onClick={(e) => e.stopPropagation()}>
+              <button
+                type="button"
+                className="mp-cover-close"
+                onClick={() => setZoomed(false)}
+                aria-label="close"
+              >
+                &times;
+              </button>
+              <img src={coverUrl} alt={`${trackName} cover art`} draggable={false} />
+              <figcaption>{trackName}</figcaption>
+            </figure>
+          </div>,
+          document.body,
+        )}
       <style>{`
         .music-player {
           position: fixed;
@@ -223,6 +293,98 @@ export default function MusicPlayer() {
           content: 'click play';
           color: var(--color-accent);
           margin-left: 0.25rem;
+        }
+        /* Cover art box: collapsed to zero width until the image loads so the
+           pill stays compact for tracks without embedded artwork. */
+        .mp-cover {
+          flex: 0 0 auto;
+          width: 0;
+          height: 30px;
+          padding: 0;
+          border: none;
+          border-radius: 8px;
+          overflow: hidden;
+          background: none;
+          cursor: pointer;
+          opacity: 0;
+          transition: width 0.2s ease, opacity 0.2s ease, transform 0.15s ease;
+          -webkit-tap-highlight-color: transparent;
+        }
+        .mp-cover.is-visible {
+          width: 30px;
+          opacity: 1;
+        }
+        .mp-cover.is-visible:hover {
+          transform: scale(1.05);
+        }
+        .mp-cover img {
+          width: 30px;
+          height: 30px;
+          object-fit: cover;
+          display: block;
+          border-radius: 8px;
+          border: 1px solid var(--color-border);
+        }
+        .mp-cover-overlay {
+          position: fixed;
+          inset: 0;
+          z-index: 1000;
+          display: grid;
+          place-items: center;
+          padding: 1.5rem;
+          background: color-mix(in oklab, #000 78%, transparent);
+          backdrop-filter: blur(4px);
+          cursor: zoom-out;
+          animation: mp-fade 0.18s ease-out;
+        }
+        @keyframes mp-fade { from { opacity: 0; } to { opacity: 1; } }
+        .mp-cover-figure {
+          position: relative;
+          margin: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.75rem;
+          cursor: auto;
+        }
+        .mp-cover-figure img {
+          max-width: min(90vw, 560px);
+          max-height: 80vh;
+          width: auto;
+          height: auto;
+          border-radius: 12px;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        .mp-cover-figure figcaption {
+          color: #fff;
+          font-family: var(--font-mono);
+          font-size: 0.8rem;
+          text-align: center;
+          max-width: 80vw;
+        }
+        .mp-cover-close {
+          position: absolute;
+          top: -0.75rem;
+          right: -0.75rem;
+          width: 2.1rem;
+          height: 2.1rem;
+          display: grid;
+          place-items: center;
+          border: 1px solid var(--color-border);
+          border-radius: 999px;
+          background: var(--color-bg);
+          color: var(--color-text);
+          font-size: 1.3rem;
+          line-height: 1;
+          cursor: pointer;
+          transition: border-color 0.2s, transform 0.2s;
+        }
+        .mp-cover-close:hover {
+          border-color: var(--color-accent);
+          transform: scale(1.05);
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .mp-cover, .mp-cover-overlay, .mp-cover-close { transition: none; animation: none; }
         }
         .mp-btn {
           background: none;
