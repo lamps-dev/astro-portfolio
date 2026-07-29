@@ -10,6 +10,25 @@ export const GITHUB_USERNAME = 'lamps-dev';
 export const GITHUB_REPO = 'lamps-dev/astro-portfolio';
 export const GALLERY_GITHUB_REPO = 'lamps-dev/portfolio-gallery';
 
+/** YouTube handle (no leading @) the /youtube page pulls uploads from. */
+export const YOUTUBE_HANDLE = 'ilovelampadaire';
+
+/**
+ * Optional channel ID (UC...). Set it to skip the handle lookup in
+ * /api/youtube; leave empty to resolve YOUTUBE_HANDLE at runtime.
+ */
+export const YOUTUBE_CHANNEL_ID = '';
+
+/**
+ * Manual category overrides for /youtube, keyed by video ID.
+ *
+ * Everything is categorised automatically, but once a broadcast ends YouTube
+ * gives archived streams and finished premieres identical metadata, so
+ * archives fall back to "stream". Pin the odd one out here, e.g.
+ *   'dQw4w9WgXcQ': 'video',
+ */
+export const YOUTUBE_TYPE_OVERRIDES: Record<string, 'stream' | 'video' | 'short'> = {};
+
 export const SOCIAL_LINKS = {
   github: 'https://github.com/lamps-dev',
   youtube: 'https://youtube.com/@ilovelampadaire',
@@ -23,6 +42,7 @@ export const NAV_LINKS = [
   { href: '/', label: 'home' },
   { href: '/projects', label: 'projects' },
   { href: '/gallery', label: 'gallery' },
+  { href: '/youtube', label: 'youtube' },
   { href: '/about', label: 'about' },
   { href: '/uses', label: 'uses' },
   { href: '/now', label: 'now' },

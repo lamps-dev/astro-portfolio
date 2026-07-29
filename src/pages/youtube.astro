@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import YouTubeFeed from '../components/YouTubeFeed.tsx';
+import { YOUTUBE_HANDLE } from '../consts';
+
+const channelUrl = `https://www.youtube.com/@${YOUTUBE_HANDLE}`;
+---
+
+<BaseLayout
+  title="YouTube"
+  description="Every stream, video and short I've uploaded, plus whatever is live or premiering right now."
+  fullBleed
+>
+  <!-- Wider than the default .page so the two-column cards have room. -->
+  <div class="page page-wide">
+    <SectionHeading level="h1" eyebrow="youtube">Streams, videos & shorts</SectionHeading>
+    <p class="lede">
+      Everything I've uploaded, newest first. Click a thumbnail (or "read more")
+      to open it full-size with the description and comments. Refreshes itself
+      every minute, so anything live or premiering shows up here on its own.
+    </p>
+
+    <YouTubeFeed client:load />
+
+    <p class="footnote">
+      Pulled live from
+      <a href={channelUrl} target="_blank" rel="noopener noreferrer">
+        youtube.com/@{YOUTUBE_HANDLE}
+      </a>.
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  .lede {
+    color: var(--color-muted);
+    margin: -0.5rem 0 1.75rem;
+    max-width: 60ch;
+  }
+  .footnote {
+    margin-top: 2rem;
+    font-size: 0.8rem;
+    color: var(--color-muted);
+  }
+  .footnote a {
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+  .footnote a:hover {
+    text-decoration: underline;
+  }
+</style>
