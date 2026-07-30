@@ -10,6 +10,7 @@ import icon from 'astro-icon';
 import vercel from '@astrojs/vercel';
 
 import remarkSubtext from './src/lib/remark-subtext.mjs';
+import remarkVideo from './src/lib/remark-video.mjs';
 
 // https://astro.build/config
 export default defineConfig({
@@ -20,7 +21,7 @@ export default defineConfig({
   }),
   // Applies to both .md and .mdx (the MDX integration extends this config).
   markdown: {
-    remarkPlugins: [remarkSubtext],
+    remarkPlugins: [remarkSubtext, remarkVideo],
   },
   integrations: [mdx(), sitemap(), react(), icon()],
 

@@ -142,6 +142,24 @@ const { title, description, date, updated, tags } = Astro.props;
   .prose :global(img:hover) {
     opacity: 0.9;
   }
+  /* Videos sit where an image would, minus the lightbox: the controls already
+     carry a native fullscreen button, so zoom-on-click would fight them. */
+  .prose :global(video.post-video) {
+    display: block;
+    border-radius: 8px;
+    /* Centred, because a portrait clip is narrower than the text column. */
+    margin: 1em auto;
+    max-width: 100%;
+    /* Without this a 9:16 phone clip renders taller than the viewport and you
+       cannot see the picture and the controls at the same time. */
+    max-height: 70vh;
+    height: auto;
+    background: #000;
+  }
+  /* <Video> supplies its own <figure> margin, so drop the inner one. */
+  .prose :global(.video-figure video.post-video) {
+    margin: 0;
+  }
 
   /* ---- Lightbox (mirrors the gallery lightbox) ---- */
   .lightbox {

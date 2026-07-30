@@ -10,6 +10,7 @@
  */
 import type { APIRoute } from 'astro';
 import {
+  describeYouTubeError,
   jsonResponse,
   YouTubeError,
   youtubeApiKey,
@@ -158,12 +159,9 @@ export const GET: APIRoute = async ({ url }) => {
       });
     }
 
-    const error =
-      err instanceof YouTubeError
-        ? err.reason === 'quotaExceeded'
-          ? 'daily youtube quota exceeded'
-          : err.message
-        : 'fetch failed';
-    return jsonResponse({ ok: false, error } satisfies YouTubeCommentsData);
+    return jsonResponse({
+      ok: false,
+      error: describeYouTubeError(err),
+    } satisfies YouTubeCommentsData);
   }
 };

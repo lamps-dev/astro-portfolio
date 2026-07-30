@@ -1,0 +1,137 @@
+---
+/*
+  Self-hosted video for blog posts — a real <video> file, not a third-party
+  embed. Because nothing leaves your own domain there is no tracking, so this
+  needs none of Embed.astro's consent gating.
+
+  Usage in .mdx (import once at the top of the file):
+
+    import Video from '../../components/Video.astro';
+
+    <Video src="/files/videos/clip.mp4" caption="A clip" />
+    <Video src="/files/videos/loop.mp4" gif />
+    <Video src={["/files/videos/c.webm", "/files/videos/c.mp4"]} poster="/files/videos/c.jpg" />
+
+  For a plain drop-in you don't even need this component: writing
+  `![caption](/files/videos/clip.mp4)` in Markdown renders a video too — see
+  src/lib/remark-video.mjs. Reach for <Video> when you want a poster, a
+  visible caption, a gif-style loop, or multiple source formats.
+
+  Where to put the files:
+    public/files/videos/...  -> referenced by absolute path, copied as-is.
+                                Best for anything large.
+    src/assets/...           -> `import clip from '../../assets/clip.mp4'`
+                                gets a content-hashed URL (cache-busting).
+*/
+interface Props {
+  /** One path, or several encodings of the same video (best format first). */
+  src: string | string[];
+  /** Still shown before playback; also what social previews pick up. */
+  poster?: string;
+  /** Optional caption rendered under the video. */
+  caption?: string;
+  /**
+   * GIF replacement: silent, looping, auto-playing, no controls.
+   * Vastly smaller than an actual .gif for the same clip.
+   */
+  gif?: boolean;
+  autoplay?: boolean;
+  loop?: boolean;
+  muted?: boolean;
+  controls?: boolean;
+  /** e.g. "16/9" — reserves the space so the page doesn't jump while loading. */
+  ratio?: string;
+  /** Accessible name, for when the video carries meaning on its own. */
+  label?: string;
+}
+
+const {
+  src,
+  poster,
+  caption,
+  gif = false,
+  autoplay = gif,
+  loop = gif,
+  // Browsers refuse to autoplay anything with sound, so autoplay implies muted.
+  muted = gif || autoplay,
+  controls = !gif,
+  ratio,
+  label,
+} = Astro.props;
+
+const MIME: Record<string, string> = {
+  mp4: 'video/mp4',
+  m4v: 'video/x-m4v',
+  webm: 'video/webm',
+  ogv: 'video/ogg',
+  ogg: 'video/ogg',
+  mov: 'video/quicktime',
+};
+
+const list = (Array.isArray(src) ? src : [src]).filter(Boolean);
+const sources = list.map((url) => {
+  const ext = url.split('?')[0].split('#')[0].split('.').pop()?.toLowerCase() ?? '';
+  return { url, type: MIME[ext] };
+});
+
+// With a poster there is nothing to show until play, so skip the preload
+// entirely; without one, fetch metadata so the first frame and duration appear.
+const preload = poster ? 'none' : 'metadata';
+---
+
+<figure class="video-figure">
+  <video
+    class="post-video"
+    controls={controls}
+    autoplay={autoplay}
+    loop={loop}
+    muted={muted}
+    poster={poster}
+    preload={preload}
+    playsinline
+    aria-label={label}
+    style={ratio ? `aspect-ratio: ${ratio}` : undefined}
+  >
+    {sources.map((s) => <source src={s.url} type={s.type} />)}
+    {/* Shown only if the browser can play none of the sources. */}
+    <a href={list[0]} download>Download the video</a>
+  </video>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style is:global>
+  .video-figure {
+    margin: 1.5em 0;
+  }
+  .video-figure figcaption {
+    margin-top: 0.6rem;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--color-muted);
+    font-family: var(--font-mono);
+  }
+</style>
+
+{/*
+  Auto-playing loops are motion the reader never asked for, so pause them when
+  the OS says "reduce motion" and give them controls instead. Bound once and
+  re-run per navigation, matching the other blog scripts.
+*/}
+<script is:inline>
+  (function () {
+    if (window.__postVideoInit) return;
+    window.__postVideoInit = true;
+
+    function apply() {
+      var mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+      document.querySelectorAll('video.post-video[autoplay]').forEach(function (v) {
+        if (!mq.matches) return;
+        v.autoplay = false;
+        v.controls = true;
+        v.pause();
+      });
+    }
+
+    document.addEventListener('astro:page-load', apply);
+  })();
+</script>

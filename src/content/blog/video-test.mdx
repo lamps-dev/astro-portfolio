@@ -1,0 +1,49 @@
+---
+title: Video test
+description: Scratch post for checking how self-hosted video files render in a post.
+date: 2026-07-30
+draft: true
+---
+
+import Video from '../../components/Video.astro';
+
+Two ways to put a video file in a post. Both use files served from this site —
+no third-party embed, so nothing to consent-gate.
+
+## 1. Markdown syntax
+
+Exactly like an image, just pointing at a video file:
+
+```markdown
+![Random memes from discord part 11](/files/assets/videos/randomemesdiscordpart11.mp4)
+```
+
+![Random memes from discord part 11](/files/assets/videos/randomemesdiscordpart11.mp4)
+
+-# The alt text becomes the accessible name. Good enough for most drops.
+
+## 2. The Video component
+
+For a visible caption, a poster frame, a reserved aspect ratio, or several
+encodings:
+
+```mdx
+<Video
+  src="/files/assets/videos/randomemesdiscordpart11.mp4"
+  ratio="9/16"
+  caption="Part 11 — vertical, so the ratio stops the page jumping while it loads."
+/>
+```
+
+<Video
+  src="/files/assets/videos/randomemesdiscordpart11.mp4"
+  ratio="9/16"
+  caption="Part 11 — vertical, so the ratio stops the page jumping while it loads."
+/>
+
+## 3. Images still behave as before
+
+![The site favicon, shown at full size.](/favicon.svg)
+
+-# Images keep their click-to-zoom lightbox; videos don't, because the native
+-# controls already have a fullscreen button.

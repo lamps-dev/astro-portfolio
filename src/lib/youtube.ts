@@ -17,12 +17,47 @@ export function youtubeApiKey(): string | null {
 export class YouTubeError extends Error {
   reason: string | null;
   status: number;
+  /** Google's human-readable message -- usually says exactly what to fix. */
+  detail: string | null;
 
-  constructor(message: string, status: number, reason: string | null) {
+  constructor(message: string, status: number, reason: string | null, detail: string | null = null) {
     super(message);
     this.name = 'YouTubeError';
     this.status = status;
     this.reason = reason;
+    this.detail = detail;
+  }
+}
+
+/**
+ * Turns an API failure into something actionable. A bare "403 (forbidden)"
+ * says nothing about which of the several possible misconfigurations it is,
+ * so map the reasons we can name and fall back to Google's own message.
+ */
+export function describeYouTubeError(err: unknown): string {
+  if (!(err instanceof YouTubeError)) return 'fetch failed';
+
+  // Google reports a referrer/IP block as a generic `forbidden`, so the only
+  // reliable signal is the message text. Check it before the reason switch.
+  if (err.detail && /from referer|referer <empty>|from ip address/i.test(err.detail)) {
+    return 'the API key is restricted to websites/IPs -- set Application restrictions to "None" (this key is server-side only)';
+  }
+
+  switch (err.reason) {
+    case 'quotaExceeded':
+    case 'dailyLimitExceeded':
+      return 'daily youtube quota exceeded';
+    case 'accessNotConfigured':
+    case 'SERVICE_DISABLED':
+      return 'YouTube Data API v3 is not enabled for this key’s Google Cloud project';
+    case 'ipRefererBlocked':
+      return 'the API key has application restrictions (HTTP referrer or IP) that block server-side calls';
+    case 'keyInvalid':
+      return 'the API key is invalid';
+    case 'channelNotFound':
+      return 'channel not found -- check YOUTUBE_HANDLE in src/consts.ts';
+    default:
+      return err.detail ? `${err.message}: ${err.detail}` : err.message;
   }
 }
 
@@ -39,11 +74,19 @@ export async function ytFetch<T>(
   const json: any = await res.json().catch(() => null);
 
   if (!res.ok) {
-    const reason: string | null = json?.error?.errors?.[0]?.reason ?? null;
+    const reason: string | null =
+      json?.error?.errors?.[0]?.reason ?? json?.error?.details?.[0]?.reason ?? null;
+    const detail: string | null = json?.error?.message ?? null;
+    // Log the raw error server-side: it never reaches the browser, and it is
+    // the difference between "403" and knowing which setting is wrong.
+    console.error(
+      `[youtube] ${endpoint} failed: ${res.status} reason=${reason ?? 'n/a'} message=${detail ?? 'n/a'}`,
+    );
     throw new YouTubeError(
       `youtube ${res.status}${reason ? ` (${reason})` : ''}`,
       res.status,
       reason,
+      detail,
     );
   }
   return json as T;

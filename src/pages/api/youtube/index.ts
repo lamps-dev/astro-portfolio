@@ -30,6 +30,7 @@ import {
   YOUTUBE_TYPE_OVERRIDES,
 } from '../../../consts';
 import {
+  describeYouTubeError,
   formatDuration,
   jsonResponse,
   parseIsoDuration,
@@ -56,8 +57,19 @@ const CHANNEL_TTL_MS = 12 * 60 * 60_000;
 const SHORT_MAX_SECONDS = 185;
 /** Fallback cutoff when the /shorts probe is unavailable. */
 const SHORT_FALLBACK_SECONDS = 60;
-/** Bound the added latency of probing uncached candidates on a cold start. */
-const MAX_SHORT_PROBES_PER_REFRESH = 25;
+/**
+ * Bound the added latency of probing uncached candidates on a cold start.
+ * Needs to comfortably exceed the number of short non-broadcast uploads,
+ * or the leftovers fall back to the duration guess for a few refreshes.
+ */
+const MAX_SHORT_PROBES_PER_REFRESH = 60;
+
+/**
+ * A scheduled broadcast this far past its start time never happened. YouTube
+ * keeps these forever with liveBroadcastContent still "upcoming", so without
+ * this they'd sit in the live banner permanently reading "starting now".
+ */
+const STALE_UPCOMING_MS = 12 * 60 * 60_000;
 
 /** Descriptions are capped at YouTube's own 5,000-character limit. */
 const MAX_DESCRIPTION = 5000;
@@ -233,13 +245,27 @@ function categorise(
   if (override === 'video') return 'videos';
   if (override === 'short') return 'shorts';
 
-  const isShort =
-    short === null ? duration > 0 && duration <= SHORT_FALLBACK_SECONDS : short;
-  if (isShort) return 'shorts';
-
+  // Broadcast signals come first, because a Short can never be a broadcast.
+  // Checking duration first would file an aborted stream -- which can be a
+  // few seconds long -- as a Short.
   if (liveStatus === 'live' || liveStatus === 'upcoming-stream') return 'streams';
   if (liveStatus === 'premiere' || liveStatus === 'upcoming-premiere') return 'videos';
-  return hasBroadcastDetails ? 'streams' : 'videos';
+  if (hasBroadcastDetails) return 'streams';
+
+  const isShort =
+    short === null ? duration > 0 && duration <= SHORT_FALLBACK_SECONDS : short;
+  return isShort ? 'shorts' : 'videos';
+}
+
+/** True for a scheduled broadcast that never started and never will. */
+function isStaleUpcoming(video: YouTubeVideo): boolean {
+  if (video.liveStatus !== 'upcoming-stream' && video.liveStatus !== 'upcoming-premiere') {
+    return false;
+  }
+  if (video.actualStartTime) return false;
+  const at = video.scheduledStartTime ? Date.parse(video.scheduledStartTime) : NaN;
+  if (Number.isNaN(at)) return true;
+  return Date.now() - at > STALE_UPCOMING_MS;
 }
 
 async function buildVideos(items: any[]): Promise<YouTubeVideo[]> {
@@ -250,6 +276,9 @@ async function buildVideos(items: any[]): Promise<YouTubeVideo[]> {
     const id: string = item?.id ?? '';
     const duration = parseIsoDuration(item?.contentDetails?.duration);
     if (!id || duration <= 0 || duration > SHORT_MAX_SECONDS) continue;
+    // Anything with broadcast details is settled by categorise() without a
+    // probe, so don't spend budget on it.
+    if (item.liveStreamingDetails) continue;
     if (shortsCache.has(id) || probes.has(id)) continue;
     if (budget-- <= 0) break;
     probes.set(
@@ -312,7 +341,10 @@ async function buildVideos(items: any[]): Promise<YouTubeVideo[]> {
   // playlistItems is already newest-first, but videos.list does not promise an
   // order, so sort explicitly.
   videos.sort((a, b) => Date.parse(b.publishedAt || '0') - Date.parse(a.publishedAt || '0'));
-  return videos;
+
+  // Abandoned scheduled broadcasts have no video behind them, so they'd be a
+  // permanently "scheduled" card with nothing to open.
+  return videos.filter((v) => !isStaleUpcoming(v));
 }
 
 export const GET: APIRoute = async () => {
@@ -351,12 +383,7 @@ export const GET: APIRoute = async () => {
       headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
     });
   } catch (err) {
-    const error =
-      err instanceof YouTubeError
-        ? err.reason === 'quotaExceeded'
-          ? 'daily youtube quota exceeded'
-          : err.message
-        : 'fetch failed';
+    const error = describeYouTubeError(err);
     // Serve the last good payload rather than an empty page when a refresh
     // fails (quota blips, transient 5xx). Keep it briefly so we retry soon.
     if (listCache) {
