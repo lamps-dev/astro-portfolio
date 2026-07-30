@@ -177,7 +177,24 @@ Oh wait[^1]...).
 
 ### Note
 > [!IMPORTANT]
-> The Vercel server astro package binaries are broken on Windows (since vercel deployements are supposed to be done on Linux systems), due to that, you **MUST** uninstall the vercel build astro package (``pnpm remove @astrojs/vercel``) and install the Node server package instead (``pnpm add @astrojs/node``). **ONLY DO THIS LOCALLY AND ONLY ON YOUR WINDOWS SYSTEM IF USING WINDOWS!!!!**
+> **If you're on Windows**, building this will explode with something like ``EPERM: operation not permitted, symlink``. That's not the project being broken, that's just Windows refusing to let a normal account create symlinks, which is a thing the Vercel adapter's build step needs to do (and pnpm does it constantly too).
+>
+> The fix is turning on **Developer Mode**: Settings > System > For developers > Developer Mode -> ON.
+>
+> That toggle just flips one registry value, so if you'd rather do it by hand (or the toggle refuses to stick, which happens), open regedit as admin and set:
+>
+> ```
+> HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock
+>   AllowDevelopmentWithoutDevLicense = 1   (DWORD, 32-bit)
+> ```
+>
+> Or from an **admin** PowerShell, one line:
+>
+> ```powershell
+> New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" -Name "AllowDevelopmentWithoutDevLicense" -Value 1 -PropertyType DWORD -Force
+> ```
+>
+> Then restart your terminal (or just reboot, Windows loves a reboot), nuke ``node_modules`` and ``.vercel``, ``pnpm install`` again, and it builds. **You do NOT need to swap out ``@astrojs/vercel`` for anything**, which is what I used to do before I found this out. :3
 
 ### Guide
 
