@@ -23,7 +23,10 @@ const SONG_BASE = '/files/assets/songs/';
 // Cache extracted covers per song for the life of the (warm) function so
 // repeated requests don't re-fetch and re-parse the mp3. `null` records
 // "parsed, but this track has no cover" so we don't retry those either.
-type Cover = { data: Uint8Array; type: string } | null;
+// `Uint8Array<ArrayBuffer>` rather than a bare `Uint8Array`: the latter is
+// generic over ArrayBufferLike, i.e. possibly backed by a SharedArrayBuffer,
+// which Response's BodyInit won't take.
+type Cover = { data: Uint8Array<ArrayBuffer>; type: string } | null;
 const cache = new Map<string, Cover>();
 
 export const GET: APIRoute = async ({ params, request }) => {
@@ -61,7 +64,9 @@ export const GET: APIRoute = async ({ params, request }) => {
     }
 
     const cover: Cover = {
-      data: pic.data instanceof Uint8Array ? pic.data : new Uint8Array(pic.data),
+      // Copied out of whatever buffer music-metadata parsed into, which also
+      // gives us the plain-ArrayBuffer backing the line above wants.
+      data: new Uint8Array(pic.data),
       type: pic.format || 'image/jpeg',
     };
     cache.set(song, cover);

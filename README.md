@@ -80,6 +80,8 @@ It survives page navigations thanks to `transition:persist`, so the song keeps p
 
 That route is genuinely my favourite bit of jank in here: on Vercel the mp3s are static CDN files and are **not** in the function's filesystem, so it can't just read them off disk. Instead it fetches the song from its own public URL and stream-parses only the first few bytes to get to the cover, then cancels the download. It does not download a whole 8MB song to show you a 300px square. :3
 
+The playlist can also hold mp4s, which play through a `<video>` instead — for those the cover **is** the video: it plays in the little 30px square and goes fullscreen when you click it. (The fullscreen copy is a second muted `<video>` shadowing the real one, because React can't move a playing element into a portal without remounting it, and remounting means a gap in the audio.) Either way, a track with nothing to show — an mp3 with no embedded art, an mp4 with no picture track — just collapses the thumbnail and carries on.
+
 ___
 
 ## The YouTube page, aka. quota hell
