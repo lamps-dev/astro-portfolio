@@ -1,4 +1,4 @@
-export type ProjectStatus = 'active' | 'random and silly' | 'old and abandonned, rip' | 'no longer active' | 'semi-active' | 'wip';
+export type ProjectStatus = 'active' | 'random and silly' | 'old and abandonned, rip' | 'no longer active' | 'semi-active' | 'wip' | 'discontinued';
 
 export type Project = {
   name: string;
@@ -28,8 +28,8 @@ export const projects: Project[] = [
     name: 'Terry',
     tagline: 'Discord bot.',
     description:
-      'A discord bot based on Forgescript, kind of discontinued since im busy on LmpBot and the hosting provider where Terry is hosted on has been offline for a while now.',
-    status: 'no longer active',
+      'A discord bot based on Forgescript. Partially alive again now that the hosting provider is back online, but most of my time still goes into LmpBot.',
+    status: 'semi-active',
     tech: ['Forgescript', 'Javascript'],
     date: '2026',
   },
@@ -59,11 +59,10 @@ export const projects: Project[] = [
     tagline: 'joke website, vibecoded',
     description:
       'Vibecoded in an afternoon. Exactly what the domain says (its just a cat-posting platform). No further questions.',
-    status: 'random and silly',
+    status: 'discontinued',
     tech: ['React', 'Typescript', 'Vite', 'Cloudflare Storage', 'Tailwind', 'Supabase'],
     demo: 'https://onlycats.info',
     date: '2026',
-    featured: true,
   },
   {
     name: 'SysInfo',
@@ -96,8 +95,8 @@ export const projects: Project[] = [
     name: 'Cubic',
     tagline: 'Python + C# toolset',
     description:
-      "Said i'd add 100 tools, currently has 2. TextTool's CDN has expired.",
-    status: 'no longer active',
+      "Said i'd add 100 tools, ended up with 2. TextTool's CDN has expired. Discontinued, use LampTools instead.",
+    status: 'discontinued',
     tech: ['Python', 'C#'],
     github: 'https://github.com/lamps-dev/cubic',
     date: '2025',
