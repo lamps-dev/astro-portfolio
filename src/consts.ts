@@ -51,3 +51,9 @@ export const NAV_LINKS = [
   { href: '/privacy', label: 'privacy policy' },
   { href: '/tos', label: 'tos' },
 ] as const;
+
+/**
+ * Link for the site-wide sunset banner (SunsetNotice.astro). Point this at
+ * the blog post explaining the move once it exists.
+ */
+export const SUNSET_POST_URL = '/blog/portfolio-sunset';

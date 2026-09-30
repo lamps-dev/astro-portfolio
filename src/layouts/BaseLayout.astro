@@ -2,6 +2,7 @@
 import { ClientRouter } from 'astro:transitions';
 import BaseHead from '../components/BaseHead.astro';
 import Navbar from '../components/Navbar.astro';
+import SunsetNotice from '../components/SunsetNotice.astro';
 import Footer from '../components/Footer.astro';
 import MusicPlayer from '../components/MusicPlayer.tsx';
 
@@ -27,6 +28,7 @@ const { title, description, image, fullBleed = false, hideMusic = false } = Astr
   <body>
   {/* GTM noscript fallback intentionally omitted: it would load tracking for
       no-JS visitors who can't reach the consent prompt. See BaseHead.astro. */}
+    <SunsetNotice />
     <Navbar />
     <main class={fullBleed ? '' : 'page'}>
       <slot />
