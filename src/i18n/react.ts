@@ -1,5 +1,6 @@
 import { useCallback, useSyncExternalStore } from 'react';
 import { DEFAULT_LANG, LANG_EVENT, UPDATE_EVENT, getLang, translateText, type Lang } from './index';
+import { toTemplate } from './shared.mjs';
 
 // Bumped whenever translations land, so islands re-render with them.
 let version = 0;
@@ -29,12 +30,7 @@ export type Translate = (english: string, vars?: Vars) => string;
  * because the API translates words like {time} but leaves numbers alone.
  */
 function translateTemplate(lang: Lang, english: string, vars?: Vars): string {
-  const names: string[] = [];
-  const template = english.replace(/\{(\w+)\}/g, (m, k: string) => {
-    if (!vars || !(k in vars)) return m;
-    if (!names.includes(k)) names.push(k);
-    return `{${names.indexOf(k)}}`;
-  });
+  const { template, names } = toTemplate(english, vars ?? {});
   const fill = (str: string) => str.replace(/\{(\d+)\}/g, (m, i) => (i < names.length ? String(vars![names[i]]) : m));
   const out = translateText(lang, template);
   // If the translation lost a placeholder, the English is better than a gap.

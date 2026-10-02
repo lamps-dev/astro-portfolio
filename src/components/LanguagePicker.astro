@@ -208,6 +208,7 @@ const entries = Object.entries(LANGUAGES);
     getLang,
     isLang,
     setLang,
+    whenReady,
   } from '../i18n';
 
   let busy = false;
@@ -300,10 +301,13 @@ const entries = Object.entries(LANGUAGES);
     });
   }
 
-  // Initial page: apply what's cached (the rest is fetched in the background),
-  // then reveal. The head script hides a non-English page until this runs.
-  applyTranslations();
-  document.documentElement.classList.remove('i18n-pending');
+  // Initial page: load the pre-translated dictionary, apply it (anything it
+  // lacks is fetched in the background), then reveal. The head script hides a
+  // non-English page until this runs.
+  whenReady().finally(() => {
+    applyTranslations();
+    document.documentElement.classList.remove('i18n-pending');
+  });
 
   // Module scripts run once, so these document/window listeners persist
   // across client-side navigations.

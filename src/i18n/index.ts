@@ -2,11 +2,14 @@
  * Client-side i18n backed by the LibreTranslate instance at
  * translate.uniqueweb.site.
  *
- * English stays in the markup. When another language is picked, every marked
- * piece of text is sent to the API, swapped in as results come back, and
- * cached in localStorage so each string is only ever translated once. If the
- * API errors, the site falls back to English and an `i18n-error` event is
- * fired (LanguagePicker shows a popup for it).
+ * English stays in the markup. When another language is picked, marked text is
+ * looked up in src/i18n/translations/<lang>.json first. That file is generated
+ * ahead of time by `pnpm translate` (the API is far too slow to make visitors
+ * wait on it), and is loaded on demand so English visitors never download it.
+ * Anything not in there (text added since the last run) is sent to the API,
+ * swapped in as results come back, and cached in localStorage. If the API
+ * errors, the site falls back to English and an `i18n-error` event is fired
+ * (LanguagePicker shows a popup for it).
  *
  * Markup hooks:
  *   data-i18n                         translate the element's innerHTML
@@ -16,6 +19,8 @@
  * React islands use the useT() hook from ./react instead, so hydration is
  * never fought over.
  */
+
+import { cacheKey, sourceHtml } from './shared.mjs';
 
 export const TRANSLATE_API = 'https://translate.uniqueweb.site/translate';
 
@@ -66,30 +71,68 @@ function canStore() {
 
 /* ---- Cache ---- */
 
+// Pre-translated dictionaries, each its own lazily loaded chunk.
+const prebuiltLoaders = import.meta.glob<Record<string, string>>('./translations/*.json', {
+  import: 'default',
+});
+
+/** Everything known for a language: pre-translated plus API results. */
 const caches: Partial<Record<Lang, Map<string, string>>> = {};
+/** Only the API results; this is what gets persisted to localStorage. */
+const fetched: Partial<Record<Lang, Map<string, string>>> = {};
+const prebuilt: Partial<Record<Lang, Promise<void>>> = {};
+const prebuiltDone = new Set<Lang>();
 const saveTimers: Partial<Record<Lang, number>> = {};
 
-const cacheKey = (format: Format, text: string) => `${format}:${text}`;
+function fetchedFor(lang: Lang) {
+  let map = fetched[lang];
+  if (!map) {
+    map = new Map();
+    try {
+      const raw = canStore() ? localStorage.getItem(CACHE_PREFIX + lang) : null;
+      if (raw) for (const [k, v] of Object.entries(JSON.parse(raw))) map.set(k, String(v));
+    } catch {}
+    fetched[lang] = map;
+  }
+  return map;
+}
 
 function cacheFor(lang: Lang) {
   let cache = caches[lang];
   if (!cache) {
-    cache = new Map();
-    try {
-      const raw = canStore() ? localStorage.getItem(CACHE_PREFIX + lang) : null;
-      if (raw) for (const [k, v] of Object.entries(JSON.parse(raw))) cache.set(k, String(v));
-    } catch {}
+    cache = new Map(fetchedFor(lang));
     caches[lang] = cache;
   }
   return cache;
 }
 
-function saveCache(lang: Lang) {
+/**
+ * Load the pre-translated dictionary for `lang` (once). Resolves even if it is
+ * missing or fails to load; the API then covers everything.
+ */
+export function whenReady(lang: Lang = getLang()): Promise<void> {
+  if (lang === DEFAULT_LANG) return Promise.resolve();
+  prebuilt[lang] ??= (async () => {
+    try {
+      const load = prebuiltLoaders[`./translations/${lang}.json`];
+      const dict = load ? await load() : {};
+      const cache = cacheFor(lang);
+      for (const [k, v] of Object.entries(dict)) cache.set(k, v);
+    } catch {}
+    prebuiltDone.add(lang);
+    window.dispatchEvent(new CustomEvent(UPDATE_EVENT, { detail: lang }));
+  })();
+  return prebuilt[lang]!;
+}
+
+function store(lang: Lang, key: string, value: string) {
+  cacheFor(lang).set(key, value);
+  fetchedFor(lang).set(key, value);
   window.clearTimeout(saveTimers[lang]);
   saveTimers[lang] = window.setTimeout(() => {
     try {
       if (canStore()) {
-        localStorage.setItem(CACHE_PREFIX + lang, JSON.stringify(Object.fromEntries(cacheFor(lang))));
+        localStorage.setItem(CACHE_PREFIX + lang, JSON.stringify(Object.fromEntries(fetchedFor(lang))));
       }
     } catch {}
   }, 500);
@@ -181,9 +224,7 @@ async function request(jobs: Job[]) {
       throw new Error('the server sent back an unexpected response');
     }
     if (gen !== generation) return;
-    const cache = cacheFor(lang);
-    jobs.forEach((job, i) => cache.set(cacheKey(format, job.text), list[i] as string));
-    saveCache(lang);
+    jobs.forEach((job, i) => store(lang, cacheKey(format, job.text), list[i] as string));
     window.dispatchEvent(new CustomEvent(UPDATE_EVENT, { detail: lang }));
   } catch (err) {
     if (gen !== generation) return; // superseded by a language switch
@@ -212,15 +253,18 @@ function fail(err: unknown) {
 }
 
 /**
- * Translated `text` for `lang` if it is cached. Otherwise it is queued for the
+ * Translated `text` for `lang` if it is known. Otherwise it is queued for the
  * API and the English text is returned for now; an UPDATE_EVENT follows once
  * the translation arrives.
  */
 export function translateText(lang: Lang, text: string, format: Format = 'text'): string {
-  if (lang === DEFAULT_LANG || !text.trim()) return text;
+  if (lang === DEFAULT_LANG || !text.trim() || typeof window === 'undefined') return text;
   const hit = cacheFor(lang).get(cacheKey(format, text));
   if (hit !== undefined) return hit;
-  if (typeof window !== 'undefined') enqueue({ lang, format, text });
+  // Check the pre-translated file before bothering the API. Its UPDATE_EVENT
+  // re-runs this lookup once it has loaded.
+  if (!prebuiltDone.has(lang)) void whenReady(lang);
+  else enqueue({ lang, format, text });
   return text;
 }
 
@@ -236,17 +280,6 @@ function remember(el: Element) {
     originals.set(el, o);
   }
   return o;
-}
-
-/**
- * What gets sent to the API: whitespace collapsed, Astro's scope (and dev-only
- * source) attributes dropped so the cache key is the same in dev and prod.
- */
-function sourceHtml(html: string) {
-  return html
-    .replace(/\s+data-astro-(cid|source)-[\w-]+(="[^"]*")?/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
 }
 
 /** Astro scopes styles with data-astro-cid-* attributes; put them back on swapped-in children. */

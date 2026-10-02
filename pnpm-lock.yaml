@@ -75,6 +75,9 @@ importers:
       '@iconify-json/lucide':
         specifier: ^1.2.104
         version: 1.2.104
+      parse5:
+        specifier: ^7.3.0
+        version: 7.3.0
       typescript:
         specifier: ^6.0.3
         version: 6.0.3

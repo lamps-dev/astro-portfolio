@@ -18,9 +18,9 @@ export const projects: Project[] = [
     name: 'Lmp Bot',
     tagline: 'discord bot, my newest project.',
     description:
-      'Pycord-based discord bot (used to be in Forgescript). Has a honeypot spam channel setup that auto-bans anyone who posts in it. surprisingly effective.',
+      'Discord.js-based discord bot (used to be in Pycord, and Forgescript before that). Has a honeypot spam channel setup that auto-bans anyone who posts in it. surprisingly effective.',
     status: 'active',
-    tech: ['Python', 'Pycord'],
+    tech: ['Discord.js', 'NodeJS'],
     date: '2026',
     featured: true,
   },
@@ -96,7 +96,7 @@ export const projects: Project[] = [
     tagline: 'Python + C# toolset',
     description:
       "Said i'd add 100 tools, ended up with 2. TextTool's CDN has expired. Discontinued, use LampTools instead.",
-    status: 'discontinued',
+    status: 'old and abandonned, rip',
     tech: ['Python', 'C#'],
     github: 'https://github.com/lamps-dev/cubic',
     date: '2025',
