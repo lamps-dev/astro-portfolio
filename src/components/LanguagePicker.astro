@@ -1,0 +1,335 @@
+---
+import { Icon } from 'astro-icon/components';
+import { DEFAULT_LANG, LANGUAGES } from '../i18n';
+
+const entries = Object.entries(LANGUAGES);
+---
+
+<div class="lang-picker">
+  <button
+    type="button"
+    class="lang-btn"
+    aria-haspopup="menu"
+    aria-expanded="false"
+    aria-label="Change language"
+    data-i18n-attr="aria-label"
+  >
+    <Icon class="lang-icon" name="lucide:languages" width={16} height={16} />
+    <Icon class="lang-spinner" name="lucide:loader-circle" width={16} height={16} />
+    <span class="lang-current">{LANGUAGES[DEFAULT_LANG].short}</span>
+    <Icon class="lang-chevron" name="lucide:chevron-down" width={14} height={14} />
+  </button>
+  <ul class="lang-menu" role="menu" hidden>
+    {entries.map(([code, { label }]) => (
+      <li role="none">
+        <button type="button" role="menuitemradio" lang={code} data-lang={code} aria-checked={code === DEFAULT_LANG ? 'true' : 'false'}>
+          <span>{label}</span>
+          <Icon class="lang-check" name="lucide:check" width={14} height={14} />
+        </button>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .lang-picker {
+    position: relative;
+  }
+  .lang-btn {
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0 0.6rem;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--color-text);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+  .lang-btn:hover,
+  .lang-btn[aria-expanded='true'] {
+    background-color: var(--color-border);
+  }
+  .lang-chevron {
+    color: var(--color-muted);
+    transition: transform 0.2s ease;
+  }
+  .lang-btn[aria-expanded='true'] .lang-chevron {
+    transform: rotate(180deg);
+  }
+  .lang-menu {
+    position: absolute;
+    top: calc(100% + 0.4rem);
+    right: 0;
+    z-index: 60;
+    min-width: 9.5rem;
+    margin: 0;
+    padding: 0.3rem;
+    list-style: none;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: var(--color-bg);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18);
+    animation: lang-pop 0.15s ease;
+  }
+  .lang-menu[hidden] {
+    display: none;
+  }
+  .lang-menu button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.5rem 0.65rem;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--color-text);
+    font: inherit;
+    font-size: 0.9rem;
+    text-align: left;
+    cursor: pointer;
+  }
+  .lang-menu button:hover,
+  .lang-menu button:focus-visible {
+    background: color-mix(in oklab, var(--color-border) 60%, transparent);
+    outline: none;
+  }
+  .lang-check {
+    color: var(--color-accent);
+    visibility: hidden;
+  }
+  .lang-menu button[aria-checked='true'] .lang-check {
+    visibility: visible;
+  }
+  @keyframes lang-pop {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+  }
+  @media (max-width: 640px) {
+    .lang-btn .lang-chevron {
+      display: none;
+    }
+  }
+  .lang-spinner {
+    display: none;
+    animation: lang-spin 0.9s linear infinite;
+  }
+  .lang-picker.busy .lang-icon {
+    display: none;
+  }
+  .lang-picker.busy .lang-spinner {
+    display: inline-flex;
+  }
+  @keyframes lang-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lang-menu,
+    .lang-spinner {
+      animation: none;
+    }
+  }
+</style>
+
+<style is:global>
+  /* Error popup. Appended to <body> (the nav's backdrop-filter would trap a
+     fixed element inside it), so these styles can't be scoped. */
+  .lang-error {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(4px);
+    animation: lang-error-in 0.15s ease;
+  }
+  .lang-error-box {
+    width: min(26rem, 100%);
+    padding: 1.1rem 1.2rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    background: var(--color-bg);
+    color: var(--color-text);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  }
+  .lang-error-box h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1.05rem;
+  }
+  .lang-error-box p {
+    margin: 0 0 0.5rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  .lang-error-box .lang-error-detail {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--color-muted);
+    word-break: break-word;
+  }
+  .lang-error-box button {
+    display: block;
+    margin: 0.9rem 0 0 auto;
+    padding: 0.45rem 1rem;
+    border: 1px solid var(--color-accent);
+    border-radius: 8px;
+    background: color-mix(in oklab, var(--color-accent) 18%, transparent);
+    color: var(--color-text);
+    font: inherit;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  @keyframes lang-error-in {
+    from {
+      opacity: 0;
+    }
+  }
+</style>
+
+<script>
+  import {
+    BUSY_EVENT,
+    ERROR_EVENT,
+    LANGUAGES,
+    UPDATE_EVENT,
+    applyTranslations,
+    getLang,
+    isLang,
+    setLang,
+  } from '../i18n';
+
+  let busy = false;
+
+  function picker() {
+    return document.querySelector<HTMLElement>('.lang-picker');
+  }
+
+  function close(focusButton = false) {
+    const root = picker();
+    const btn = root?.querySelector<HTMLButtonElement>('.lang-btn');
+    const menu = root?.querySelector<HTMLElement>('.lang-menu');
+    if (!btn || !menu || menu.hidden) return;
+    menu.hidden = true;
+    btn.setAttribute('aria-expanded', 'false');
+    if (focusButton) btn.focus();
+  }
+
+  function sync() {
+    const root = picker();
+    if (!root) return;
+    const lang = getLang();
+    const current = root.querySelector('.lang-current');
+    if (current) current.textContent = LANGUAGES[lang].short;
+    root.querySelectorAll<HTMLButtonElement>('[data-lang]').forEach((b) => {
+      b.setAttribute('aria-checked', String(b.dataset.lang === lang));
+    });
+    root.classList.toggle('busy', busy);
+    root.querySelector('.lang-btn')?.setAttribute('aria-busy', String(busy));
+  }
+
+  function showError(reason: string) {
+    document.querySelector('.lang-error')?.remove();
+    const overlay = document.createElement('div');
+    overlay.className = 'lang-error';
+    overlay.innerHTML = `
+      <div class="lang-error-box" role="alertdialog" aria-modal="true" aria-labelledby="lang-error-title" aria-describedby="lang-error-text">
+        <h2 id="lang-error-title">Translation failed</h2>
+        <p id="lang-error-text">The translation API ran into an error, so the site was switched back to English.</p>
+        <p class="lang-error-detail"></p>
+        <button type="button">OK</button>
+      </div>`;
+    overlay.querySelector('.lang-error-detail')!.textContent = `Error: ${reason}`;
+    const dismiss = () => {
+      overlay.remove();
+      document.removeEventListener('keydown', onKey);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') dismiss();
+    };
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) dismiss();
+    });
+    overlay.querySelector('button')!.addEventListener('click', dismiss);
+    document.addEventListener('keydown', onKey);
+    document.body.appendChild(overlay);
+    overlay.querySelector('button')!.focus();
+  }
+
+  function setupPicker() {
+    const root = picker();
+    const btn = root?.querySelector<HTMLButtonElement>('.lang-btn');
+    const menu = root?.querySelector<HTMLElement>('.lang-menu');
+    if (!root || !btn || !menu || root.dataset.bound === 'true') return;
+    root.dataset.bound = 'true';
+    sync();
+
+    btn.addEventListener('click', () => {
+      const open = menu.hidden;
+      menu.hidden = !open;
+      btn.setAttribute('aria-expanded', String(open));
+      if (open) menu.querySelector<HTMLButtonElement>('[aria-checked="true"]')?.focus();
+    });
+
+    menu.querySelectorAll<HTMLButtonElement>('[data-lang]').forEach((item) => {
+      item.addEventListener('click', () => {
+        const lang = item.dataset.lang;
+        if (isLang(lang) && lang !== getLang()) setLang(lang);
+        close(true);
+      });
+    });
+
+    menu.addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+      e.preventDefault();
+      const items = [...menu.querySelectorAll<HTMLButtonElement>('[data-lang]')];
+      const i = items.indexOf(document.activeElement as HTMLButtonElement);
+      const next = (i + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length;
+      items[next]?.focus();
+    });
+  }
+
+  // Initial page: apply what's cached (the rest is fetched in the background),
+  // then reveal. The head script hides a non-English page until this runs.
+  applyTranslations();
+  document.documentElement.classList.remove('i18n-pending');
+
+  // Module scripts run once, so these document/window listeners persist
+  // across client-side navigations.
+  document.addEventListener('astro:before-swap', (e) => {
+    // Translate the incoming page from cache before it is shown.
+    applyTranslations(getLang(), e.newDocument);
+  });
+  document.addEventListener('astro:after-swap', () => {
+    // The swap resets <html lang>; anything uncached gets queued here.
+    document.documentElement.lang = getLang();
+    applyTranslations();
+  });
+  window.addEventListener(UPDATE_EVENT, () => applyTranslations());
+  window.addEventListener('lang-change', sync);
+  window.addEventListener(BUSY_EVENT, (e) => {
+    busy = (e as CustomEvent<boolean>).detail;
+    sync();
+  });
+  window.addEventListener(ERROR_EVENT, (e) => showError((e as CustomEvent<string>).detail));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') close(true);
+  });
+  document.addEventListener('click', (e) => {
+    if (!(e.target as Element).closest('.lang-picker')) close();
+  });
+
+  setupPicker();
+  document.addEventListener('astro:page-load', setupPicker);
+</script>

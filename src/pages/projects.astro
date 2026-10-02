@@ -60,14 +60,14 @@ const grouped = sections.map((s) => ({
   description="Everything I've made, sorted into things that work, that are dumb, that died, that are silly, that are semi-active, that are no longer active, that are WIP and that got discontinued."
 >
   <SectionHeading level="h1" eyebrow="projects">Things I've made</SectionHeading>
-  <p class="lede">
+  <p class="lede" data-i18n>
     Sorted into the seven states of code: Working, Silly, Dead, Semi-Active, WIP, No longer active and Discontinued.
   </p>
 
   <nav class="jumps" aria-label="section jumps">
     {grouped.map((s) => (
       <a href={`#${s.id}`} class={`jump status-${s.status}`}>
-        <span class="jump-title">{s.title}</span>
+        <span class="jump-title" data-i18n>{s.title}</span>
         <span class="jump-count">{s.items.length}</span>
       </a>
     ))}
@@ -81,7 +81,7 @@ const grouped = sections.map((s) => ({
           <span class="count">{s.items.length}</span>
         </SectionHeading>
       </div>
-      <p class="blurb">{s.blurb}</p>
+      <p class="blurb" data-i18n>{s.blurb}</p>
       {s.items.length > 0 ? (
         <div class="grid">
           {s.items.map((p) => <ProjectCard project={p} />)}
@@ -89,7 +89,7 @@ const grouped = sections.map((s) => ({
       ) : (
         <div class="empty">
           <span class="empty-icon">∅</span>
-          <span>Nothing here yet.</span>
+          <span data-i18n>Nothing here yet.</span>
         </div>
       )}
     </section>

@@ -6,6 +6,7 @@
  * the full commit description and a link to the commit on GitHub.
  */
 import { useEffect, useState } from 'react';
+import { useT } from '../i18n/react';
 
 type Commit = {
   sha: string;
@@ -21,11 +22,11 @@ type CommitsData =
   | { ok: true; commits: Commit[] }
   | { ok: false; error: string };
 
-function formatDate(iso: string): string {
+function formatDate(iso: string, lang: string): string {
   if (!iso) return '';
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return '';
-  return d.toLocaleDateString(undefined, {
+  return d.toLocaleDateString(lang, {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
@@ -36,6 +37,7 @@ export default function Changelog() {
   const [data, setData] = useState<CommitsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState<string | null>(null);
+  const { t, lang } = useT();
 
   useEffect(() => {
     let cancelled = false;
@@ -62,14 +64,14 @@ export default function Changelog() {
 
   return (
     <div className="changelog">
-      {loading && <p className="muted">loading recent commits...</p>}
+      {loading && <p className="muted">{t('loading recent commits...')}</p>}
 
       {!loading && data && data.ok === false && (
-        <p className="muted">couldn't load commits right now.</p>
+        <p className="muted">{t("couldn't load commits right now.")}</p>
       )}
 
       {!loading && data && data.ok && data.commits.length === 0 && (
-        <p className="muted">no recent commits to show.</p>
+        <p className="muted">{t('no recent commits to show.')}</p>
       )}
 
       {!loading && data && data.ok && data.commits.length > 0 && (
@@ -95,7 +97,7 @@ export default function Changelog() {
                       {c.date && (
                         <>
                           <span className="sep">·</span>
-                          <span className="date">{formatDate(c.date)}</span>
+                          <span className="date">{formatDate(c.date, lang)}</span>
                         </>
                       )}
                     </span>
@@ -107,7 +109,7 @@ export default function Changelog() {
                     {c.description ? (
                       <pre className="description">{c.description}</pre>
                     ) : (
-                      <p className="no-desc">No additional description.</p>
+                      <p className="no-desc">{t('No additional description.')}</p>
                     )}
                     <a
                       className="commit-link"
@@ -115,7 +117,7 @@ export default function Changelog() {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      View commit on GitHub ↗
+                      {t('View commit on GitHub ↗')}
                     </a>
                   </div>
                 )}

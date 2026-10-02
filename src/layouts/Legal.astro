@@ -7,7 +7,7 @@ const { frontmatter } = Astro.props;
 <BaseLayout title={frontmatter.title} description={frontmatter.description}>
   <article class="legal">
     <header class="legal-head">
-      <p class="kicker"><a href="/">&larr; back home</a></p>
+      <p class="kicker"><a href="/">&larr; <span data-i18n>back home</span></a></p>
       <h1>{frontmatter.title}</h1>
     </header>
     <div class="prose">

@@ -10,7 +10,7 @@ import { GITHUB_REPO } from '../consts';
   description="Recent GitHub commits, freshest first. Click one to read its full description and jump to the commit."
 >
   <SectionHeading level="h1" eyebrow="changelog">Recent commits</SectionHeading>
-  <p class="lede">
+  <p class="lede" data-i18n>
     The latest public commits I've pushed, freshest first. Click any entry to
     read its full description and open the commit on GitHub.
   </p>
@@ -18,7 +18,7 @@ import { GITHUB_REPO } from '../consts';
   <Changelog client:load />
 
   <p class="footnote">
-    Pulled live from
+    <span data-i18n>Pulled live from</span>
     <a href={`https://github.com/${GITHUB_REPO}`} target="_blank" rel="noopener noreferrer">
       github.com/{GITHUB_REPO}
     </a>.

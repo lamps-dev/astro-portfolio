@@ -14,10 +14,10 @@ const posts = (await getCollection('blog'))
   description="posts by lamp."
 >
   <SectionHeading level="h1" eyebrow="blog">blog</SectionHeading>
-  <p class="lede">things i've written. mostly notes-to-self.</p>
+  <p class="lede" data-i18n>things i've written. mostly notes-to-self.</p>
 
   {posts.length === 0 ? (
-    <p class="empty">nothing here yet.</p>
+    <p class="empty" data-i18n>nothing here yet.</p>
   ) : (
     <ul class="post-list">
       {posts.map((post) => (

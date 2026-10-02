@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import { SITE_TITLE } from '../consts';
+import { CACHE_PREFIX, DEFAULT_LANG, LANGUAGES } from '../i18n';
 
 interface Props {
   title: string;
@@ -11,6 +12,7 @@ interface Props {
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const { title, description, image = '/og-default.png' } = Astro.props;
 const fullTitle = title === SITE_TITLE ? title : `${title} - ${SITE_TITLE}`;
+const langs = Object.keys(LANGUAGES);
 ---
 
 <meta charset="utf-8" />
@@ -51,6 +53,22 @@ const fullTitle = title === SITE_TITLE ? title : `${title} - ${SITE_TITLE}`;
   })();
 </script>
 
+{/* Language: resolved before paint so islands pick it up on hydration. A
+    non-English page stays hidden until LanguagePicker has applied cached
+    translations (capped, so a failed script never leaves the page blank). */}
+<style is:inline>html.i18n-pending body { visibility: hidden; }</style>
+<script is:inline define:vars={{ langs, defaultLang: DEFAULT_LANG }}>
+  let storedLang = null;
+  try { if (window.__functionalConsent()) storedLang = localStorage.getItem('lang'); } catch {}
+  window.__lang = langs.includes(storedLang) ? storedLang : defaultLang;
+  if (window.__lang !== defaultLang) {
+    const root = document.documentElement;
+    root.lang = window.__lang;
+    root.classList.add('i18n-pending');
+    setTimeout(() => root.classList.remove('i18n-pending'), 1500);
+  }
+</script>
+
 <script is:inline>
   document.addEventListener('astro:after-swap', () => {
     const stored = window.__functionalConsent() ? localStorage.getItem('theme') : null;
@@ -72,7 +90,7 @@ const fullTitle = title === SITE_TITLE ? title : `${title} - ${SITE_TITLE}`;
 <!-- LampConsent (cookie consent). Inits Google Consent Mode defaults; the tags
      below stay blocked until the matching category is opted in. -->
 <script is:inline src="/lampconsent.js"></script>
-<script is:inline>
+<script is:inline define:vars={{ cachePrefix: CACHE_PREFIX }}>
   LampConsent.init({
     position: 'bottom-center',
     theme: 'auto',
@@ -97,8 +115,15 @@ const fullTitle = title === SITE_TITLE ? title : `${title} - ${SITE_TITLE}`;
       { id: 'analytics', name: 'Analytics', desc: 'Helps us understand how visitors use the site.', required: false, gtag: ['analytics_storage'] },
     ],
     onChange: function (prefs) {
-      // Turning Functional off stops the site from remembering your theme.
-      if (!prefs.functional) { try { localStorage.removeItem('theme'); } catch (e) {} }
+      // Turning Functional off stops the site from remembering your theme,
+      // language and cached translations.
+      if (!prefs.functional) {
+        try {
+          localStorage.removeItem('theme');
+          localStorage.removeItem('lang');
+          Object.keys(localStorage).forEach(function (k) { if (k.indexOf(cachePrefix) === 0) localStorage.removeItem(k); });
+        } catch (e) {}
+      }
     },
   });
 </script>

@@ -19,14 +19,14 @@ const featured = projects.filter((p) => p.featured).slice(0, 3);
     </div>
 
     <div class="hero-content">
-      <p class="kicker">hi, I'm</p>
+      <p class="kicker" data-i18n>hi, I'm</p>
       <h1>Lamp<span class="cursor-blink">_</span></h1>
-      <p class="tagline">
+      <p class="tagline" data-i18n>
         I code projects sometimes (and mostly random code) for fun.
       </p>
       <div class="hero-actions">
-        <a class="cta primary" href="/projects">Projects I maintain &rarr;</a>
-        <a class="cta ghost" href="/about">About me</a>
+        <a class="cta primary" href="/projects" data-i18n>Projects I maintain &rarr;</a>
+        <a class="cta ghost" href="/about" data-i18n>About me</a>
       </div>
       <div class="hero-socials">
         <SocialLinks size={20} />
@@ -40,7 +40,7 @@ const featured = projects.filter((p) => p.featured).slice(0, 3);
       {featured.map((p) => <ProjectCard project={p} />)}
     </div>
     <p class="more">
-      <a href="/projects">See everything (aka. all of my projects) &rarr;</a>
+      <a href="/projects" data-i18n>See everything (aka. all of my projects) &rarr;</a>
     </p>
   </div>
 </BaseLayout>

@@ -1,0 +1,38 @@
+[    1893ms] [ERROR] Failed to load resource: the server responded with a status of 504 (Outdated Optimize Dep) @ http://localhost:4391/@id/astro/runtime/client/dev-toolbar/entrypoint.js:0
+[    2002ms] [INFO] [LampConsent] 🦆 detected vendors: Google Analytics, Google Tag Manager, Cloudflare Web Analytics @ http://localhost:4391/lampconsent.js:442
+[    2055ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:4391/node_modules/.vite/deps/chunk-JHJO4W2E.js?v=772391b7:20102
+[    3108ms] [ERROR] Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://react.dev/link/invalid-hook-call for tips about how to debug and fix this problem. @ http://localhost:4391/node_modules/.vite/deps/chunk-IIYDBBXO.js?v=0f403d44:391
+[    3111ms] [ERROR] Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://react.dev/link/invalid-hook-call for tips about how to debug and fix this problem. @ http://localhost:4391/node_modules/.vite/deps/chunk-IIYDBBXO.js?v=0f403d44:391
+[    3112ms] TypeError: Cannot read properties of null (reading 'useState')
+    at exports.useState (http://localhost:4391/node_modules/.vite/deps/chunk-IIYDBBXO.js?v=0f403d44:959:35)
+    at ShaderMountImpl (http://localhost:4391/node_modules/.vite/deps/@paper-design_shaders-react.js?v=a3f96832:6799:73)
+    at Object.react_stack_bottom_frame (http://localhost:4391/node_modules/.vite/deps/chunk-JHJO4W2E.js?v=772391b7:18509:20)
+    at renderWithHooks (http://localhost:4391/node_modules/.vite/deps/chunk-JHJO4W2E.js?v=772391b7:5654:24)
+    at updateForwardRef (http://localhost:4391/node_modules/.vite/deps/chunk-JHJO4W2E.js?v=772391b7:7198:21)
+    at beginWork (http://localhost:4391/node_modules/.vite/deps/chunk-JHJO4W2E.js?v=772391b7:8735:20)
+    at runWithFiberInDEV (http://localhost:4391/node_modules/.vite/deps/chunk-JHJO4W2E.js?v=772391b7:997:72)
+    at performUnitOfWork (http://localhost:4391/node_modules/.vite/deps/chunk-JHJO4W2E.js?v=772391b7:12561:98)
+    at workLoopSync (http://localhost:4391/node_modules/.vite/deps/chunk-JHJO4W2E.js?v=772391b7:12424:43)
+    at renderRootSync (http://localhost:4391/node_modules/.vite/deps/chunk-JHJO4W2E.js?v=772391b7:12408:13)
+[    3112ms] [WARNING] %s
+
+%s
+ An error occurred in the <ShaderMount> component. Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries. @ http://localhost:4391/node_modules/.vite/deps/chunk-JHJO4W2E.js?v=772391b7:6965
+[    4888ms] [ERROR] Failed to load resource: the server responded with a status of 504 (Outdated Optimize Dep) @ http://localhost:4391/@id/astro/runtime/client/dev-toolbar/entrypoint.js:0
+[    5082ms] [INFO] [LampConsent] 🦆 detected vendors: Google Analytics, Google Tag Manager, Cloudflare Web Analytics @ http://localhost:4391/lampconsent.js:442
+[    5165ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:4391/node_modules/.vite/deps/chunk-JHJO4W2E.js?v=0f403d44:20102
+[   12746ms] [ERROR] Failed to load resource: the server responded with a status of 504 (Outdated Optimize Dep) @ http://localhost:4391/@id/astro/runtime/client/dev-toolbar/entrypoint.js:0
+[   12768ms] [INFO] [LampConsent] 🦆 detected vendors: Google Analytics, Google Tag Manager, Cloudflare Web Analytics @ http://localhost:4391/lampconsent.js:442
+[   12791ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:4391/node_modules/.vite/deps/chunk-JHJO4W2E.js?v=0f403d44:20102
+[   87271ms] [ERROR] Failed to load resource: the server responded with a status of 504 (Outdated Optimize Dep) @ http://localhost:4391/@id/astro/runtime/client/dev-toolbar/entrypoint.js:0
+[   87342ms] [INFO] [LampConsent] 🦆 detected vendors: Google Analytics, Google Tag Manager, Cloudflare Web Analytics @ http://localhost:4391/lampconsent.js:442
+[   87363ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:4391/node_modules/.vite/deps/chunk-JHJO4W2E.js?v=0f403d44:20102

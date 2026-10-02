@@ -21,11 +21,11 @@ const { group } = Astro.props as { group: ResolvedGroup };
 >
   <div class="gallery-view" transition:name="gallery-view" transition:animate={pageTransform}>
     <a class="back" href="/gallery">
-      <span class="back-arrow" aria-hidden="true">&larr;</span> back to gallery
+      <span class="back-arrow" aria-hidden="true">&larr;</span> <span data-i18n>back to gallery</span>
     </a>
 
     <SectionHeading level="h1" eyebrow="folder">{group.title}</SectionHeading>
-    {group.blurb && <p class="lede">{group.blurb}</p>}
+    {group.blurb && <p class="lede" data-i18n>{group.blurb}</p>}
 
     <ul class="gallery" role="list">
       {group.items.map((item) => (
@@ -37,18 +37,20 @@ const { group } = Astro.props as { group: ResolvedGroup };
             data-title={item.title}
             data-desc={item.description}
             aria-label={`View ${item.title} full-size`}
+            data-i18n-attr="data-title,data-desc"
           >
             <Image
               src={item.image}
               alt={item.title}
+              data-i18n-attr="alt"
               widths={[320, 480, 640]}
               sizes="(max-width: 600px) 45vw, (max-width: 900px) 30vw, 260px"
               loading="lazy"
               class="tile-img"
             />
             <span class="tile-meta">
-              <span class="tile-title">{item.title}</span>
-              {item.description && <span class="tile-desc">{item.description}</span>}
+              <span class="tile-title" data-i18n>{item.title}</span>
+              {item.description && <span class="tile-desc" data-i18n>{item.description}</span>}
             </span>
           </button>
         </li>
@@ -60,7 +62,7 @@ const { group } = Astro.props as { group: ResolvedGroup };
   <div class="lightbox" id="lightbox" hidden aria-hidden="true">
     <div class="lightbox-backdrop" data-close></div>
     <figure class="lightbox-figure">
-      <button type="button" class="lightbox-close" data-close aria-label="Close">&times;</button>
+      <button type="button" class="lightbox-close" data-close aria-label="Close" data-i18n-attr="aria-label">&times;</button>
       <img class="lightbox-img" id="lightbox-img" src="" alt="" />
       <figcaption class="lightbox-caption">
         <span class="lightbox-title" id="lightbox-title"></span>

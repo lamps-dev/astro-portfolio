@@ -28,7 +28,7 @@ const sectionIcons: Record<string, string> = {
           <span class="block-icon">
             <Icon name={sectionIcons[section.id] ?? 'lucide:circle'} width={16} height={16} />
           </span>
-          <h3 class="block-title">{section.title}</h3>
+          <h3 class="block-title" data-i18n>{section.title}</h3>
           <span class="block-count">{section.items.length}</span>
         </header>
         <ul class="items">
@@ -38,10 +38,10 @@ const sectionIcons: Record<string, string> = {
                 {item.link ? (
                   <a href={item.link} target="_blank" rel="noopener noreferrer">{item.name}</a>
                 ) : (
-                  item.name
+                  <span data-i18n>{item.name}</span>
                 )}
               </span>
-              {item.detail && <span class="detail">{item.detail}</span>}
+              {item.detail && <span class="detail" data-i18n>{item.detail}</span>}
             </li>
           ))}
         </ul>

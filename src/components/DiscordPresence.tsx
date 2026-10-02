@@ -9,6 +9,7 @@
  * the component falls back to a quiet "offline" pill.
  */
 import { useEffect, useRef, useState } from 'react';
+import { useT } from '../i18n/react';
 
 const DISCORD_USER_ID = '1056952213056004118';
 const LANYARD_WS = 'wss://api.lanyard.rest/socket';
@@ -87,6 +88,7 @@ export default function DiscordPresence() {
   const [data, setData] = useState<LanyardPayload | null>(null);
   const [connected, setConnected] = useState(false);
   const [, forceTick] = useState(0);
+  const { t } = useT();
   const wsRef = useRef<WebSocket | null>(null);
   const heartbeatRef = useRef<number | null>(null);
 
@@ -159,7 +161,7 @@ export default function DiscordPresence() {
   const listening = activities.find((a) => a.type === 2);
   const spotify = data?.spotify;
 
-  let content: React.ReactNode = <span className="muted">offline</span>;
+  let content: React.ReactNode = <span className="muted">{t('offline')}</span>;
   let albumArt: string | null = null;
 
   if (status !== 'offline') {
@@ -167,9 +169,9 @@ export default function DiscordPresence() {
       albumArt = spotify.album_art_url;
       content = (
         <div className="line">
-          <span className="label">listening</span>
+          <span className="label">{t('listening')}</span>
           <span className="title">{spotify.song}</span>
-          <span className="sub">by {spotify.artist}</span>
+          <span className="sub">{t('by {artist}', { artist: spotify.artist })}</span>
         </div>
       );
     } else if (game) {
@@ -178,32 +180,32 @@ export default function DiscordPresence() {
       if (art) albumArt = art;
       content = (
         <div className="line">
-          <span className="label">{game.type === 0 ? 'playing' : 'doing'}</span>
+          <span className="label">{game.type === 0 ? t('playing') : t('doing')}</span>
           <span className="title">{game.name}</span>
           {(game.details || game.state) && (
             <span className="sub">
               {[game.details, game.state].filter(Boolean).join(' - ')}
             </span>
           )}
-          {start && <span className="time">{elapsed(start)} elapsed</span>}
+          {start && <span className="time">{t('{time} elapsed', { time: elapsed(start) })}</span>}
         </div>
       );
     } else if (listening) {
       content = (
         <div className="line">
-          <span className="label">listening</span>
+          <span className="label">{t('listening')}</span>
           <span className="title">{listening.name}</span>
         </div>
       );
     } else if (custom) {
       content = (
         <div className="line">
-          <span className="label">status</span>
+          <span className="label">{t('status')}</span>
           <span className="title">{custom.state || custom.name}</span>
         </div>
       );
     } else {
-      content = <span className="muted">{status}</span>;
+      content = <span className="muted">{t(status)}</span>;
     }
   }
 
@@ -215,8 +217,8 @@ export default function DiscordPresence() {
       </div>
       <div className="meta">
         <div className="head">
-          <span className="who">discord</span>
-          {connected && <span className="live" aria-label="connected" />}
+          <span className="who">{t('discord')}</span>
+          {connected && <span className="live" aria-label={t('connected')} />}
         </div>
         {content}
       </div>

@@ -21,9 +21,9 @@ const elsewhere = [
 >
   <div class="now-head">
     <SectionHeading level="h1" eyebrow="now">Now</SectionHeading>
-    <span class="stamp">Updated {now.lastUpdated}</span>
+    <span class="stamp"><span data-i18n>Updated</span> <span data-i18n>{now.lastUpdated}</span></span>
   </div>
-  <p class="lede">
+  <p class="lede" data-i18n>
     A snapshot of what I'm doing, building, and of what im watching + doing other stuff this month.
   </p>
 
@@ -38,30 +38,30 @@ const elsewhere = [
     <section class="list-card">
       <header class="list-head">
         <Icon name="lucide:hammer" width={16} height={16} />
-        <h3>Building</h3>
+        <h3 data-i18n>Building</h3>
       </header>
       <ul>
-        {now.building.map((item) => <li>{item}</li>)}
+        {now.building.map((item) => <li data-i18n>{item}</li>)}
       </ul>
     </section>
 
     <section class="list-card">
       <header class="list-head">
         <Icon name="lucide:book-open" width={16} height={16} />
-        <h3>Learning</h3>
+        <h3 data-i18n>Learning</h3>
       </header>
       <ul>
-        {now.learning.map((item) => <li>{item}</li>)}
+        {now.learning.map((item) => <li data-i18n>{item}</li>)}
       </ul>
     </section>
 
     <section class="list-card">
       <header class="list-head">
         <Icon name="lucide:headphones" width={16} height={16} />
-        <h3>Watching or doing other stuff</h3>
+        <h3 data-i18n>Watching or doing other stuff</h3>
       </header>
       <ul>
-        {now.consuming.map((item) => <li>{item}</li>)}
+        {now.consuming.map((item) => <li data-i18n>{item}</li>)}
       </ul>
     </section>
   </div>
@@ -71,8 +71,8 @@ const elsewhere = [
     {elsewhere.map((e) => (
       <a class="elsewhere-card" href={e.href}>
         <Icon name={e.icon} width={16} height={16} />
-        <span class="el-label">{e.label}</span>
-        <span class="el-detail">{e.detail}</span>
+        <span class="el-label" data-i18n>{e.label}</span>
+        <span class="el-detail" data-i18n>{e.detail}</span>
       </a>
     ))}
   </div>

@@ -5,6 +5,7 @@
  * API key never reaches the browser). Polls every 60 seconds.
  */
 import { useEffect, useState } from 'react';
+import { useT } from '../i18n/react';
 
 type WakatimeData = {
   ok: true;
@@ -21,6 +22,7 @@ const POLL_INTERVAL_MS = 30_000;
 export default function CodingActivity() {
   const [data, setData] = useState<WakatimeData | null>(null);
   const [loading, setLoading] = useState(true);
+  const { t } = useT();
 
   useEffect(() => {
     let cancelled = false;
@@ -51,24 +53,24 @@ export default function CodingActivity() {
   return (
     <div className="coding-activity" role="status" aria-live="polite">
       <div className="head">
-        <span className="who">coding</span>
+        <span className="who">{t('coding')}</span>
         {!loading && data?.ok && data.active && <span className="live" />}
       </div>
 
-      {loading && <p className="muted">checking wakatime...</p>}
+      {loading && <p className="muted">{t('checking wakatime...')}</p>}
 
       {!loading && data && data.ok === false && (
-        <p className="muted">wakatime not configured</p>
+        <p className="muted">{t('wakatime not configured')}</p>
       )}
 
       {!loading && data && data.ok && !data.active && (
-        <p className="muted">not coding right now</p>
+        <p className="muted">{t('not coding right now')}</p>
       )}
 
       {!loading && data && data.ok && data.active && (
         <div className="line">
           <span className="title">
-            {data.language ?? 'something'}
+            {data.language ?? t('something')}
             {data.project && (
               <span className="muted-inline"> - {data.project}</span>
             )}
@@ -80,19 +82,19 @@ export default function CodingActivity() {
         <ul className="stats">
           {data.todayText && (
             <li>
-              <span className="k">Today:</span>
+              <span className="k">{t('Today:')}</span>
               <span className="v">{data.todayText}</span>
             </li>
           )}
           {data.topLanguage && (
             <li>
-              <span className="k">Top language:</span>
+              <span className="k">{t('Top language:')}</span>
               <span className="v">{data.topLanguage}</span>
             </li>
           )}
           {data.topProject && (
             <li>
-              <span className="k">Top project:</span>
+              <span className="k">{t('Top project:')}</span>
               <span className="v">{data.topProject}</span>
             </li>
           )}

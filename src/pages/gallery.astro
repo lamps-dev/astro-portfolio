@@ -14,7 +14,7 @@ const hasImages = groups.some((g) => g.items.length > 0);
 >
   <div class="gallery-view" transition:name="gallery-view" transition:animate={pageTransform}>
     <SectionHeading level="h1" eyebrow="gallery">Things I've shot & made</SectionHeading>
-    <p class="lede">
+    <p class="lede" data-i18n>
       Sorted into folders. Hover a folder to peek inside, then click to open it.
     </p>
 
@@ -34,8 +34,8 @@ const hasImages = groups.some((g) => g.items.length > 0);
               <span class="folder__front"></span>
             </span>
             <span class="folder-label">
-              <span class="folder-title">{group.title}</span>
-              <span class="folder-count">{group.items.length} photo{group.items.length === 1 ? '' : 's'}</span>
+              <span class="folder-title" data-i18n>{group.title}</span>
+              <span class="folder-count" data-i18n>{group.items.length} photo{group.items.length === 1 ? '' : 's'}</span>
             </span>
           </a>
         ))}
@@ -43,7 +43,7 @@ const hasImages = groups.some((g) => g.items.length > 0);
     ) : (
       <div class="empty">
         <span class="empty-icon">∅</span>
-        <span>No images yet. Add some to <code>src/data/gallery.ts</code>.</span>
+        <span data-i18n>No images yet. Add some to <code>src/data/gallery.ts</code>.</span>
       </div>
     )}
   </div>

@@ -29,14 +29,14 @@ const statusLabels: Record<Project['status'], string> = {
   <div class="body">
     <header class="head">
       <h3 class="name">{project.name}</h3>
-      <span class="status">{statusLabels[project.status]}</span>
+      <span class="status" data-i18n>{statusLabels[project.status]}</span>
     </header>
 
-    <p class="tagline">{project.tagline}</p>
-    <p class="desc">{project.description}</p>
+    <p class="tagline" data-i18n>{project.tagline}</p>
+    <p class="desc" data-i18n>{project.description}</p>
 
     {project.tech.length > 0 && (
-      <ul class="tech" aria-label="tech used">
+      <ul class="tech" aria-label="tech used" data-i18n-attr="aria-label">
         {project.tech.map((t) => <li>{t}</li>)}
       </ul>
     )}
@@ -44,12 +44,12 @@ const statusLabels: Record<Project['status'], string> = {
     <div class="links">
       {project.github && (
         <a href={project.github} target="_blank" rel="noopener noreferrer" aria-label="github">
-          <Icon name="lucide:github" width={16} height={16} /> code
+          <Icon name="lucide:github" width={16} height={16} /> <span data-i18n>code</span>
         </a>
       )}
       {project.demo && (
-        <a href={project.demo} target="_blank" rel="noopener noreferrer" aria-label="demo">
-          <Icon name="lucide:external-link" width={16} height={16} /> live
+        <a href={project.demo} target="_blank" rel="noopener noreferrer" aria-label="demo" data-i18n-attr="aria-label">
+          <Icon name="lucide:external-link" width={16} height={16} /> <span data-i18n>live</span>
         </a>
       )}
     </div>

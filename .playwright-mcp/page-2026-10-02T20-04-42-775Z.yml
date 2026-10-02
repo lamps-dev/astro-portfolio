@@ -1,0 +1,160 @@
+- generic [active] [ref=e1]:
+  - note [ref=e2]:
+    - paragraph [ref=e3]:
+      - generic [ref=e6]:
+        - text: This portfolio will disappear from lamps-dev.dev in February 2027.
+        - link "Read why" [ref=e7] [cursor=pointer]:
+          - /url: /blog/portfolio-sunset
+  - banner [ref=e8]:
+    - navigation "primary" [ref=e9]:
+      - link "~/Lamp" [ref=e10] [cursor=pointer]:
+        - /url: /
+      - list [ref=e11]:
+        - listitem [ref=e12]:
+          - link "home" [ref=e13] [cursor=pointer]:
+            - /url: /
+        - listitem [ref=e14]:
+          - link "projects" [ref=e15] [cursor=pointer]:
+            - /url: /projects
+        - listitem [ref=e16]:
+          - link "gallery" [ref=e17] [cursor=pointer]:
+            - /url: /gallery
+        - listitem [ref=e18]:
+          - link "youtube" [ref=e19] [cursor=pointer]:
+            - /url: /youtube
+        - listitem [ref=e20]:
+          - link "about" [ref=e21] [cursor=pointer]:
+            - /url: /about
+        - listitem [ref=e22]:
+          - link "uses" [ref=e23] [cursor=pointer]:
+            - /url: /uses
+        - listitem [ref=e24]:
+          - link "now" [ref=e25] [cursor=pointer]:
+            - /url: /now
+        - listitem [ref=e26]:
+          - link "blog" [ref=e27] [cursor=pointer]:
+            - /url: /blog
+        - listitem [ref=e28]:
+          - link "changelog" [ref=e29] [cursor=pointer]:
+            - /url: /changelog
+        - listitem [ref=e30]:
+          - link "privacy policy" [ref=e31] [cursor=pointer]:
+            - /url: /privacy
+        - listitem [ref=e32]:
+          - link "tos" [ref=e33] [cursor=pointer]:
+            - /url: /tos
+      - generic [ref=e34]:
+        - button "Change language" [ref=e36] [cursor=pointer]:
+          - generic [ref=e39]: EN
+        - button "Toggle theme" [ref=e42] [cursor=pointer]
+  - main [ref=e54]:
+    - generic [ref=e59]:
+      - paragraph [ref=e60]: hi, I'm
+      - heading "Lamp _" [level=1] [ref=e61]:
+        - text: Lamp
+        - generic [ref=e62]: _
+      - paragraph [ref=e63]: I code projects sometimes (and mostly random code) for fun.
+      - generic [ref=e64]:
+        - link "Projects I maintain →" [ref=e65] [cursor=pointer]:
+          - /url: /projects
+        - link "About me" [ref=e66] [cursor=pointer]:
+          - /url: /about
+      - list "social links" [ref=e68]:
+        - listitem [ref=e69]:
+          - link "github" [ref=e70] [cursor=pointer]:
+            - /url: https://github.com/lamps-dev
+        - listitem [ref=e73]:
+          - link "youtube" [ref=e74] [cursor=pointer]:
+            - /url: https://youtube.com/@ilovelampadaire
+        - listitem [ref=e77]:
+          - link "mastodon" [ref=e78] [cursor=pointer]:
+            - /url: https://mastodon.social/@lampyt
+            - img "Mastodon" [ref=e80]
+        - listitem [ref=e82]:
+          - link "discord" [ref=e83] [cursor=pointer]:
+            - /url: https://discord.gg/sZxmbu4ZrG
+            - img "Discord" [ref=e85]
+        - listitem [ref=e87]:
+          - link "bluesky" [ref=e88] [cursor=pointer]:
+            - /url: https://bsky.app/profile/lamps-dev.bsky.social
+            - img "Bluesky" [ref=e90]
+    - generic [ref=e92]:
+      - generic [ref=e93]:
+        - generic [ref=e94]: featured
+        - heading "Stuff or projects I'm working on" [level=2] [ref=e95]
+      - generic [ref=e96]:
+        - article [ref=e97]:
+          - generic [ref=e98]:
+            - generic [ref=e99]:
+              - heading "Lmp Bot" [level=3] [ref=e100]
+              - generic [ref=e101]: active
+            - paragraph [ref=e102]: discord bot, my newest project.
+            - paragraph [ref=e103]: Pycord-based discord bot (used to be in Forgescript). Has a honeypot spam channel setup that auto-bans anyone who posts in it. surprisingly effective.
+            - list "tech used" [ref=e104]:
+              - listitem [ref=e105]: Python
+              - listitem [ref=e106]: Pycord
+        - article [ref=e108]:
+          - generic [ref=e109]:
+            - generic [ref=e110]:
+              - heading "sillycat.cloud" [level=3] [ref=e111]
+              - generic [ref=e112]: WIP
+            - paragraph [ref=e113]: silly cat themed cloud project
+            - paragraph [ref=e114]: In-progress and in WIP. Self-hosted silly hosting services, wired with pipes ig. Exactly as serious as the name suggests.
+            - list "tech used" [ref=e115]:
+              - listitem [ref=e116]: "website: cloud"
+              - listitem [ref=e117]: "services: will be self-hosted"
+            - link "demo" [ref=e119] [cursor=pointer]:
+              - /url: https://sillycat.cloud
+              - generic [ref=e122]: live
+      - paragraph [ref=e123]:
+        - link "See everything (aka. all of my projects) →" [ref=e124] [cursor=pointer]:
+          - /url: /projects
+  - contentinfo [ref=e125]:
+    - generic [ref=e126]:
+      - paragraph [ref=e127]: © 2026 lamp. Rewritten and built with Astro.
+      - list "social links" [ref=e128]:
+        - listitem [ref=e129]:
+          - link "github" [ref=e130] [cursor=pointer]:
+            - /url: https://github.com/lamps-dev
+        - listitem [ref=e133]:
+          - link "youtube" [ref=e134] [cursor=pointer]:
+            - /url: https://youtube.com/@ilovelampadaire
+        - listitem [ref=e137]:
+          - link "mastodon" [ref=e138] [cursor=pointer]:
+            - /url: https://mastodon.social/@lampyt
+            - img "Mastodon" [ref=e140]
+        - listitem [ref=e142]:
+          - link "discord" [ref=e143] [cursor=pointer]:
+            - /url: https://discord.gg/sZxmbu4ZrG
+            - img "Discord" [ref=e145]
+        - listitem [ref=e147]:
+          - link "bluesky" [ref=e148] [cursor=pointer]:
+            - /url: https://bsky.app/profile/lamps-dev.bsky.social
+            - img "Bluesky" [ref=e150]
+  - dialog "We value your privacy 3 partners":
+    - heading "We value your privacy 3 partners" [level=3]:
+      - generic: We value your privacy
+      - generic "3 partners detected": 3 partners
+    - paragraph:
+      - text: We use cookies for analytics, and to improve your experience. You can accept everything or pick what you want.
+      - link "privacy policy":
+        - /url: /privacy
+      - text: .
+    - generic:
+      - button "Accept all"
+      - button "Reject all"
+      - button "Manage"
+  - generic:
+    - dialog "Privacy Settings":
+      - generic:
+        - heading "Privacy Settings" [level=2]
+        - paragraph: Pick which cookies you want to allow. You can change this anytime.
+      - tablist:
+        - tab "categories"
+        - tab "partners 3":
+          - text: partners
+          - generic: "3"
+      - generic:
+        - button "Cancel"
+        - button "Save preferences"
+  - button "Privacy" [ref=e152] [cursor=pointer]

@@ -15,7 +15,7 @@ const channelUrl = `https://www.youtube.com/@${YOUTUBE_HANDLE}`;
   <!-- Wider than the default .page so the two-column cards have room. -->
   <div class="page page-wide">
     <SectionHeading level="h1" eyebrow="youtube">Streams, videos & shorts</SectionHeading>
-    <p class="lede">
+    <p class="lede" data-i18n>
       Everything I've uploaded, newest first. Click a thumbnail (or "read more")
       to open it full-size with the description and comments. Refreshes itself
       every minute, so anything live or premiering shows up here on its own.
@@ -24,7 +24,7 @@ const channelUrl = `https://www.youtube.com/@${YOUTUBE_HANDLE}`;
     <YouTubeFeed client:load />
 
     <p class="footnote">
-      Pulled live from
+      <span data-i18n>Pulled live from</span>
       <a href={channelUrl} target="_blank" rel="noopener noreferrer">
         youtube.com/@{YOUTUBE_HANDLE}
       </a>.

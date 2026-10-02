@@ -12,7 +12,7 @@ const { title, description, date, updated, tags } = Astro.props;
   <article class="post">
     <header class="post-head">
       <p class="kicker">
-        <a href="/blog">&larr; all posts</a>
+        <a href="/blog">&larr; <span data-i18n>all posts</span></a>
       </p>
       <h1>{title}</h1>
       <p class="meta">
@@ -20,7 +20,7 @@ const { title, description, date, updated, tags } = Astro.props;
         {updated && (
           <>
             {' '}<span class="dot">&middot;</span>{' '}
-            <span>updated <FormattedDate date={updated} /></span>
+            <span><span data-i18n>updated</span> <FormattedDate date={updated} /></span>
           </>
         )}
       </p>
@@ -36,7 +36,7 @@ const { title, description, date, updated, tags } = Astro.props;
     </div>
 
     <section class="comments" aria-label="comments">
-      <h2 class="comments-heading">comments</h2>
+      <h2 class="comments-heading" data-i18n>comments</h2>
       <div class="giscus-container" id="giscus-container"></div>
     </section>
   </article>
@@ -45,7 +45,7 @@ const { title, description, date, updated, tags } = Astro.props;
   <div class="lightbox" id="blog-lightbox" hidden aria-hidden="true">
     <div class="lightbox-backdrop" data-close></div>
     <figure class="lightbox-figure">
-      <button type="button" class="lightbox-close" data-close aria-label="Close">&times;</button>
+      <button type="button" class="lightbox-close" data-close aria-label="Close" data-i18n-attr="aria-label">&times;</button>
       <img class="lightbox-img" id="blog-lightbox-img" src="" alt="" />
       <figcaption class="lightbox-caption" id="blog-lightbox-caption"></figcaption>
     </figure>
@@ -275,7 +275,6 @@ const { title, description, date, updated, tags } = Astro.props;
       'data-emit-metadata': '0',
       'data-input-position': 'bottom',
       'data-theme': 'preferred_color_scheme',
-      'data-lang': 'en',
       crossorigin: 'anonymous',
     };
 
@@ -287,11 +286,13 @@ const { title, description, date, updated, tags } = Astro.props;
       container.replaceChildren();
       const s = document.createElement('script');
       for (const [k, v] of Object.entries(GISCUS_ATTRS)) s.setAttribute(k, v);
+      s.setAttribute('data-lang', window.__lang || 'en');
       s.async = true;
       container.appendChild(s);
     }
 
     document.addEventListener('astro:page-load', mount);
+    window.addEventListener('lang-change', mount);
   })();
 </script>
 

@@ -16,6 +16,7 @@
  * comments.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useT, type Translate } from '../i18n/react';
 import type {
   VideoCategory,
   YouTubeComment,
@@ -53,20 +54,20 @@ function formatCount(n: number | null): string | null {
   return `${(v < 10 ? v.toFixed(1) : Math.round(v).toString()).replace(/\.0$/, '')}M`;
 }
 
-function formatDate(iso: string): string {
+function formatDate(iso: string, lang: string): string {
   if (!iso) return '';
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return '';
-  return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+  return d.toLocaleDateString(lang, { year: 'numeric', month: 'short', day: 'numeric' });
 }
 
 /** Relative for the first month, then a plain date -- "2 days ago" beats "Jan 3" when fresh. */
-function timeAgo(iso: string): string {
+function timeAgo(iso: string, t: Translate, lang: string): string {
   if (!iso) return '';
   const then = Date.parse(iso);
   if (Number.isNaN(then)) return '';
   const seconds = Math.floor((Date.now() - then) / 1000);
-  if (seconds < 60) return 'just now';
+  if (seconds < 60) return t('just now');
   const units: [number, string][] = [
     [60, 'minute'],
     [3600, 'hour'],
@@ -78,41 +79,42 @@ function timeAgo(iso: string): string {
     if (seconds >= size) {
       const n = Math.floor(seconds / size);
       if (name === 'week' && n > 4) break;
-      return `${n} ${name}${n === 1 ? '' : 's'} ago`;
+      return t(n === 1 ? `{n} ${name} ago` : `{n} ${name}s ago`, { n });
     }
   }
-  return formatDate(iso);
+  return formatDate(iso, lang);
 }
 
 /** "starts in 2h 15m" for a scheduled broadcast, or the date if it is further out. */
-function startsIn(iso: string | null): string {
+function startsIn(iso: string | null, t: Translate, lang: string): string {
   if (!iso) return '';
   const at = Date.parse(iso);
   if (Number.isNaN(at)) return '';
   const diff = at - Date.now();
-  if (diff <= 0) return 'starting now';
+  if (diff <= 0) return t('starting now');
   const minutes = Math.floor(diff / 60_000);
-  if (minutes < 60) return `starts in ${Math.max(1, minutes)}m`;
+  if (minutes < 60) return t('starts in {m}m', { m: Math.max(1, minutes) });
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `starts in ${hours}h ${minutes % 60}m`;
-  return `starts ${new Date(at).toLocaleString(undefined, {
+  if (hours < 24) return t('starts in {h}h {m}m', { h: hours, m: minutes % 60 });
+  const date = new Date(at).toLocaleString(lang, {
     month: 'short',
     day: 'numeric',
     hour: 'numeric',
     minute: '2-digit',
-  })}`;
+  });
+  return t('starts {date}', { date });
 }
 
-function liveLabel(video: YouTubeVideo): string | null {
+function liveLabel(video: YouTubeVideo, t: Translate): string | null {
   switch (video.liveStatus) {
     case 'live':
-      return 'live';
+      return t('live');
     case 'premiere':
-      return 'premiere';
+      return t('premiere');
     case 'upcoming-stream':
-      return 'scheduled';
+      return t('scheduled');
     case 'upcoming-premiere':
-      return 'premiere soon';
+      return t('premiere soon');
     default:
       return null;
   }
@@ -126,6 +128,10 @@ export default function YouTubeFeed() {
   const [openId, setOpenId] = useState<string | null>(null);
   const [comments, setComments] = useState<Record<string, CommentState>>({});
   const closeRef = useRef<HTMLButtonElement | null>(null);
+  const { t, lang } = useT();
+  const categoryLabel = (c: YouTubeVideo['category']) => t(c.replace(/s$/, ''));
+  const countLabel = (n: number, word: string) =>
+    t(n === 1 ? `{n} ${word}` : `{n} ${word}s`, { n: formatCount(n) ?? String(n) });
 
   /* ---- Feed polling ---- */
   useEffect(() => {
@@ -262,14 +268,16 @@ export default function YouTubeFeed() {
           <span className="banner-body">
             <span className="banner-tag">
               <span className="dot" aria-hidden="true" />
-              {v.liveStatus === 'premiere' ? 'premiering now' : 'live now'}
+              {v.liveStatus === 'premiere' ? t('premiering now') : t('live now')}
             </span>
             <span className="banner-title">{v.title}</span>
             <span className="banner-meta">
               {v.concurrentViewers != null
-                ? `${formatCount(v.concurrentViewers)} watching`
-                : 'broadcasting'}
-              {v.actualStartTime ? ` · started ${timeAgo(v.actualStartTime)}` : ''}
+                ? t('{n} watching', { n: formatCount(v.concurrentViewers) ?? '' })
+                : t('broadcasting')}
+              {v.actualStartTime
+                ? ` · ${t('started {time}', { time: timeAgo(v.actualStartTime, t, lang) })}`
+                : ''}
             </span>
           </span>
         </button>
@@ -281,19 +289,19 @@ export default function YouTubeFeed() {
             <span key={v.id}>
               {i > 0 && <span className="sep"> · </span>}
               <span className="upcoming-tag">
-                {v.liveStatus === 'upcoming-premiere' ? 'premiere' : 'stream'}
+                {v.liveStatus === 'upcoming-premiere' ? t('premiere') : t('stream')}
               </span>{' '}
               <button type="button" className="linkish" onClick={() => setOpenId(v.id)}>
                 {v.title}
               </button>{' '}
-              <span className="muted">{startsIn(v.scheduledStartTime)}</span>
+              <span className="muted">{startsIn(v.scheduledStartTime, t, lang)}</span>
             </span>
           ))}
         </p>
       )}
 
       {/* ---- Filters ---- */}
-      <div className="filters" role="tablist" aria-label="Filter uploads">
+      <div className="filters" role="tablist" aria-label={t('Filter uploads')}>
         {FILTERS.map(({ key, label }) => (
           <button
             key={key}
@@ -303,39 +311,39 @@ export default function YouTubeFeed() {
             className={`filter${filter === key ? ' active' : ''}`}
             onClick={() => selectFilter(key)}
           >
-            {label}
+            {t(label)}
             <span className="filter-count">{counts[key]}</span>
           </button>
         ))}
       </div>
 
       {/* ---- States ---- */}
-      {loading && <p className="muted">loading uploads...</p>}
+      {loading && <p className="muted">{t('loading uploads...')}</p>}
 
       {!loading && data && data.ok === false && (
-        <p className="muted">couldn't load youtube right now ({data.error}).</p>
+        <p className="muted">{t("couldn't load youtube right now ({error}).", { error: data.error })}</p>
       )}
 
       {!loading && data?.ok && videos.length === 0 && (
-        <p className="muted">no uploads to show yet.</p>
+        <p className="muted">{t('no uploads to show yet.')}</p>
       )}
 
       {!loading && data?.ok && videos.length > 0 && filtered.length === 0 && (
-        <p className="muted">nothing in this category yet.</p>
+        <p className="muted">{t('nothing in this category yet.')}</p>
       )}
 
       {/* ---- Grid ---- */}
       {shown.length > 0 && (
         <ul className="grid" role="list">
           {shown.map((v) => {
-            const badge = liveLabel(v);
+            const badge = liveLabel(v, t);
             return (
               <li key={v.id} className="card">
                 <button
                   type="button"
                   className="thumb-btn"
                   onClick={() => setOpenId(v.id)}
-                  aria-label={`View ${v.title} full-size`}
+                  aria-label={t('View {title} full-size', { title: v.title })}
                 >
                   <img className="thumb" src={v.thumbnail} alt={v.title} loading="lazy" />
                   {badge && (
@@ -356,14 +364,14 @@ export default function YouTubeFeed() {
                 <div className="card-body">
                   <h3 className="card-title">{v.title}</h3>
                   <p className="card-meta">
-                    <span className="chip">{v.category.replace(/s$/, '')}</span>
-                    {v.views != null && <span>{formatCount(v.views)} views</span>}
-                    {v.publishedAt && <span>{timeAgo(v.publishedAt)}</span>}
+                    <span className="chip">{categoryLabel(v.category)}</span>
+                    {v.views != null && <span>{countLabel(v.views, 'view')}</span>}
+                    {v.publishedAt && <span>{timeAgo(v.publishedAt, t, lang)}</span>}
                   </p>
                   {v.description && <p className="card-desc">{v.description}</p>}
                   <div className="card-actions">
                     <button type="button" className="read-more" onClick={() => setOpenId(v.id)}>
-                      read more
+                      {t('read more')}
                     </button>
                     <a
                       className="watch"
@@ -372,7 +380,7 @@ export default function YouTubeFeed() {
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      watch on youtube &#8599;
+                      {t('watch on youtube ↗')}
                     </a>
                   </div>
                 </div>
@@ -384,7 +392,7 @@ export default function YouTubeFeed() {
 
       {filtered.length > visible && (
         <button type="button" className="more" onClick={() => setVisible((n) => n + PAGE_SIZE)}>
-          load more ({filtered.length - visible} left)
+          {t('load more ({n} left)', { n: filtered.length - visible })}
         </button>
       )}
 
@@ -403,7 +411,7 @@ export default function YouTubeFeed() {
               type="button"
               className="lb-close"
               onClick={() => setOpenId(null)}
-              aria-label="Close"
+              aria-label={t('Close')}
             >
               &times;
             </button>
@@ -416,46 +424,48 @@ export default function YouTubeFeed() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                watch on youtube &#8599;
+                {t('watch on youtube ↗')}
               </a>
             </div>
 
             <aside className="lb-side">
               <h2 className="lb-title">{openVideo.title}</h2>
               <p className="lb-meta">
-                <span className="chip">{openVideo.category.replace(/s$/, '')}</span>
-                {liveLabel(openVideo) && (
-                  <span className="chip chip--live">{liveLabel(openVideo)}</span>
+                <span className="chip">{categoryLabel(openVideo.category)}</span>
+                {liveLabel(openVideo, t) && (
+                  <span className="chip chip--live">{liveLabel(openVideo, t)}</span>
                 )}
-                {openVideo.views != null && <span>{formatCount(openVideo.views)} views</span>}
-                {openVideo.likes != null && <span>{formatCount(openVideo.likes)} likes</span>}
+                {openVideo.views != null && <span>{countLabel(openVideo.views, 'view')}</span>}
+                {openVideo.likes != null && <span>{countLabel(openVideo.likes, 'like')}</span>}
                 {openVideo.durationText && <span>{openVideo.durationText}</span>}
-                {openVideo.publishedAt && <span>{formatDate(openVideo.publishedAt)}</span>}
+                {openVideo.publishedAt && <span>{formatDate(openVideo.publishedAt, lang)}</span>}
               </p>
 
               <div className="lb-section">
-                <h3 className="lb-h3">description</h3>
+                <h3 className="lb-h3">{t('description')}</h3>
                 {openVideo.description ? (
                   <p className="lb-desc">{openVideo.description}</p>
                 ) : (
-                  <p className="muted">no description.</p>
+                  <p className="muted">{t('no description.')}</p>
                 )}
               </div>
 
               {wantsComments && (
                 <div className="lb-section">
-                  <h3 className="lb-h3">comments</h3>
+                  <h3 className="lb-h3">{t('comments')}</h3>
                   {(!commentState || commentState.status === 'loading') && (
-                    <p className="muted">loading comments...</p>
+                    <p className="muted">{t('loading comments...')}</p>
                   )}
                   {commentState?.status === 'disabled' && (
-                    <p className="muted">comments are turned off for this video.</p>
+                    <p className="muted">{t('comments are turned off for this video.')}</p>
                   )}
                   {commentState?.status === 'error' && (
-                    <p className="muted">couldn't load comments ({commentState.error}).</p>
+                    <p className="muted">
+                      {t("couldn't load comments ({error}).", { error: commentState.error })}
+                    </p>
                   )}
                   {commentState?.status === 'ready' && commentState.comments.length === 0 && (
-                    <p className="muted">no comments yet.</p>
+                    <p className="muted">{t('no comments yet.')}</p>
                   )}
                   {commentState?.status === 'ready' && commentState.comments.length > 0 && (
                     <ul className="comments" role="list">
@@ -477,14 +487,14 @@ export default function YouTubeFeed() {
                               ) : (
                                 <span>{c.author}</span>
                               )}
-                              <span className="muted">{timeAgo(c.publishedAt)}</span>
+                              <span className="muted">{timeAgo(c.publishedAt, t, lang)}</span>
                             </p>
                             <p className="comment-text">{c.text}</p>
                             <p className="comment-foot">
-                              {c.likes > 0 && <span>{formatCount(c.likes)} likes</span>}
+                              {c.likes > 0 && <span>{countLabel(c.likes, 'like')}</span>}
                               {c.replyCount > 0 && (
                                 <span>
-                                  {c.replyCount} {c.replyCount === 1 ? 'reply' : 'replies'}
+                                  {t(c.replyCount === 1 ? '{n} reply' : '{n} replies', { n: c.replyCount })}
                                 </span>
                               )}
                             </p>

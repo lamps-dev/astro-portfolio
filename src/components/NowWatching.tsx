@@ -7,6 +7,7 @@
  * updates so the bar moves smoothly without thrashing the API.
  */
 import { useEffect, useState } from 'react';
+import { useT } from '../i18n/react';
 
 type YtNowData =
   | {
@@ -77,6 +78,7 @@ export default function NowWatching() {
   const playing = !loading && data?.ok && data.state === 'playing';
   const paused = !loading && data?.ok && data.state === 'paused';
   const sourceLabel = data?.ok && data.source === 'music' ? 'youtube music' : 'youtube';
+  const { t } = useT();
 
   let liveTime: number | null = null;
   let duration: number | null = null;
@@ -98,10 +100,10 @@ export default function NowWatching() {
   return (
     <div className="now-watching" role="status" aria-live="polite">
       <div className="head">
-        <span className="who">watching</span>
+        <span className="who">{t('watching')}</span>
         {playing && <span className="live" />}
         {paused && (
-          <span className="pause" aria-label="paused" title="paused">
+          <span className="pause" aria-label={t('paused')} title={t('paused')}>
             <svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true">
               <rect x="2" y="2" width="3" height="8" rx="0.6" />
               <rect x="7" y="2" width="3" height="8" rx="0.6" />
@@ -110,27 +112,29 @@ export default function NowWatching() {
         )}
       </div>
 
-      {loading && <p className="muted">checking...</p>}
+      {loading && <p className="muted">{t('checking...')}</p>}
 
       {!loading && data && data.ok === false && (
-        <p className="muted">scrobbler offline</p>
+        <p className="muted">{t('scrobbler offline')}</p>
       )}
 
       {!loading && data?.ok && data.state === 'stopped' && (
-        <p className="muted">not watching anything right now</p>
+        <p className="muted">{t('not watching anything right now')}</p>
       )}
 
       {!loading && data?.ok && (playing || paused) && (
         <div className="line">
           <span className="label">
-            {paused ? 'paused on' : 'on'} {sourceLabel}
+            {paused
+              ? t('paused on {source}', { source: sourceLabel })
+              : t('on {source}', { source: sourceLabel })}
           </span>
           {data.url ? (
             <a className="title" href={data.url} target="_blank" rel="noopener noreferrer">
-              {data.title ?? 'unknown'}
+              {data.title ?? t('unknown')}
             </a>
           ) : (
-            <span className="title">{data.title ?? 'unknown'}</span>
+            <span className="title">{data.title ?? t('unknown')}</span>
           )}
           {data.channel && <span className="sub">{data.channel}</span>}
 

@@ -11,8 +11,8 @@ const Tag = level;
 ---
 
 <div class={`section-heading ${className}`} id={id}>
-  {eyebrow && <span class="eyebrow">{eyebrow}</span>}
-  <Tag class="title"><slot /></Tag>
+  {eyebrow && <span class="eyebrow" data-i18n>{eyebrow}</span>}
+  <Tag class="title" data-i18n><slot /></Tag>
 </div>
 
 <style>

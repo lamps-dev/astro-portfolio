@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Pause, Play, SkipForward, Volume1, Volume2, VolumeX } from 'lucide-react';
+import { useT } from '../i18n/react';
 
 type Playlist = { songs: string[] };
 
@@ -38,6 +39,7 @@ export default function MusicPlayer() {
   const zoomRef = useRef<HTMLVideoElement | null>(null);
   const volumeRef = useRef<HTMLDivElement | null>(null);
   const [songs, setSongs] = useState<string[]>([]);
+  const { t } = useT();
   const [current, setCurrent] = useState<string | null>(null);
   const [playing, setPlaying] = useState(false);
   const [volume, setVolume] = useState(DEFAULT_VOLUME);
@@ -213,7 +215,10 @@ export default function MusicPlayer() {
   };
 
   return (
-    <div className={`music-player ${blocked ? 'blocked' : ''}`}>
+    <div
+      className={`music-player ${blocked ? 'blocked' : ''}`}
+      style={{ '--mp-click-play': JSON.stringify(t('click play')) } as React.CSSProperties}
+    >
       {/* Cover art lives outside the flow when hidden (no embedded art) so the
           pill keeps its shape. The <img> is always rendered so onLoad/onError
           can decide visibility; the wrapper is collapsed until it loads. For an
@@ -224,7 +229,7 @@ export default function MusicPlayer() {
         type="button"
         className={`mp-cover ${showCover ? 'is-visible' : ''}`}
         onClick={() => showCover && setZoomed(true)}
-        aria-label={isVideo ? 'expand video' : 'view cover art'}
+        aria-label={isVideo ? t('expand video') : t('view cover art')}
         tabIndex={showCover ? 0 : -1}
       >
         {isVideo ? (
@@ -232,7 +237,7 @@ export default function MusicPlayer() {
         ) : (
           <img
             src={coverUrl}
-            alt={coverOk ? `${trackName} cover art` : ''}
+            alt={coverOk ? t('{track} cover art', { track: trackName }) : ''}
             onLoad={() => setCoverOk(true)}
             onError={() => setCoverOk(false)}
             draggable={false}
@@ -244,11 +249,11 @@ export default function MusicPlayer() {
         className="mp-btn"
         type="button"
         onClick={toggle}
-        aria-label={playing ? 'pause music' : 'play music'}
+        aria-label={playing ? t('pause music') : t('play music')}
       >
         {playing ? <Pause size={14} /> : <Play size={14} />}
       </button>
-      <button className="mp-btn" type="button" onClick={next} aria-label="skip song">
+      <button className="mp-btn" type="button" onClick={next} aria-label={t('skip song')}>
         <SkipForward size={14} />
       </button>
       <div className="mp-volume" ref={volumeRef}>
@@ -256,13 +261,13 @@ export default function MusicPlayer() {
           className="mp-btn"
           type="button"
           onClick={() => setShowVolume((v) => !v)}
-          aria-label="volume"
+          aria-label={t('volume')}
           aria-expanded={showVolume}
         >
           <VolumeIcon size={14} />
         </button>
         {showVolume && (
-          <div className="mp-volume-popup" role="group" aria-label="volume control">
+          <div className="mp-volume-popup" role="group" aria-label={t('volume control')}>
             <input
               className="mp-range"
               type="range"
@@ -270,7 +275,7 @@ export default function MusicPlayer() {
               max={100}
               value={pct}
               onChange={(e) => setVolume(Number(e.target.value) / 100)}
-              aria-label="volume"
+              aria-label={t('volume')}
               style={{
                 background: `linear-gradient(to right, var(--color-accent) ${pct}%, var(--color-border) ${pct}%)`,
               }}
@@ -292,7 +297,7 @@ export default function MusicPlayer() {
             step="any"
             value={Math.min(currentTime, duration || 0)}
             onChange={(e) => seek(Number(e.target.value))}
-            aria-label="seek"
+            aria-label={t('seek')}
             style={{
               background: `linear-gradient(to right, var(--color-accent) ${progressPct}%, var(--color-border) ${progressPct}%)`,
             }}
@@ -312,7 +317,7 @@ export default function MusicPlayer() {
             className="mp-cover-overlay"
             role="dialog"
             aria-modal="true"
-            aria-label={isVideo ? `${trackName} video` : `${trackName} cover art`}
+            aria-label={isVideo ? t('{track} video', { track: trackName }) : t('{track} cover art', { track: trackName })}
             onClick={() => setZoomed(false)}
           >
             <figure className="mp-cover-figure" onClick={(e) => e.stopPropagation()}>
@@ -320,14 +325,14 @@ export default function MusicPlayer() {
                 type="button"
                 className="mp-cover-close"
                 onClick={() => setZoomed(false)}
-                aria-label="close"
+                aria-label={t('close')}
               >
                 &times;
               </button>
               {isVideo ? (
                 <video ref={zoomRef} src={src} playsInline muted preload="auto" />
               ) : (
-                <img src={coverUrl} alt={`${trackName} cover art`} draggable={false} />
+                <img src={coverUrl} alt={t('{track} cover art', { track: trackName })} draggable={false} />
               )}
               <figcaption>{trackName}</figcaption>
             </figure>
@@ -354,7 +359,7 @@ export default function MusicPlayer() {
           max-width: 280px;
         }
         .music-player.blocked::after {
-          content: 'click play';
+          content: var(--mp-click-play, 'click play');
           color: var(--color-accent);
           margin-left: 0.25rem;
         }
