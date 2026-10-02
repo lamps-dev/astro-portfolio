@@ -32,3 +32,6 @@ pnpm-debug.log*
 .claude/*
 
 *.patch
+
+# Playwright MCP logs/snapshots
+.playwright-mcp/
