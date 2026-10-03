@@ -18,13 +18,13 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse, serialize } from 'parse5';
 import { cacheKey, sourceHtml, toTemplate } from '../src/i18n/shared.mjs';
+import { translateBatch } from '../src/i18n/providers.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist', 'client');
 const OUT_DIR = path.join(ROOT, 'src', 'i18n', 'translations');
-const API = 'https://translate.uniqueweb.site/translate';
 const SOURCE_LANG = 'en';
-const CHUNK_SIZE = 8;
+const CHUNK_SIZE = 25;
 const MAX_PARALLEL = 3;
 
 // Strings the islands assemble at runtime, so a source scan can't see them.
@@ -129,18 +129,16 @@ function collectFromSource(file, out) {
 
 /* ---- Translate ---- */
 
+// API keys (DEEPL_API_KEY, GOOGLE_TRANSLATE_API_KEY) are read from .env.
+try {
+  process.loadEnvFile(path.join(ROOT, '.env'));
+} catch {
+  // No .env: only the keyless fallback will be available.
+}
+
 async function translateChunk(lang, format, texts) {
-  const res = await fetch(API, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ q: texts, source: SOURCE_LANG, target: lang, format }),
-    signal: AbortSignal.timeout(180_000),
-  });
-  const json = await res.json().catch(() => null);
-  if (!res.ok || !json || json.error) throw new Error(json?.error ?? `HTTP ${res.status}`);
-  const list = Array.isArray(json.translatedText) ? json.translatedText : [json.translatedText];
-  if (list.length !== texts.length) throw new Error('unexpected response length');
-  return list;
+  const { translations } = await translateBatch(texts, { target: lang, format, env: process.env });
+  return translations;
 }
 
 function save(file, dict, used) {

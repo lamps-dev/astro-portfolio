@@ -37,7 +37,7 @@ const { group } = Astro.props as { group: ResolvedGroup };
             data-title={item.title}
             data-desc={item.description}
             aria-label={`View ${item.title} full-size`}
-            data-i18n-attr="data-title,data-desc"
+            data-i18n-attr="data-title,data-desc,aria-label"
           >
             <Image
               src={item.image}

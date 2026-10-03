@@ -38,7 +38,7 @@ const links: LinkEntry[] = [
 ];
 ---
 
-<ul class={`social-links ${className}`} aria-label="social links">
+<ul class={`social-links ${className}`} aria-label="social links" data-i18n-attr="aria-label">
   {links.map((link) => {
     const Component = link.component;
     return (

@@ -31,11 +31,6 @@ export const galleryGroups: GalleryGroup[] = [
         title: 'Salma Coming out the door',
         description: 'Kind of old Salma pic but still showing it here :3',
       },
-      {
-        file: 'city-lights.jpg',
-        title: 'City Lights',
-        description: 'Downtown after dark, all neon and rain-slick streets.',
-      },
     ],
   },
   {

@@ -21,7 +21,7 @@ const hasImages = groups.some((g) => g.items.length > 0);
     {hasImages ? (
       <div class="folders">
         {groups.map((group) => (
-          <a class="folder-card" href={`/gallery/${group.slug}`} aria-label={`Open ${group.title}`}>
+          <a class="folder-card" href={`/gallery/${group.slug}`} aria-label={`Open ${group.title}`} data-i18n-attr="aria-label">
             <span class="folder" aria-hidden="true">
               <span class="folder__tab"></span>
               <span class="folder__back"></span>

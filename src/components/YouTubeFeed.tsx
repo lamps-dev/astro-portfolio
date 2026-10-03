@@ -417,7 +417,17 @@ export default function YouTubeFeed() {
             </button>
 
             <div className="lb-media">
-              <img className="lb-img" src={openVideo.thumbnailFull} alt={openVideo.title} />
+              <img
+                className="lb-img"
+                src={openVideo.thumbnailFull}
+                alt={openVideo.title}
+                // Shorts often list a full-size thumbnail that never loads; drop
+                // back to the grid one instead of showing a broken image.
+                onError={(e) => {
+                  const img = e.currentTarget;
+                  if (img.src !== openVideo.thumbnail) img.src = openVideo.thumbnail;
+                }}
+              />
               <a
                 className="lb-watch"
                 href={openVideo.url}

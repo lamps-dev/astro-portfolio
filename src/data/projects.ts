@@ -1,5 +1,18 @@
 export type ProjectStatus = 'active' | 'random and silly' | 'old and abandonned, rip' | 'no longer active' | 'semi-active' | 'wip' | 'discontinued';
 
+/**
+ * Screenshots and clips shown on a project's card. Drop the files in
+ * public/files/assets/projects/ and reference them as
+ * '/files/assets/projects/<file>'. The first item is the card's cover;
+ * clicking it opens all of them in a viewer.
+ */
+export type ProjectMedia =
+  | { type: 'image'; src: string; alt?: string }
+  | { type: 'video'; src: string; poster?: string; alt?: string };
+
+/** Extra links beyond code/live, like a bot invite. `icon` is any iconify name. */
+export type ProjectLink = { label: string; href: string; icon?: string };
+
 export type Project = {
   name: string;
   tagline: string;
@@ -8,7 +21,8 @@ export type Project = {
   tech: string[];
   github?: string;
   demo?: string;
-  image?: string;
+  links?: ProjectLink[];
+  media?: ProjectMedia[];
   date: string;
   featured?: boolean;
 };
@@ -21,6 +35,8 @@ export const projects: Project[] = [
       'Discord.js-based discord bot (used to be in Pycord, and Forgescript before that). Has a honeypot spam channel setup that auto-bans anyone who posts in it. surprisingly effective.',
     status: 'active',
     tech: ['Discord.js', 'NodeJS'],
+    media: [{ type: 'image', src: '/files/assets/projects/zz-test.jpg', alt: 'test shot' }, { type: 'video', src: '/files/assets/videos/randomemesdiscordpart11.mp4' }],
+    links: [{ label: 'invite', href: 'https://lmpbot-invite.vercel.app/', icon: 'lucide:bot' }],
     date: '2026',
     featured: true,
   },

@@ -7,6 +7,8 @@ interface Props {
 }
 
 const { project } = Astro.props;
+const media = project.media ?? [];
+const cover = media[0];
 
 const statusLabels: Record<Project['status'], string> = {
   active: 'active',
@@ -20,10 +22,30 @@ const statusLabels: Record<Project['status'], string> = {
 ---
 
 <article class={`project-card status-${project.status}`}>
-  {project.image && (
-    <div class="thumb">
-      <img src={project.image} alt={`${project.name} screenshot`} loading="lazy" />
-    </div>
+  {cover && (
+    <button
+      type="button"
+      class="thumb"
+      data-media-open
+      aria-label={`View ${project.name} media`}
+      data-i18n-attr="aria-label"
+    >
+      {cover.type === 'image' ? (
+        <img src={cover.src} alt="" loading="lazy" />
+      ) : (
+        <video src={cover.src} poster={cover.poster} muted playsinline preload="metadata"></video>
+      )}
+      {cover.type === 'video' && (
+        <span class="thumb-play" aria-hidden="true">
+          <Icon name="lucide:play" width={22} height={22} />
+        </span>
+      )}
+      {media.length > 1 && (
+        <span class="thumb-count" aria-hidden="true">
+          <Icon name="lucide:images" width={13} height={13} /> {media.length}
+        </span>
+      )}
+    </button>
   )}
 
   <div class="body">
@@ -52,8 +74,44 @@ const statusLabels: Record<Project['status'], string> = {
           <Icon name="lucide:external-link" width={16} height={16} /> <span data-i18n>live</span>
         </a>
       )}
+      {project.links?.map((link) => (
+        <a href={link.href} target="_blank" rel="noopener noreferrer">
+          <Icon name={link.icon ?? 'lucide:external-link'} width={16} height={16} /> <span data-i18n>{link.label}</span>
+        </a>
+      ))}
     </div>
   </div>
+
+  {media.length > 0 && (
+    <dialog class="media-dialog" aria-label={`${project.name} media`} data-i18n-attr="aria-label">
+      <div class="md-inner">
+        <button type="button" class="md-close" data-media-close aria-label="Close" data-i18n-attr="aria-label">
+          <Icon name="lucide:x" width={18} height={18} />
+        </button>
+        {media.map((m, i) => (
+          <figure class="md-slide" hidden={i !== 0}>
+            {m.type === 'image' ? (
+              <img src={m.src} alt={m.alt ?? `${project.name} screenshot`} loading="lazy" />
+            ) : (
+              <video src={m.src} poster={m.poster} controls playsinline preload="none"></video>
+            )}
+            {m.alt && <figcaption data-i18n>{m.alt}</figcaption>}
+          </figure>
+        ))}
+        {media.length > 1 && (
+          <div class="md-nav">
+            <button type="button" data-media-step="-1" aria-label="Previous" data-i18n-attr="aria-label">
+              <Icon name="lucide:chevron-left" width={18} height={18} />
+            </button>
+            <span class="md-counter">1 / {media.length}</span>
+            <button type="button" data-media-step="1" aria-label="Next" data-i18n-attr="aria-label">
+              <Icon name="lucide:chevron-right" width={18} height={18} />
+            </button>
+          </div>
+        )}
+      </div>
+    </dialog>
+  )}
 </article>
 
 <style>
@@ -81,15 +139,126 @@ const statusLabels: Record<Project['status'], string> = {
     border-style: dashed;
   }
   .thumb {
+    position: relative;
     aspect-ratio: 16 / 9;
     overflow: hidden;
     background: var(--color-border);
+    padding: 0;
+    border: 0;
+    cursor: zoom-in;
   }
-  .thumb img {
+  .thumb img,
+  .thumb video {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
+    transition: transform 0.3s;
+  }
+  .thumb:hover img,
+  .thumb:hover video {
+    transform: scale(1.03);
+  }
+  .thumb:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: -2px;
+  }
+  .thumb-play {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 3rem;
+    height: 3rem;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+  }
+  .thumb-count {
+    position: absolute;
+    right: 0.5rem;
+    bottom: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+  }
+
+  /* Media viewer. A native <dialog> handles focus, Escape, and the top layer. */
+  .media-dialog {
+    margin: auto;
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    background: var(--color-bg);
+    color: var(--color-text);
+    max-width: min(960px, calc(100vw - 2rem));
+    max-height: calc(100dvh - 2rem);
+  }
+  .media-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+  }
+  .md-inner {
+    position: relative;
+    padding: 2.75rem 1rem 1rem;
+  }
+  .md-slide {
+    margin: 0;
+  }
+  .md-slide img,
+  .md-slide video {
+    display: block;
+    max-width: 100%;
+    max-height: calc(100dvh - 13rem);
+    margin: 0 auto;
+    border-radius: 8px;
+  }
+  .md-slide figcaption {
+    margin-top: 0.6rem;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--color-muted);
+  }
+  .md-close,
+  .md-nav button {
+    display: inline-grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--color-text);
+    cursor: pointer;
+  }
+  .md-close:hover,
+  .md-nav button:hover {
+    border-color: var(--color-accent);
+  }
+  .md-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+  .md-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 0.75rem;
+  }
+  .md-counter {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--color-muted);
   }
   .body {
     padding: 1rem;
@@ -169,3 +338,62 @@ const statusLabels: Record<Project['status'], string> = {
     text-decoration: underline;
   }
 </style>
+
+<script>
+  // One set of delegated listeners serves every card, including cards that
+  // arrive through client-side navigation.
+  function showSlide(dialog: HTMLDialogElement, index: number) {
+    const slides = dialog.querySelectorAll<HTMLElement>('.md-slide');
+    const i = (index + slides.length) % slides.length;
+    slides.forEach((slide, j) => {
+      slide.hidden = j !== i;
+      if (j !== i) slide.querySelector('video')?.pause();
+    });
+    dialog.dataset.index = String(i);
+    const counter = dialog.querySelector('.md-counter');
+    if (counter) counter.textContent = `${i + 1} / ${slides.length}`;
+  }
+
+  const openDialog = () => document.querySelector<HTMLDialogElement>('dialog.media-dialog[open]');
+
+  document.addEventListener('click', (e) => {
+    const target = e.target as Element;
+
+    const opener = target.closest('[data-media-open]');
+    if (opener) {
+      const dialog = opener.closest('.project-card')?.querySelector<HTMLDialogElement>('dialog.media-dialog');
+      if (!dialog) return;
+      showSlide(dialog, 0);
+      dialog.showModal();
+      return;
+    }
+
+    const dialog = target.closest<HTMLDialogElement>('dialog.media-dialog');
+    if (!dialog) return;
+    // A click that lands on the <dialog> itself is a click on the backdrop.
+    if (target === dialog || target.closest('[data-media-close]')) {
+      dialog.close();
+      return;
+    }
+    const step = target.closest<HTMLElement>('[data-media-step]');
+    if (step) showSlide(dialog, Number(dialog.dataset.index ?? 0) + Number(step.dataset.mediaStep));
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    const dialog = openDialog();
+    if (!dialog || dialog.querySelectorAll('.md-slide').length < 2) return;
+    showSlide(dialog, Number(dialog.dataset.index ?? 0) + (e.key === 'ArrowRight' ? 1 : -1));
+  });
+
+  // `close` doesn't bubble, so catch it on the way down to stop any video.
+  document.addEventListener(
+    'close',
+    (e) => {
+      const dialog = e.target as Element;
+      if (!dialog.matches?.('dialog.media-dialog')) return;
+      dialog.querySelectorAll('video').forEach((v) => v.pause());
+    },
+    true,
+  );
+</script>

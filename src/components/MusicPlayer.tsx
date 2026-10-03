@@ -3,7 +3,9 @@ import { createPortal } from 'react-dom';
 import { Pause, Play, SkipForward, Volume1, Volume2, VolumeX } from 'lucide-react';
 import { useT } from '../i18n/react';
 
-type Playlist = { songs: string[] };
+// `start` maps a filename to the second it should begin at. Entries ending
+// in `.disabled` are skipped, matching the renamed file on disk.
+type Playlist = { songs: string[]; start?: Record<string, number> };
 
 const PLAYLIST_URL = '/files/assets/songs/playlist.json';
 const SONG_BASE = '/files/assets/songs/';
@@ -39,6 +41,7 @@ export default function MusicPlayer() {
   const zoomRef = useRef<HTMLVideoElement | null>(null);
   const volumeRef = useRef<HTMLDivElement | null>(null);
   const [songs, setSongs] = useState<string[]>([]);
+  const [starts, setStarts] = useState<Record<string, number>>({});
   const { t } = useT();
   const [current, setCurrent] = useState<string | null>(null);
   const [playing, setPlaying] = useState(false);
@@ -66,8 +69,11 @@ export default function MusicPlayer() {
       .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
       .then((data: Playlist) => {
         if (cancelled) return;
-        const list = Array.isArray(data?.songs) ? data.songs : [];
+        const list = (Array.isArray(data?.songs) ? data.songs : []).filter(
+          (s) => !s.endsWith('.disabled'),
+        );
         setSongs(list);
+        setStarts(data?.start ?? {});
         const first = pickRandom(list);
         if (first) setCurrent(first);
       })
@@ -199,7 +205,9 @@ export default function MusicPlayer() {
   // An mp4 plays through <video> so its picture can double as the cover art;
   // everything else is a plain audio file whose art comes from /api/cover.
   const isVideo = /\.mp4$/i.test(current);
-  const src = `${SONG_BASE}${current}`;
+  // A media fragment (#t=) makes the browser begin there with no audible jump.
+  const start = starts[current];
+  const src = `${SONG_BASE}${current}${start ? `#t=${start}` : ''}`;
   const coverUrl = `/api/cover/${encodeURIComponent(current)}`;
   const trackName = current.replace(/\.[^.]+$/, '');
   const showCover = isVideo ? hasVideo : coverOk;

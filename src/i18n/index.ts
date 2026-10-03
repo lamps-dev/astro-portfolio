@@ -1,6 +1,7 @@
 /*
- * Client-side i18n backed by the LibreTranslate instance at
- * translate.uniqueweb.site.
+ * Client-side i18n. Live translations go through /api/translate, which tries
+ * DeepL, then Google Cloud Translation, then Google's keyless endpoint (see
+ * src/i18n/providers.mjs).
  *
  * English stays in the markup. When another language is picked, marked text is
  * looked up in src/i18n/translations/<lang>.json first. That file is generated
@@ -22,7 +23,7 @@
 
 import { cacheKey, sourceHtml } from './shared.mjs';
 
-export const TRANSLATE_API = 'https://translate.uniqueweb.site/translate';
+export const TRANSLATE_API = '/api/translate';
 
 export const LANGUAGES = {
   en: { label: 'English', short: 'EN' },
