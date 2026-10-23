@@ -27,17 +27,20 @@ The most notable security vulnerability though, is: **PHP2Shell**.
 
 ## PHP2Shell
 
+(Explanation of one of the exploits):
+
 Apparently, you can exploit PHP when it runs out of memory (OOM error), it utilizes a low-level C function, and sometimes it may leave memory in an half-broken state, which leads to a remote code execution (RCE)
+
 
 This is.. **VERY BAD** right now, because ~70% of the internet still runs on PHP.
 
 The notable websites that went down were:
 
-- DevianArt
+- DeviantArt
 - WiKirby
 - Alpine Linux Wiki
 - FOSS Wiki
-- Mirahese
+- Miraheze
 - Wiki.gg
 - 4chan
 
@@ -47,11 +50,11 @@ Sources:
 - https://bsky.app/profile/hailey.at/post/3myfj3tu3vs2q (lmfao)
 
 
-I'm pretty sure PHP is now mostly patched (but not really) but most of the web is still offline right now, since there are other severe vulnerabilities to deal with too, yay!
+I'm pretty sure PHP is now mostly patched (but not really) but most of the web was offline, some sites still are, since there are other severe vulnerabilities to deal with too, yay!
 
 ![PHP patch but not really](/dayum.png)
 
-Just, shutdown your servers in PHP for now and update please!!!!
+Just, shutdown your servers in PHP for now and update your PHP please (until you update, keep it offline, after you update, turn your server back on)!!!!
 
 https://bsky.app/profile/nightshade.technology/post/3myfbtrmdas27
 
@@ -59,17 +62,17 @@ ___
 
 ## eMudhra certs leak
 
-So, there was also 8 certificates that got leaked.
+So, there was also 8 certificates that got leaked/had guessable keys.
 
-And one of the cert's code was "**4**", YES, JUST FUCKING "4", WHY!!!
+And one of the cert's private key was "**4**", YES, JUST FUCKING "4", WHY!!!
 
 ![FOUR](/securitycodedamyum.png)
 
 ![bruh](/dayumpart2.png)
 
-But the other certs also were leaked cuz their codes were below 256, good shit good shit.
+But the other certs also were leaked/had guessable keys cuz their codes were below 256, good shit good shit.
 
-Check if you are infected: https://emudhra.we-have-a-problem.com
+Check if your client still trusts them: https://emudhra.we-have-a-problem.com
 
 After that, they also decided to leave the international TLS certificate business, lmfao
 
@@ -82,6 +85,8 @@ Sources:
 ___
 
 Check out https://bsky.app/profile/lampyt.lamps-dev.dev and scroll down to see some stuff I reposted about the NodeJS, PHP and eMudhra situations.
+
+(pip needs 26.2.2 or newer and certifi 2026.10.19 or newer, since old pip keeps trusting the certificates regardless of the OS store. debian's fixed package for trixie is 20250419+deb13u1)
 
 ## NodeJS and others
 
@@ -99,7 +104,7 @@ Apache traffic server (not httpd thank fuck): https://bsky.app/profile/nightshad
 
 Railway (really): https://bsky.app/profile/nightshade.technology/post/3myg72rgevk2k
 
-OpenCode: https://thehackernews.com/2026/10/opencode-flaw-lets-malicious-mcp.html
+OpenCode: https://www.infosecurity-magazine.com/news/opencode-breach-openai-anthropic/
 
 Apache Pulsar Manager (lmfao): https://bsky.app/profile/nightshade.technology/post/3myg7f5hwi22k
 
@@ -115,7 +120,7 @@ TeamUpdraft: https://teamupdraft.com/blog/security-incident-october-2026/
 
 GhostAction (in the month, not week): https://cybersecuritynews.com/ghostaction-supply-chain-campaign/
 
-Zeabur (its shutting down now, RIP): https://cybernews.com/news/zeabur-cloud-provider-shutdown-two-breaches-3-million-records/
+Zeabur (its shutting down in december, RIP): https://cybernews.com/news/zeabur-cloud-provider-shutdown-two-breaches-3-million-records/
 
 Tensorlake (in the month, not week): https://thehackernews.com/2026/10/tensorlake-npm-package-compromised-to.html
 
