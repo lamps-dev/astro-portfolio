@@ -61,7 +61,7 @@ Just, shutdown your servers in PHP for now and update your PHP please!!!! (until
 https://bsky.app/profile/nightshade.technology/post/3myfbtrmdas27
 ___
 
-## eMudhra certs leak
+## eMudhra certs leak/with extremely weak keys
 
 So, there was also 8 certificates that got leaked/had guessable keys.
 
@@ -77,6 +77,8 @@ Check if your client still trusts them: https://emudhra.we-have-a-problem.com
 
 After that, they also decided to leave the international TLS certificate business, lmfao
 
+(pip needs 26.2.2 or newer and certifi 2026.10.19 or newer, since old pip keeps trusting the certificates regardless of the OS store. debian's fixed package for trixie is 20250419+deb13u1)
+
 Sources: 
 - https://bsky.app/profile/nightshade.technology/post/3myhrxkw44s2d
 - https://emudhra.we-have-a-problem.com
@@ -86,8 +88,6 @@ Sources:
 ___
 
 Check out https://bsky.app/profile/lampyt.lamps-dev.dev and scroll down to see some stuff I reposted about the NodeJS, PHP and eMudhra situations.
-
-(pip needs 26.2.2 or newer and certifi 2026.10.19 or newer, since old pip keeps trusting the certificates regardless of the OS store. debian's fixed package for trixie is 20250419+deb13u1)
 
 ## NodeJS and others
 
