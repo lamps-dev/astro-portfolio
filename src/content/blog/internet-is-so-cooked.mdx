@@ -1,0 +1,115 @@
+---
+title: The internet is so cooked
+description: this is such a wild week/month, read this if you've been under a rock
+date: 2026-10-23
+tags:
+  - cooked
+  - php
+  - vulnerability
+  - web
+  - help
+  - selfhosting
+  - hosting
+  - shutdown
+---
+
+import Embed from '../../components/Embed.astro';
+
+# What is happening right now?
+
+So, I woke up on the 21st, and went about my day, but then I saw a bunch of vulnerabilities happening at once.
+
+This is honestly one of the most wild weeks/months EVER LIKE WHAT THE FUCK
+
+The most notable security vulnerability though, is: **PHP2Shell**.
+
+(Also thanks https://bsky.app/profile/nightshade.technology for documenting most of this :3)
+
+## PHP2Shell
+
+Apparently, you can exploit PHP when it runs out of memory (OOM error), it utilizes a low-level C function, and sometimes it may leave memory in an half-broken state, which leads to a remote code execution (RCE)
+
+This is.. **VERY BAD** right now, because ~70% of the internet still runs on PHP.
+
+The notable websites that went down were:
+
+- DevianArt
+- WiKirby
+- Alpine Linux Wiki
+- FOSS Wiki
+- Mirahese
+- Wiki.gg
+- 4chan
+
+Sources:
+- https://r74n.com/php 
+- https://bsky.app/profile/nightshade.technology/post/3mydptd5yjk2f
+- https://bsky.app/profile/hailey.at/post/3myfj3tu3vs2q (lmfao)
+
+
+I'm pretty sure PHP is now mostly patched (but not really) but most of the web is still offline right now, since there are other severe vulnerabilities to deal with too, yay!
+
+![PHP patch but not really](/dayum.png)
+
+![bruh](/dayumpart2.png)
+
+Just, shutdown your servers in PHP for now and update please!!!!
+
+https://bsky.app/profile/nightshade.technology/post/3myfbtrmdas27
+
+___
+
+## eMudhra certs leak
+
+So, there was also 8 certificates that got leaked.
+
+And one of the cert's code was "**4**", YES, JUST FUCKING "4", WHY!!!
+
+![FOUR](/securitycodedamyum.png)
+
+But the other certs also were leaked cuz their codes were below 256, good shit good shit.
+
+Check if you are infected: https://emudhra.we-have-a-problem.com
+
+After that, they also decided to leave the international TLS certificate business, lmfao
+
+Sources: 
+- https://bsky.app/profile/nightshade.technology/post/3myhrxkw44s2d
+- https://emudhra.we-have-a-problem.com
+- https://emudhra.com/en/press-release/emudhra-statement-distrust-global-tls-intermediate-root-ca
+- https://arstechnica.com/security/2026/10/the-internet-goes-on-high-alert-after-discovery-of-8-compromised-tls-certs/
+- https://bsky.app/profile/nightshade.technology/post/3myffljqujs2s
+___
+
+# NodeJS and others
+
+So, there are A BUNCH of other vulnerabilities!!!!
+
+Gitlab (another FUCKING RCE WHAT THE FUCK): https://x.com/TheHackersNews/status/2112981939984671090
+NodeJS: https://nodejs.org/en/blog/vulnerability/october-2026-security-releases, https://bsky.app/profile/nightshade.technology/post/3myil56elck2l
+Ubuntu: https://bsky.app/profile/kastor.sh/post/3myfe2ap57k2l
+Plex2Shell (*sigh* better update now!!!): https://thehackernews.com/2026/10/hackers-exploit-plex2shell-flaws-to.html
+Apache traffic server (not httpd thank fuck): https://bsky.app/profile/nightshade.technology/post/3myg2rw7dmc2s
+Railway (really): https://bsky.app/profile/nightshade.technology/post/3myg72rgevk2k
+OpenCode: https://thehackernews.com/2026/10/opencode-flaw-lets-malicious-mcp.html
+Apache Pulsar Manager (lmfao): https://bsky.app/profile/nightshade.technology/post/3myg7f5hwi22k
+DNS in BIND (bruh): https://bsky.app/profile/nightshade.technology/post/3myg77emtbk2k
+Linux Kernel Vulnerabilities leaked (lmfao): https://www.phoronix.com/news/LKML-New-Trend-Vulnerabilities
+LiteLLM (docker and pypi got infected, lmfao): https://docs.litellm.ai/blog/security-incident-oct-21-2026
+OVHcloud CLI (malware): https://thehackernews.com/2026/10/hackers-hijack-five-ovhcloud-cli.html
+TeamUpdraft: https://teamupdraft.com/blog/security-incident-october-2026/
+GhostAction (in the month, not week): https://cybersecuritynews.com/ghostaction-supply-chain-campaign/
+Zeabur (its shutting down now, RIP): https://cybernews.com/news/zeabur-cloud-provider-shutdown-two-breaches-3-million-records/
+Tensorlake (in the month, not week): https://thehackernews.com/2026/10/tensorlake-npm-package-compromised-to.html
+ConnectWise: https://thehackernews.com/2026/10/hackers-use-compromised-connectwise.html
+Capcom: https://www.bleepingcomputer.com/news/security/capcom-confirms-data-breach-affecting-117-million-accounts/
+Quest Diagnostics: https://cybersecuritynews.com/quest-diagnostics-hacked, https://x.com/AndrewCurran_/status/2113437710065311970
+IDCF Cloud (in the month, not week): https://cybernews.com/security/japanese-cloud-cyberattack-railways-police-495-organizations-idcf/
+VeloCloud: https://thehackernews.com/2026/10/arista-warns-of-critical-velocloud-sql.html
+
+Sources:
+- https://bsky.app/profile/nightshade.technology/post/3myfqvt6fl22f
+- https://bsky.app/profile/kastor.sh/post/3myfe2ap57k2l
+- https://bsky.app/profile/nightshade.technology/post/3myil56elck2l
+
+This week/month is so fucking wild.....
