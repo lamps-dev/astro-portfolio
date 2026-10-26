@@ -4,9 +4,9 @@ title: Terms of Service
 description: The terms you agree to when using any service operated by Lamp Studios.
 ---
 
-**Last updated: May 27, 2026**
+**Last updated: October 26, 2026**
 
-These terms cover all services operated by **Lamp Studios** (an unregistered personal/hobby project, referred to here as "we", "us", or "the operator"), including services hosted on the `lamps-dev.dev`, `uniqueweb.site`, and `sillycat.cloud` domains, any subdomains thereof, and any additional services Lamp Studios may host on external domains or platforms outside of those listed above.
+These terms cover all services operated by **Lamp Studios** (an unregistered personal/hobby project, referred to here as "we", "us", or "the operator"), including services hosted on the `lamps-dev.dev`, `uniqueweb.site`, and `sillycat.cloud` domains, any subdomains thereof, the **LmpBot** Discord bot ([source code](https://github.com/lamp-studios/lmpbot-beta)), and any additional services Lamp Studios may host on external domains or platforms outside of those listed above.
 
 See also the [Privacy Policy](/privacy).
 
@@ -72,15 +72,27 @@ These terms may be updated. The "Last updated" date at the top reflects the most
 
 These terms are governed by the laws of France. Any disputes will be handled by French courts.
 
+## 10. LmpBot (Discord bot)
+
+These extra terms apply to the **LmpBot** Discord bot, on top of everything above.
+
+- **Discord's rules still apply.** Using LmpBot means you're also following [Discord's Terms of Service](https://discord.com/terms) and [Community Guidelines](https://discord.com/guidelines).
+- **Server admins are responsible for their setup.** Features like the bot trap channel (which soft-bans anyone who posts in it), server lockdown and verification act on members automatically. Admins who add the bot and configure these features are responsible for how they're used in their server.
+- **AI replies can be wrong.** The chatbot is powered by AI models. Its replies may be inaccurate, offensive or just plain weird, and they don't reflect the views of Lamp Studios. Don't rely on it for anything important (medical, legal, financial, safety), and don't share passwords, tokens or other secrets with it.
+- **Don't misuse the chatbot.** Don't use it to generate content that breaks Discord's rules or the AI provider's usage policies, to harass people, or to spam. We may block users or servers that do.
+- **The bot is in beta.** Features may change, break or disappear without notice.
+- **Removal.** We may remove the bot from any server, or stop it responding to any user, at any time.
+
+How LmpBot handles your data is covered in the [Privacy Policy](/privacy#10-lmpbot-discord-bot).
+
 ---
 
 ## Contact
 
 Got questions or complaints? Reach out:
 
-- **Primary:** [support@sillycat.cloud](mailto:support@sillycat.cloud)
+- **Primary:** [rimit58872@pm.me](mailto:rimit58872@pm.me)
 - **Backup:** [lampyt@lamps-dev.dev](mailto:lampyt@lamps-dev.dev)
-- **Last resort (anonymized for privacy/security reasons):** [supportprivacy.charger933@passmail.net](mailto:supportprivacy.charger933@passmail.net)
 - **YouTube:** [@ilovelampadaire](https://youtube.com/@ilovelampadaire)
 
 ---
