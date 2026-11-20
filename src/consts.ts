@@ -1,7 +1,8 @@
 export const AGE = 13;
 export const SITE_TITLE = 'Lamp';
 export const SITE_DESCRIPTION = `Lamp's Portfolio. I'm ${AGE}, and I code things.`;
-export const SITE_URL = 'https://lamps-dev.dev';
+/** Canonical origin. Keep in sync with `site` in astro.config.mjs. */
+export const SITE_URL = 'https://www.lamps-dev.dev';
 
 /** GitHub handle used for the live changelog feed (/api/commits). */
 export const GITHUB_USERNAME = 'lamps-dev';

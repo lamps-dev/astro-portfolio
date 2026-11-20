@@ -26,10 +26,10 @@ const hasImages = groups.some((g) => g.items.length > 0);
               <span class="folder__tab"></span>
               <span class="folder__back"></span>
               {group.items[0] && (
-                <Image src={group.items[0].image} alt="" widths={[220]} sizes="110px" class="paper paper--left" />
+                <Image src={group.items[0].image} alt="" layout="none" widths={[220]} sizes="110px" class="paper paper--left" />
               )}
               {group.items[1] && (
-                <Image src={group.items[1].image} alt="" widths={[220]} sizes="110px" class="paper paper--right" />
+                <Image src={group.items[1].image} alt="" layout="none" widths={[220]} sizes="110px" class="paper paper--right" />
               )}
               <span class="folder__front"></span>
             </span>

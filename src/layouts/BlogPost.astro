@@ -320,6 +320,25 @@ const { title, description, date, updated, tags } = Astro.props;
       document.body.style.overflow = 'hidden';
     }
 
+    // Responsive images advertise several widths. The lightbox should show
+    // the largest one, not whichever candidate the layout happened to pick.
+    function fullSrc(el: HTMLImageElement): string {
+      let bestUrl = el.currentSrc || el.src;
+      let bestW = 0;
+      if (!el.srcset) return bestUrl;
+      for (const part of el.srcset.split(',')) {
+        const bits = part.trim().split(/\s+/);
+        const url = bits[0];
+        const descriptor = bits[1] ?? '';
+        const w = descriptor.endsWith('w') ? Number(descriptor.slice(0, -1)) : 0;
+        if (url && w >= bestW) {
+          bestW = w;
+          bestUrl = url;
+        }
+      }
+      return bestUrl;
+    }
+
     function close() {
       lightbox!.hidden = true;
       lightbox!.setAttribute('aria-hidden', 'true');
@@ -329,7 +348,7 @@ const { title, description, date, updated, tags } = Astro.props;
 
     document.querySelectorAll<HTMLImageElement>('.prose img').forEach((el) => {
       el.addEventListener('click', () => {
-        open(el.currentSrc || el.src, el.alt || '');
+        open(fullSrc(el), el.alt || '');
       });
     });
 

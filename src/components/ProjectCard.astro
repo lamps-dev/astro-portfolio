@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import { Icon } from 'astro-icon/components';
 import type { Project } from '../data/projects';
 
@@ -31,7 +32,13 @@ const statusLabels: Record<Project['status'], string> = {
       data-i18n-attr="aria-label"
     >
       {cover.type === 'image' ? (
-        <img src={cover.src} alt="" loading="lazy" />
+        <Image
+          src={cover.src}
+          alt=""
+          layout="constrained"
+          width={960}
+          sizes="(max-width: 640px) 100vw, 440px"
+        />
       ) : (
         <video src={cover.src} poster={cover.poster} muted playsinline preload="metadata"></video>
       )}
@@ -91,7 +98,13 @@ const statusLabels: Record<Project['status'], string> = {
         {media.map((m, i) => (
           <figure class="md-slide" hidden={i !== 0}>
             {m.type === 'image' ? (
-              <img src={m.src} alt={m.alt ?? `${project.name} screenshot`} loading="lazy" />
+              <Image
+                src={m.src}
+                alt={m.alt ?? `${project.name} screenshot`}
+                layout="constrained"
+                width={960}
+                sizes="(max-width: 960px) 100vw, 960px"
+              />
             ) : (
               <video src={m.src} poster={m.poster} controls playsinline preload="none"></video>
             )}
@@ -219,6 +232,13 @@ const statusLabels: Record<Project['status'], string> = {
     max-height: calc(100dvh - 13rem);
     margin: 0 auto;
     border-radius: 8px;
+  }
+  /* The optimized <img> has width/height attributes and object-fit: cover.
+     width/height auto lets a short dialog scale the whole screenshot down
+     instead of cropping it. The card thumbnail keeps its own cover crop. */
+  .md-slide img {
+    width: auto;
+    height: auto;
   }
   .md-slide figcaption {
     margin-top: 0.6rem;
