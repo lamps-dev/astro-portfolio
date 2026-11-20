@@ -43,6 +43,7 @@ const { group } = Astro.props as { group: ResolvedGroup };
               src={item.image}
               alt={item.title}
               data-i18n-attr="alt"
+              layout="none"
               widths={[320, 480, 640]}
               sizes="(max-width: 600px) 45vw, (max-width: 900px) 30vw, 260px"
               loading="lazy"

@@ -1,3 +1,5 @@
+import { SITE_URL } from '../consts';
+
 export type UsesItem = {
   name: string;
   detail?: string;
@@ -44,7 +46,7 @@ export const uses: UsesSection[] = [
     id: 'online',
     title: 'Online',
     items: [
-      { name: 'lamps-dev.dev', detail: 'This portfolio', link: 'https://lamps-dev.dev' },
+      { name: 'lamps-dev.dev', detail: 'This portfolio', link: SITE_URL },
       { name: 'onlycats.info', detail: 'The vibecoded joke project', link: 'https://onlycats.info' },
       { name: 'sillycat.cloud', detail: 'In-progress/WIP Cat cloud hosting', link: 'https://sillycat.cloud' },
       { name: 'uniqueweb.site', detail: 'Self-hosting domain', link: 'https://uniqueweb.site'},

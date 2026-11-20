@@ -41,7 +41,9 @@ export async function resolveGroups() {
           return {
             ...item,
             image,
-            full: await getImage({ src: image, width: 1600 }),
+            // layout none: the lightbox only uses this one URL, so don't
+            // also emit the responsive srcset the global layout would add.
+            full: await getImage({ src: image, width: 1600, layout: 'none' }),
           };
         }),
       ),

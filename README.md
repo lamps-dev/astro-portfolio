@@ -4,7 +4,7 @@
 
 Welcome, to, well, my new portfolio, built with Astro (blog template)! (and vibecoded, [heres the reason why btw](https://www.lamps-dev.dev/blog/the-switch/#:~:text=Why%2C%20vibecode%20almost%20everything%3F)).
 
-Live at [lamps-dev.dev](https://lamps-dev.dev) :3
+Live at [www.lamps-dev.dev](https://www.lamps-dev.dev) :3
 
 ___
 
