@@ -233,6 +233,13 @@ const statusLabels: Record<Project['status'], string> = {
     margin: 0 auto;
     border-radius: 8px;
   }
+  /* The optimized <img> has width/height attributes and object-fit: cover.
+     width/height auto lets a short dialog scale the whole screenshot down
+     instead of cropping it. The card thumbnail keeps its own cover crop. */
+  .md-slide img {
+    width: auto;
+    height: auto;
+  }
   .md-slide figcaption {
     margin-top: 0.6rem;
     text-align: center;
